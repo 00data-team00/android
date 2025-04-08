@@ -1,0 +1,53 @@
+[
+    {
+      "name": "⚙️ setting",
+      "color": "e3dede",
+      "description": "프로젝트 환경 설정 (Gradle, build, Git 설정 등)"
+    },
+    {
+      "name": "✨ feat",
+      "color": "a2eeef",
+      "description": "새로운 기능 추가"
+    },
+    {
+      "name": "🎨 design",
+      "color": "fef2c0",
+      "description": "UI/UX 디자인 또는 레이아웃 작업"
+    },
+    {
+      "name": "🔨 refactor",
+      "color": "f29a4e",
+      "description": "코드 구조 개선 및 리팩토링 (기능 변화 없음)"
+    },
+    {
+      "name": "🚑 !HOTFIX",
+      "color": "d73a4a",
+      "description": "긴급 수정 (운영 이슈 등)"
+    },
+    {
+      "name": "💬 comment",
+      "color": "bfdadc",
+      "description": "코드 주석 추가 또는 수정"
+    },
+    {
+      "name": "📃 docs",
+      "color": "0075ca",
+      "description": "문서 작성 및 수정 (README, 위키 등)"
+    },
+    {
+      "name": "🔁 rename",
+      "color": "ededed",
+      "description": "파일/클래스/메소드명 변경"
+    },
+    {
+      "name": "❌ remove",
+      "color": "ffffff",
+      "description": "불필요한 코드, 파일, 리소스 삭제"
+    },
+    {
+      "name": "🐛 fix",
+      "color": "fbca04",
+      "description": "버그 수정"
+    }
+  ]
+  
