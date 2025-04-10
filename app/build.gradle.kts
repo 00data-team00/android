@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace = "com.data.app"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.data.app"
         minSdk = 28
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -33,6 +33,12 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+
+    buildFeatures {
+        viewBinding = true
+        buildConfig = true
+        dataBinding = true
+    }
 }
 
 dependencies {
@@ -45,4 +51,7 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    // coil
+    implementation("io.coil-kt.coil3:coil-compose:3.1.0")
 }
