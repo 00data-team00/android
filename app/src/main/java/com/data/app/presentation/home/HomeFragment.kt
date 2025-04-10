@@ -48,9 +48,8 @@ class HomeFragment:Fragment() {
             tvTitleEng.text=getString(R.string.home_title_eng, "GooGoo")
             tvNotGiveUp.text=getString(R.string.home_not_give_up, "구구")
             tvContinueStudy.text=getString(R.string.home_continue_study, 13)
-            ivLanguage.load(R.drawable.ic_korea){
+            ivLanguage.load(R.drawable.ic_korea) {
                 transformations(
-                    CircleCropTransformation(),
                     BorderTransformation(borderWidth = 3f, borderColor = resources.getColor(R.color.ic_language_stoke))
                 )
             }
@@ -64,7 +63,11 @@ class HomeFragment:Fragment() {
 
     private fun showLanguage(){
         val adapter = LanguageAdapter { selectedLanguage ->
-            binding.ivLanguage.setImageResource(selectedLanguage.iconRes)
+            binding.ivLanguage.load(selectedLanguage.iconRes) {
+                transformations(
+                    BorderTransformation(borderWidth = 3f, borderColor = resources.getColor(R.color.ic_language_stoke))
+                )
+            }
             binding.cvLanguageList.slideUp()
         }
         binding.rvLanguages.adapter = adapter
@@ -148,29 +151,31 @@ class HomeFragment:Fragment() {
             get() = "$borderWidth-$borderColor"
 
         override suspend fun transform(input: Bitmap, size: Size): Bitmap {
-            val output = Bitmap.createBitmap(input.width, input.height, input.config ?: Bitmap.Config.ARGB_8888)
+            val size = minOf(input.width, input.height)
+            val output = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
             val canvas = Canvas(output)
 
-            // Draw the original image
-            canvas.drawBitmap(input, 0f, 0f, null)
+            // 원형 이미지 그리기
+            val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+            val rect = RectF(0f, 0f, size.toFloat(), size.toFloat())
+            canvas.drawOval(rect, paint)
 
-            // Draw the border
-            val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            paint.xfermode = android.graphics.PorterDuffXfermode(android.graphics.PorterDuff.Mode.SRC_IN)
+            canvas.drawBitmap(input, null, rect, paint)
+
+            // 테두리 그리기
+            val borderPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
                 style = Paint.Style.STROKE
                 color = borderColor
                 strokeWidth = borderWidth
             }
 
             val halfStroke = borderWidth / 2
-            val rect = RectF(
-                halfStroke,
-                halfStroke,
-                input.width - halfStroke,
-                input.height - halfStroke
-            )
-            canvas.drawOval(rect, paint) // 원형 기준
+            val borderRect = RectF(halfStroke, halfStroke, size - halfStroke, size - halfStroke)
+            canvas.drawOval(borderRect, borderPaint)
 
             return output
         }
     }
+
 }

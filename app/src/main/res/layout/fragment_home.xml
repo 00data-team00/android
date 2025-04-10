@@ -40,6 +40,7 @@
             android:layout_height="0dp"
             android:src="@drawable/ic_korea"
             android:layout_marginEnd="20dp"
+            android:scaleType="centerCrop"
             app:layout_constraintBottom_toBottomOf="@id/tv_title_eng"
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintEnd_toEndOf="parent"
