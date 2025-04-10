@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">app</string>
+
+    <string name="home_title_kor">%s님의 학습기록</string>
+    <string name="home_title_eng">%s\'s Learning Journey</string>
+    <string name="home_not_give_up">포기하지 않는 %s님!</string>
+    <string name="home_continue_study">연속으로 %d일차 공부했어요! 오늘도 이어서 해볼까요?</string>
+    <string name="home_quiz_1">내가 푼 퀴즈</string>
+    <string name="home_quiz_2">오늘의 푼 퀴즈</string>
+    <string name="home_conversation">회화 연습 횟수</string>
+    <string name="home_go_to_study_kor">공부하러가기</string>
+    <string name="home_go_to_study_eng">Today\'s Learning Games</string>
+    <string name="home_study_title">AI 튜터와\n한국어 실전 연습</string>
 </resources>
