@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/homeFragment"
+    app:popEnterAnim="@anim/slide_out_right"
+    app:popExitAnim="@anim/stay">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.data.app.presentation.home.HomeFragment"
+        android:label="Home">
+
+        <action
+            android:id="@+id/action_home_to_aiPractice"
+            app:destination="@id/aiPracticeFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/stay"
+            app:popEnterAnim="@anim/stay"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/aiPracticeFragment"
+        android:name="com.data.app.presentation.home.AIPracticeFragment"
+        android:label="ai_practice">
+    </fragment>
+
+    <fragment
+        android:id="@+id/menuFragment"
+        android:name="com.data.app.presentation.MenuFragment"
+        android:label="menu">
+    </fragment>
+
+    <fragment
+        android:id="@+id/mapFragment"
+        android:name="com.data.app.presentation.MapFragment"
+        android:label="map"></fragment>
+    <fragment
+        android:id="@+id/myFragment"
+        android:name="com.data.app.presentation.MyFragment"
+        android:label="my"></fragment>
+</navigation>

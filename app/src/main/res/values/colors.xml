@@ -12,4 +12,9 @@
     <color name="ic_language_stoke">#A3D80D</color>
     <color name="home_continuous_study">#A75050</color>
     <color name="home_count_quiz">#A3D80D</color>
+
+    <color name="ai_practice_btn_dark_green">#5C7418</color>
+
+    <!--mock-->
+    <color name="mock_ai_practice_title_gray">#767677</color>
 </resources>

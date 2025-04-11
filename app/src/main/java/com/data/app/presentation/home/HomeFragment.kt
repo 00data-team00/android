@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import coil3.Canvas
 import coil3.load
 import coil3.request.transformations
@@ -40,6 +41,7 @@ class HomeFragment:Fragment() {
 
     private fun setting(){
         inputMockData()
+        clickPractice()
     }
 
     private fun inputMockData(){
@@ -55,9 +57,6 @@ class HomeFragment:Fragment() {
             }
 
             showLanguage()
-            /*ivLanguage.setOnClickListener{
-                showLanguagePopup(it)
-            }*/
         }
     }
 
@@ -89,29 +88,10 @@ class HomeFragment:Fragment() {
         }
     }
 
-    private fun showLanguagePopup(anchor: View) {
-        val popup = PopupMenu(requireContext(), anchor)
-        popup.menuInflater.inflate(R.menu.menu_language, popup.menu)
-
-        popup.setOnMenuItemClickListener { item ->
-            when (item.itemId) {
-                R.id.menu_korea -> {
-                    binding.ivLanguage.setImageResource(R.drawable.ic_korea)
-                    true
-                }
-                R.id.menu_usa -> {
-                    binding.ivLanguage.setImageResource(R.drawable.ic_america)
-                    true
-                }
-                R.id.menu_china -> {
-                    binding.ivLanguage.setImageResource(R.drawable.ic_china)
-                    true
-                }
-                else -> false
-            }
+    private fun clickPractice(){
+        binding.ivStudy1.setOnClickListener{
+            findNavController().navigate(R.id.action_home_to_aiPractice)
         }
-
-        popup.show()
     }
 
     private fun View.slideDown(duration: Long = 200) {
@@ -135,7 +115,6 @@ class HomeFragment:Fragment() {
             }
             .start()
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()

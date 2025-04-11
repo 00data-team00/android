@@ -48,10 +48,18 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
     // coil
     implementation("io.coil-kt.coil3:coil-compose:3.1.0")
+
+    //viewmodel
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7")
+    implementation("androidx.fragment:fragment-ktx:1.8.6")
+    implementation("androidx.activity:activity-ktx:1.10.1")
+
 }
