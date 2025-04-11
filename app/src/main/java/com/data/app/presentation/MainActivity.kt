@@ -3,6 +3,8 @@ package com.data.app.presentation
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
+import androidx.navigation.ui.setupWithNavController
 import com.data.app.R
 import com.data.app.databinding.ActivityMainBinding
 import com.data.app.presentation.home.HomeFragment
@@ -21,12 +23,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setting() {
-        clickBottomNavigation()
-        binding.bnvMain.selectedItemId = R.id.menu_home
-        replaceFragment(HomeFragment())
+        binding.bnvMain.post {
+            val navController = findNavController(R.id.fcv_main)
+            binding.bnvMain.setupWithNavController(navController)
+        }
+        //clickBottomNavigation()
+        //binding.bnvMain.selectedItemId = R.id.menu_home
+        //replaceFragment(HomeFragment())
     }
 
-    private fun clickBottomNavigation() {
+    /*private fun clickBottomNavigation() {
         binding.bnvMain.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.menu_menu -> {
@@ -54,7 +60,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-    }
+    }*/
 
     private fun replaceFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
