@@ -54,6 +54,9 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
+    //button
+    implementation("com.google.android.material:material:1.11.0")
+
     // coil
     implementation("io.coil-kt.coil3:coil-compose:3.1.0")
 
