@@ -22,13 +22,11 @@ class LandingActivity:AppCompatActivity() {
         binding=ActivityLandingBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val textView = findViewById<TextView>(R.id.tv_landing1)
-        val textData: String = textView.text.toString()
+        val textData = binding.tvLanding.text.toString()
         val builder = SpannableStringBuilder(textData)
-        val boldSpan = StyleSpan(Typeface.BOLD)
-        builder.setSpan(boldSpan, 6, 13, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-        builder.setSpan(boldSpan, 22, textData.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-        textView.text = builder
+        builder.setSpan(StyleSpan(Typeface.BOLD), 6, 13, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        builder.setSpan(StyleSpan(Typeface.BOLD), 22, textData.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        binding.tvLanding.text = builder
 
         /*
         Handler(Looper.getMainLooper()).postDelayed({
