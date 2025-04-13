@@ -28,13 +28,13 @@ class LandingActivity:AppCompatActivity() {
         builder.setSpan(StyleSpan(Typeface.BOLD), 22, textData.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         binding.tvLanding.text = builder
 
-        /*
+
         Handler(Looper.getMainLooper()).postDelayed({
-            val intent = Intent(this, LogInActivity::class.java)
+            val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
             overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out)
         }, 2000)
-         */
+
 
     }
 

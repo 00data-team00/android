@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/tv_ruready"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/login_ruready"
+        android:textStyle="bold"
+        android:textSize="25sp"
+        android:layout_marginTop="110dp"
+        android:layout_marginStart="50dp"
+        android:bufferType="spannable"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <TextView
+        android:id="@+id/tv_tocontinue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:textSize="11sp"
+        android:text="@string/login_tocontinue"
+        app:layout_constraintStart_toStartOf="@id/tv_ruready"
+        app:layout_constraintTop_toBottomOf="@id/tv_ruready"/>
+
+    <EditText
+        android:id="@+id/et_login_email"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginEnd="50dp"
+        android:layout_marginTop="20dp"
+        android:textSize="15sp"
+        android:textColor="#bbbbbb"
+        android:backgroundTint="#d6d6d6"
+        android:inputType="text"
+        android:hint="  Email"
+        android:drawableLeft="@drawable/ic_email_black_24"
+        app:layout_constraintTop_toBottomOf="@id/tv_tocontinue"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <EditText
+        android:id="@+id/et_login_password"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginEnd="50dp"
+        android:layout_marginTop="5dp"
+        android:textSize="15sp"
+        android:textColor="#bbbbbb"
+        android:drawableLeft="@drawable/ic_lock_black_24"
+        android:backgroundTint="#d6d6d6"
+        android:inputType="text"
+        android:hint="  Password"
+        app:layout_constraintTop_toBottomOf="@id/et_login_email"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_login"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginEnd="50dp"
+        android:layout_marginBottom="60dp"
+        android:text="LOG IN"
+        android:textSize="15sp"
+        android:textColor="#ffffff"
+        android:elevation="5dp"
+        android:translationZ="8dp"
+        app:backgroundTint="@null"
+        android:background="@drawable/bg_loginbutton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <TextView
+        android:id="@+id/tv_joinus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
+        android:textSize="14sp"
+        android:text="New here? Join us"
+        android:textColor="#666666"
+        app:layout_constraintBottom_toTopOf="@id/btn_login"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

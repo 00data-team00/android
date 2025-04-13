@@ -2,6 +2,8 @@
     <string name="app_name">app</string>
 
     <string name="login_landing">Speak Korean.\nPlay the Game.\nMaster It.</string>
+    <string name="login_ruready">Ready to level up\nyour Korean?</string>
+    <string name="login_tocontinue">Sign up with Social of fill the form to continue.</string>
 
     <string name="home_title_kor">%s님의 학습기록</string>
     <string name="home_title_eng">%s\'s Learning Journey</string>
