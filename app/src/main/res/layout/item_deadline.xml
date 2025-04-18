@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cv_deadline"
+        android:layout_width="260dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="7dp"
+        android:layout_marginEnd="7dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginBottom="5dp"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="2dp"
+        app:cardBackgroundColor="@android:color/white"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/iv_image"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:src="@drawable/ic_image"
+                android:scaleType="centerCrop"
+                app:layout_constraintDimensionRatio="1:0.5"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+            <ImageView
+                android:id="@+id/iv_background"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="@drawable/deadline_bg_white"
+                app:layout_constraintTop_toBottomOf="@id/iv_image"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="15dp"
+                android:gravity="start"
+                android:paddingEnd="15dp"
+                android:text="외국인 근로자 한글 교육 프로그램"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="@id/iv_background"
+                app:layout_constraintTop_toTopOf="@id/iv_background"
+                app:layout_constraintStart_toStartOf="@id/iv_background"/>
+
+            <TextView
+                android:id="@+id/tv_address"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="서초구"
+                android:textColor="@color/mock_ai_practice_title_gray"
+                android:textSize="12dp"
+                app:layout_constraintTop_toBottomOf="@id/tv_title"
+                app:layout_constraintStart_toStartOf="@id/tv_title"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_enroll"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="@drawable/btn_enroll"
+                android:text="@string/explore_enroll"
+                android:textColor="@color/explore_enroll_dark_green"
+                android:textStyle="bold"
+                android:layout_marginEnd="15dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="15dp"
+                app:layout_constraintHeight_percent="0.17"
+                app:layout_constraintTop_toBottomOf="@id/tv_address"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="@id/tv_address"
+                app:layout_constraintEnd_toEndOf="@id/iv_background"/>
+
+            <TextView
+                android:id="@+id/tv_deadline_date"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:text="~ APR 15"
+                android:textSize="10dp"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:gravity="center_vertical"
+                android:background="@drawable/deadline_bg_dark_green"
+                android:layout_marginStart="3dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="5dp"
+                app:layout_constraintHeight_percent="0.09"
+                app:layout_constraintTop_toTopOf="@id/iv_image"
+                app:layout_constraintEnd_toEndOf="@id/iv_image"/>
+
+            <TextView
+                android:id="@+id/tv_price"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:text="3,000원"
+                android:textSize="12dp"
+                android:textStyle="bold"
+                android:textColor="@color/explore_enroll_dark_green"
+                android:background="@drawable/indicator_white"
+                android:layout_marginStart="3dp"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                app:layout_constraintHeight_percent="0.075"
+                app:layout_constraintTop_toBottomOf="@id/iv_image"
+                app:layout_constraintBottom_toTopOf="@id/iv_background"
+                app:layout_constraintStart_toStartOf="parent"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+</androidx.constraintlayout.widget.ConstraintLayout>
