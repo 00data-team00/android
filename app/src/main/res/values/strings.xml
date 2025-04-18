@@ -26,6 +26,13 @@
     <string name="practice_record_title_kor">나의 연습 기록</string>
     <string name="practice_record_title_eng">My Practice Records</string>
 
+    <!--explore-->
+    <string name="explore_title">마감 기한이 코앞으로 다가왔어요!</string>
+    <string name="explore_enroll">신청하기</string>
+    <string name="explore_all_title">전체 프로그램</string>
+    <string name="explore_price_free">무료</string>
+    <string name="explore_price_paid">유료</string>
+
 
     <!--mock-->
     <string name="practice_record_item_title">은행 업무에 대한 대화</string>

@@ -48,7 +48,7 @@
 
     <fragment
         android:id="@+id/mapFragment"
-        android:name="com.data.app.presentation.MapFragment"
+        android:name="com.data.app.presentation.explore.ExploreFragment"
         android:label="map"></fragment>
     <fragment
         android:id="@+id/myFragment"

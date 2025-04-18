@@ -21,6 +21,11 @@
 
     <color name="chat_gray">#F2F2F7</color>
 
+    <color name="explore_enroll_dark_green">#5C7418</color>
+    <color name="explore_enroll_click_dark_green">#475914</color>
+    <color name="explore_price_click_green">#A3D80D</color>
+    <color name="explore_price_unclick_gray">#F0F0F0</color>
+
     <!--mock-->
     <color name="mock_ai_practice_title_gray">#767677</color>
 </resources>
