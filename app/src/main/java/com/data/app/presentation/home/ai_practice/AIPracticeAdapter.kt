@@ -1,6 +1,5 @@
-package com.data.app.presentation.home
+package com.data.app.presentation.home.ai_practice
 
-import android.content.ClipData.Item
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView

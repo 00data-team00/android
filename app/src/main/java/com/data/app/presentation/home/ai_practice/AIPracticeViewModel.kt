@@ -1,4 +1,4 @@
-package com.data.app.presentation.home
+package com.data.app.presentation.home.ai_practice
 
 import androidx.lifecycle.ViewModel
 import com.data.app.R

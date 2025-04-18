@@ -65,4 +65,7 @@ dependencies {
     implementation("androidx.fragment:fragment-ktx:1.8.6")
     implementation("androidx.activity:activity-ktx:1.10.1")
 
+    //Timber
+    implementation("com.jakewharton.timber:timber:4.7.1")
+
 }

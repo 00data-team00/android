@@ -23,4 +23,20 @@
     <string name="ai_practice_culture">문화/여가</string>
     <string name="ai_practice_job">취업/업무</string>
 
+    <string name="practice_record_title_kor">나의 연습 기록</string>
+    <string name="practice_record_title_eng">My Practice Records</string>
+
+
+    <!--mock-->
+    <string name="practice_record_item_title">은행 업무에 대한 대화</string>
+    <string name="practice_record_item_summation">예적금 방법과 은행 방문 목적에 관해 이야기 함</string>
+    <string name="practice_record_item_date">2025.04.08</string>
+    <string name="practice_record_item_type">일상</string>
+
+    <string name="chat_me_item_content1">Hi team 🖐️</string>
+    <string name="chat_me_item_content2">Anyone on for lunch today</string>
+    <string name="chat_ai_item_name">Jav</string>
+    <string name="chat_ai_item_content1">I\'m down! Any ideas??</string>
+    <string name="chat_ai_item_content2">Let me know</string>
+    <string name="chat_item_date">11:31 AM</string>
 </resources>

@@ -15,6 +15,12 @@
 
     <color name="ai_practice_btn_dark_green">#5C7418</color>
 
+    <color name="practice_record_item_gray">#999999</color>
+    <color name="practice_record_item_dark_green">#5C7418</color>
+    <color name="practice_record_item_btn_gray">#D1D1D6</color>
+
+    <color name="chat_gray">#F2F2F7</color>
+
     <!--mock-->
     <color name="mock_ai_practice_title_gray">#767677</color>
 </resources>
