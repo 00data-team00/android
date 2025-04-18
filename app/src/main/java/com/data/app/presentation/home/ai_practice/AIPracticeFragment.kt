@@ -1,4 +1,4 @@
-package com.data.app.presentation.home
+package com.data.app.presentation.home.ai_practice
 
 import android.content.res.Resources
 import android.os.Bundle
@@ -6,14 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.navOptions
 import com.data.app.R
 import com.data.app.databinding.FragmentAiPracticeBinding
-import com.data.app.databinding.ItemTabAiBinding
 import com.google.android.material.tabs.TabLayout
 
 class AIPracticeFragment:Fragment() {
@@ -21,8 +18,8 @@ class AIPracticeFragment:Fragment() {
     private val binding:FragmentAiPracticeBinding
         get()= requireNotNull(_binding){"AI Practice Fragment is null"}
 
-    private lateinit var aiAdaper:AIPracticeAdapter
-    private val aiPracticeViewModel:AIPracticeViewModel by viewModels()
+    private lateinit var aiAdaper: AIPracticeAdapter
+    private val aiPracticeViewModel: AIPracticeViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,11 +37,12 @@ class AIPracticeFragment:Fragment() {
 
     private fun setting(){
         showList()
+        clickPracticeRecord()
         clickBackButton()
     }
 
     private fun showList(){
-        aiAdaper=AIPracticeAdapter()
+        aiAdaper= AIPracticeAdapter()
         binding.rvAiPractice.adapter=aiAdaper
         aiAdaper.getList(aiPracticeViewModel.mockDailyList)
 
@@ -164,36 +162,11 @@ class AIPracticeFragment:Fragment() {
         return (this * Resources.getSystem().displayMetrics.density).toInt()
     }
 
-
-    /* private fun setupTabListeners() {
-         binding.tlAiPractice.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-             override fun onTabSelected(tab: TabLayout.Tab?) {
-                 val customView = tab?.customView ?: return
-                 val titleView = ItemTabAiBinding.bind(customView).tvTabTitle
-                 titleView.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
-
-                 moveIndicatorTo(tab)
-             }
-
-             override fun onTabUnselected(tab: TabLayout.Tab?) {
-                 val customView = tab?.customView ?: return
-                 val titleView = ItemTabAiBinding.bind(customView).tvTabTitle
-                 titleView.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
-             }
-
-             override fun onTabReselected(tab: TabLayout.Tab?) {}
-         })
-     }
-
-     private fun moveIndicatorTo(tab: TabLayout.Tab) {
-         val tabView = tab.view
-         binding.indicator.animate()
-             .x(tabView.x)
-             .setDuration(150)
-             .start()
-         binding.indicator.layoutParams.width = tabView.width
-         binding.indicator.requestLayout()
-     }*/
+    private fun clickPracticeRecord(){
+        binding.btnShowPreviousPractice.setOnClickListener{
+            findNavController().navigate(R.id.action_aiPractice_to_practiceRecords)
+        }
+    }
 
     private fun clickBackButton(){
         binding.btnBack.setOnClickListener {
