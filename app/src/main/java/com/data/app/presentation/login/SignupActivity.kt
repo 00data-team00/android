@@ -32,6 +32,9 @@ class SignupActivity:AppCompatActivity() {
         binding = ActivitySignupBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        clickBackButton()
+        clickQuitButton()
+
         val et_email = binding.etSignupEmail
         val tv_valid = binding.tvWritevalid
         val tv_already = binding.tvAlreadyuse
@@ -166,5 +169,32 @@ class SignupActivity:AppCompatActivity() {
         binding.btnSignup.visibility =
             if (nameFilled && pwFilled && nationFilled && binding.btnPrivacy.isChecked)
                 View.VISIBLE else View.GONE
+    }
+
+    private fun clickBackButton(){
+        binding.btnSignupBack.setOnClickListener{
+            binding.etSignupEmail.setText("")
+            binding.tvWritevalid.visibility = View.GONE
+            binding.tvAlreadyuse.visibility = View.GONE
+            binding.btnSend.visibility = View.GONE
+            binding.etVerifycode.visibility = View.GONE
+            binding.tvCodenotvalid.visibility = View.GONE
+            binding.btnVerify.visibility = View.GONE
+            binding.tvTimer.visibility = View.GONE
+            binding.btnVerified.visibility = View.GONE
+            binding.etSignupName.visibility = View.GONE
+            binding.etNationality.visibility = View.GONE
+            binding.etSignupPassword.visibility = View.GONE
+            binding.tvPwcondition.visibility = View.GONE
+            binding.btnPrivacy.visibility = View.GONE
+            binding.btnSignup.visibility = View.GONE
+        }
+    }
+
+    private fun clickQuitButton(){
+        binding.btnSignupExit.setOnClickListener{
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+        }
     }
 }
