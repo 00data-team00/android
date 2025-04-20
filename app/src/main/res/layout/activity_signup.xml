@@ -2,17 +2,296 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/tv_start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Signup page to be implemented"
+        android:text="@string/signup_letsstart"
+        android:textStyle="bold"
+        android:textSize="25sp"
+        android:layout_marginTop="110dp"
+        android:layout_marginStart="50dp"
+        android:textColor="@color/black"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <TextView
+        android:id="@+id/tv_tocontinue2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:textSize="11sp"
+        android:text="@string/login_tocontinue"
+        app:layout_constraintStart_toStartOf="@id/tv_start"
+        app:layout_constraintTop_toBottomOf="@id/tv_start"/>
+
+    <EditText
+        android:id="@+id/et_signup_email"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginEnd="50dp"
+        android:layout_marginTop="20dp"
+        android:textSize="15sp"
+        android:textColorHint="#cccccc"
+        android:backgroundTint="#d6d6d6"
+        android:inputType="text"
+        android:hint="Email"
+        android:drawableLeft="@drawable/ic_email_black_24"
+        android:drawablePadding="6dp"
+        app:layout_constraintTop_toBottomOf="@id/tv_tocontinue2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_send"
+        android:layout_width="50dp"
+        android:layout_height="38dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginEnd="10dp"
+        android:paddingStart="0dp"
+        android:paddingEnd="0dp"
+        android:text="Send"
+        android:textAllCaps="false"
+        android:textSize="11sp"
+        android:textColor="#000000"
+        android:elevation="3dp"
+        android:translationZ="3dp"
+        android:visibility="gone"
+        app:cornerRadius="9dp"
+        app:layout_constraintEnd_toEndOf="@id/et_signup_email"
+        app:layout_constraintBottom_toBottomOf="@id/et_signup_email"/>
+
+    <TextView
+        android:id="@+id/tv_alreadyuse"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="13sp"
+        android:textColor="#aa1100"
+        android:text="@string/signup_alreadyuse"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="@id/et_signup_email"
+        app:layout_constraintTop_toBottomOf="@id/et_signup_email"/>
+
+    <TextView
+        android:id="@+id/tv_writevalid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="11sp"
+        android:textColor="#aa1100"
+        android:text="@string/signup_writevalid"
+        android:visibility="visible"
+        app:layout_constraintStart_toStartOf="@id/et_signup_email"
+        app:layout_constraintTop_toBottomOf="@id/et_signup_email"/>
+
+    <EditText
+        android:id="@+id/et_verifycode"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginEnd="50dp"
+        android:layout_marginTop="5dp"
+        android:textSize="15sp"
+        android:textColorHint="#cccccc"
+        android:backgroundTint="#d6d6d6"
+        android:inputType="text"
+        android:hint="Verification Code"
+        android:drawableLeft="@drawable/ic_code_black_24"
+        android:drawablePadding="6dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/et_signup_email"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:id="@+id/tv_codenotvalid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="11sp"
+        android:textColor="#aa1100"
+        android:text="@string/signup_codenotvalid"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="@id/et_verifycode"
+        app:layout_constraintTop_toBottomOf="@id/et_verifycode"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_verify"
+        android:layout_width="50dp"
+        android:layout_height="38dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginEnd="10dp"
+        android:paddingStart="0dp"
+        android:paddingEnd="0dp"
+        android:text="Verify"
+        android:textAllCaps="false"
+        android:textSize="11sp"
+        android:textColor="#000000"
+        android:elevation="3dp"
+        android:translationZ="3dp"
+        android:visibility="gone"
+        app:cornerRadius="9dp"
+        app:layout_constraintEnd_toEndOf="@id/et_verifycode"
+        app:layout_constraintBottom_toBottomOf="@id/et_verifycode"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_verified"
+        android:layout_width="50dp"
+        android:layout_height="38dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginEnd="10dp"
+        android:paddingStart="0dp"
+        android:paddingEnd="0dp"
+        android:text="Verified"
+        android:textAllCaps="false"
+        android:textSize="10sp"
+        android:textColor="#005f00"
+        android:backgroundTint="#ddff88"
+        android:visibility="gone"
+        app:cornerRadius="9dp"
+        app:layout_constraintEnd_toEndOf="@id/et_verifycode"
+        app:layout_constraintBottom_toBottomOf="@id/et_verifycode"/>
+
+    <TextView
+        android:id="@+id/tv_timer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:text="5:00"
+        android:textSize="13dp"
+        android:textColor="#aa1100"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/btn_verify"
+        app:layout_constraintEnd_toStartOf="@id/btn_verify"
+        app:layout_constraintTop_toTopOf="@id/btn_verify"/>
+
+    <EditText
+        android:id="@+id/et_signup_name"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginEnd="50dp"
+        android:layout_marginTop="5dp"
+        android:textSize="15sp"
+        android:textColorHint="#cccccc"
+        android:backgroundTint="#d6d6d6"
+        android:inputType="text"
+        android:hint="Name"
+        android:drawableLeft="@drawable/ic_person_black_24"
+        android:drawablePadding="6dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/et_verifycode"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <AutoCompleteTextView
+        android:id="@+id/et_nationality"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginEnd="50dp"
+        android:layout_marginTop="5dp"
+        android:hint="Nationality"
+        android:textSize="15sp"
+        android:textColorHint="#cccccc"
+        android:backgroundTint="#d6d6d6"
+        android:drawableLeft="@drawable/ic_plane_black_24"
+        android:drawableRight="@drawable/ic_arrow_grey_24"
+        android:drawablePadding="6dp"
+        android:visibility="gone"
+        android:dropDownHeight="250dp"
+        app:layout_constraintTop_toBottomOf="@id/et_signup_name"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <EditText
+        android:id="@+id/et_signup_password"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginEnd="50dp"
+        android:layout_marginTop="5dp"
+        android:textSize="15sp"
+        android:textColorHint="#cccccc"
+        android:backgroundTint="#d6d6d6"
+        android:inputType="text"
+        android:hint="Password"
+        android:drawableLeft="@drawable/ic_lock_black_24"
+        android:drawablePadding="6dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/et_nationality"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:id="@+id/tv_pwcondition"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:textSize="10sp"
+        android:text="@string/signup_pwcheck"
+        android:textColor="#c5c5c5"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="@id/et_signup_password"
+        app:layout_constraintTop_toBottomOf="@id/et_signup_password"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_signup"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginEnd="50dp"
+        android:layout_marginBottom="60dp"
+        android:text="sign up"
+        android:textSize="15sp"
+        android:textColor="#ffffff"
+        android:background="@drawable/bg_loginbutton"
+        android:elevation="3dp"
+        android:translationZ="3dp"
+        android:visibility="gone"
+        app:backgroundTint="@null"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <CheckBox
+        android:id="@+id/btn_privacy"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="50dp"
+        android:layout_marginEnd="50dp"
+        android:layout_marginBottom="122dp"
+        android:textSize="11sp"
+        android:textColor="#999999"
+        android:text="@string/signup_privacy"
+        android:buttonTint="@color/privacy_checkbox"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="@id/btn_signup"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <ImageButton
+        android:id="@+id/btn_signup_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/white"
+        android:layout_marginTop="15dp"
+        android:layout_marginStart="10dp"
+        app:srcCompat="@drawable/ic_backarrow_black_24"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <ImageButton
+        android:id="@+id/btn_signup_exit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/white"
+        android:layout_marginTop="17dp"
+        android:layout_marginEnd="15dp"
+        app:srcCompat="@drawable/ic_quit_black_13"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
