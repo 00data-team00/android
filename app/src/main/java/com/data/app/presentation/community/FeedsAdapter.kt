@@ -10,6 +10,7 @@ import coil3.transform.RoundedCornersTransformation
 import com.data.app.R
 import com.data.app.data.Feed
 import com.data.app.databinding.ItemFeedBinding
+import timber.log.Timber
 
 class FeedsAdapter : RecyclerView.Adapter<FeedsAdapter.FeedsViewHolder>() {
 
@@ -47,7 +48,7 @@ class FeedsAdapter : RecyclerView.Adapter<FeedsAdapter.FeedsViewHolder>() {
                 tvTime.text = root.context.getString(R.string.community_time, data.time)
 
                 btnFollow.isSelected = data.isFollowing
-                if(!data.isFollowing) btnFollow.text=root.context.getString(R.string.community_follow)
+                if(!data.isFollowing) btnFollow.text=root.context.getString(R.string.community_following)
                 tvContent.text = data.content
                 tvLikeCount.text = data.like.toString()
                 tvCommentCount.text = data.comments.size.toString()
@@ -58,10 +59,15 @@ class FeedsAdapter : RecyclerView.Adapter<FeedsAdapter.FeedsViewHolder>() {
                         if(btnFollow.isSelected) R.string.community_follow
                         else R.string.community_following
                     )
+                    Timber.d("btn is select?${btnFollow.isSelected}")
                 }
                 
                 btnLike.setOnClickListener{
                     btnLike.isSelected=!btnLike.isSelected
+                    tvLikeCount.text = (
+                            if (btnLike.isSelected) tvLikeCount.text.toString().toInt() + 1
+                            else tvLikeCount.text.toString().toInt() - 1
+                            ).toString()
                 }
             }
         }
