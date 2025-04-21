@@ -2,7 +2,7 @@
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:id="@+id/menuFragment"
+    <item android:id="@+id/communityFragment"
         android:icon="@drawable/ic_menu_black_24"
         android:title="" />
     <item android:id="@+id/homeFragment"

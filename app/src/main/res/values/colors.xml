@@ -26,6 +26,12 @@
     <color name="explore_price_click_green">#A3D80D</color>
     <color name="explore_price_unclick_gray">#F0F0F0</color>
 
+    <!--community-->
+    <color name="community_follow_green">#A3D80D</color>
+    <color name="community_name_gray">#687684</color>
+    <color name="community_content_black">#141619</color>
+    <color name="community_indicator_green">#E8F5B5</color>
+
     <!--mock-->
     <color name="mock_ai_practice_title_gray">#767677</color>
 </resources>

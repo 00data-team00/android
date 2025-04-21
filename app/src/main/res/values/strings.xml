@@ -40,6 +40,14 @@
     <string name="explore_price_paid">유료</string>
 
 
+    <!--community-->
+    <string name="community_all">전체</string>
+    <string name="community_following">팔로잉</string>
+    <string name="community_follow">팔로우</string>
+    <string name="community_user_country">사용자 국가</string>
+    <string name="community_name">\@%s</string>
+    <string name="community_time"> · %dh</string>
+
     <!--mock-->
     <string name="practice_record_item_title">은행 업무에 대한 대화</string>
     <string name="practice_record_item_summation">예적금 방법과 은행 방문 목적에 관해 이야기 함</string>
@@ -52,4 +60,6 @@
     <string name="chat_ai_item_content1">I\'m down! Any ideas??</string>
     <string name="chat_ai_item_content2">Let me know</string>
     <string name="chat_item_date">11:31 AM</string>
+
+    <string name="community_content_mock"></string>
 </resources>
