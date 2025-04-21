@@ -47,12 +47,17 @@ class FeedsAdapter : RecyclerView.Adapter<FeedsAdapter.FeedsViewHolder>() {
                 tvTime.text = root.context.getString(R.string.community_time, data.time)
 
                 btnFollow.isSelected = data.isFollowing
+                if(!data.isFollowing) btnFollow.text=root.context.getString(R.string.community_follow)
                 tvContent.text = data.content
                 tvLikeCount.text = data.like.toString()
                 tvCommentCount.text = data.comments.size.toString()
 
                 btnFollow.setOnClickListener{
                     btnFollow.isSelected=!btnFollow.isSelected
+                    btnFollow.text=root.context.getString(
+                        if(btnFollow.isSelected) R.string.community_follow
+                        else R.string.community_following
+                    )
                 }
                 
                 btnLike.setOnClickListener{
