@@ -12,6 +12,7 @@
         android:layout_height="0dp"
         android:src="@drawable/ic_profile"
         android:layout_marginTop="15dp"
+        android:scaleType="centerCrop"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintWidth_percent="0.1"
         app:layout_constraintTop_toTopOf="parent"
@@ -29,7 +30,7 @@
 
     <TextView
         android:id="@+id/tv_time"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/community_time"
         android:textColor="@color/community_name_gray"

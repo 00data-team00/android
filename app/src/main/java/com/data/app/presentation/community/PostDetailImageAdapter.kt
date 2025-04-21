@@ -1,0 +1,56 @@
+package com.data.app.presentation.community
+
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
+import androidx.fragment.app.FragmentActivity
+import androidx.recyclerview.widget.RecyclerView
+import coil3.load
+import coil3.request.transformations
+import coil3.transform.RoundedCornersTransformation
+
+class PostDetailImageAdapter(val clickImage: (Int) -> Unit) :
+    RecyclerView.Adapter<PostDetailImageAdapter.PostDetailImageViewHolder>() {
+    private val images = mutableListOf<Int>()
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostDetailImageViewHolder {
+        val imageView = ImageView(parent.context).apply {
+            layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+        }
+        return PostDetailImageViewHolder(imageView)
+    }
+
+    override fun getItemCount(): Int = images.size
+
+    override fun onBindViewHolder(holder: PostDetailImageViewHolder, position: Int) {
+        holder.bind(images[position])
+    }
+
+    fun getList(list: List<Int>) {
+        images.clear()
+        images.addAll(list)
+        notifyDataSetChanged()
+    }
+
+
+    inner class PostDetailImageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val imageView = itemView as ImageView
+
+        fun bind(imageRes: Int) {
+            imageView.scaleType = ImageView.ScaleType.CENTER_CROP
+
+            imageView.load(imageRes) {
+                transformations(
+                    RoundedCornersTransformation(30f)
+                )
+            }
+
+            imageView.setOnClickListener {
+                clickImage(position)
+            }
+        }
+    }
+}

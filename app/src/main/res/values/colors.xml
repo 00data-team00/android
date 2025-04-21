@@ -32,6 +32,10 @@
     <color name="community_content_black">#141619</color>
     <color name="community_indicator_green">#E8F5B5</color>
 
+    <color name="post_detail_bg_gray">#F1F1F1</color>
+    <color name="post_detail_indicator_gray">#80FCFCFC</color>
+    <color name="post_detail_indicator_white">#FCFCFC</color>
+
     <!--mock-->
     <color name="mock_ai_practice_title_gray">#767677</color>
 </resources>

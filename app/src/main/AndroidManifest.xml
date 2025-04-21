@@ -34,6 +34,10 @@
             android:name=".presentation.MainActivity"
             android:exported="false">
         </activity>
+        <activity
+            android:name=".presentation.community.ImagePopupActivity"
+            android:exported="false">
+        </activity>
     </application>
 
 </manifest>
