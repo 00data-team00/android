@@ -2,13 +2,13 @@
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/white"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white">
+        android:layout_height="wrap_content">
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_back"
@@ -63,7 +63,7 @@
             android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="@id/iv_profile"
             app:layout_constraintDimensionRatio="2.5:1"
-            app:layout_constraintEnd_toEndOf="@id/vp_images"
+            app:layout_constraintEnd_toEndOf="@id/tv_content"
             app:layout_constraintTop_toTopOf="@id/iv_profile"
             app:layout_constraintWidth_percent="0.2" />
 
@@ -74,7 +74,8 @@
             android:layout_marginTop="10dp"
             android:text="Just tried 김치찌개 for the first time. Spicy but so good!"
             android:textColor="@color/community_content_black"
-            app:layout_constraintEnd_toEndOf="@id/vp_images"
+            android:layout_marginEnd="20dp"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@id/iv_profile"
             app:layout_constraintTop_toBottomOf="@id/iv_profile" />
 
@@ -97,7 +98,6 @@
             android:layout_height="0dp"
             android:layout_marginTop="15dp"
             android:layout_marginEnd="20dp"
-            app:layout_constraintDimensionRatio="2:1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@id/tv_content"
             app:layout_constraintTop_toBottomOf="@id/tv_content"/>
@@ -126,7 +126,7 @@
             android:layout_marginBottom="15dp"
             android:background="@drawable/btn_like"
             app:layout_constraintDimensionRatio="1.1:1"
-            app:layout_constraintStart_toStartOf="@id/vp_images"
+            app:layout_constraintStart_toStartOf="@id/tv_content"
             app:layout_constraintTop_toBottomOf="@id/vp_images"
             app:layout_constraintWidth_percent="0.05" />
 
@@ -173,7 +173,7 @@
             android:background="@drawable/ic_share_gray_50"
             app:layout_constraintBottom_toBottomOf="@id/btn_comment"
             app:layout_constraintDimensionRatio="1.1:1"
-            app:layout_constraintEnd_toEndOf="@id/vp_images"
+            app:layout_constraintEnd_toEndOf="@id/tv_content"
             app:layout_constraintTop_toTopOf="@id/btn_comment"
             app:layout_constraintWidth_percent="0.05" />
 

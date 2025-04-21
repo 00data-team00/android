@@ -10,7 +10,7 @@ data class Post (
     val time:Int,
     val isFollowing:Boolean,
     val content:String,
-    val images:List<Int>,
+    val images:List<Int>?,
     val like:Int,
     val comments:List<Comments>
 ):Parcelable{

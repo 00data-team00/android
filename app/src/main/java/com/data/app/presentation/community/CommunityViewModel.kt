@@ -29,10 +29,7 @@ class CommunityViewModel:ViewModel() {
             time = 5,
             isFollowing = false,
             content = "[전체] 고양이 용품 싸게 살 수 있는 오프라인 매장 어디 있을까요?",
-            images = listOf(
-                R.drawable.ic_image3,
-                R.drawable.ic_image4
-            ),
+            images = null,
             like = 70,
             comments = listOf(
                 Post.Comments(R.drawable.ic_profile, "Mina", "을지로 근처에 있어요!", 10)
@@ -65,11 +62,7 @@ class CommunityViewModel:ViewModel() {
             time = 1,
             isFollowing = true,
             content = "[팔로우] 어제 고양이 미용했는데 표정이 완전 정색이에요 😾",
-            images =listOf(
-                R.drawable.ic_image2,
-                R.drawable.ic_image3,
-                R.drawable.ic_image4
-            ),
+            images = null,
             like = 134,
             comments = listOf(
                 Post.Comments(R.drawable.ic_profile, "Sophie", "미용한 뒤 애들이 다 그래요 ㅋㅋ", 7),

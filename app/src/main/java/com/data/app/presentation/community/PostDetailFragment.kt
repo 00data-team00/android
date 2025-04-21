@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -64,26 +65,46 @@ class PostDetailFragment : Fragment() {
             tvCommentCount.text = post.comments.size.toString()
 
             btnFollow.isSelected = post.isFollowing
+        }
+        showImages(post)
+        clickFollow()
+        clickLike()
+    }
 
-            val postDetailImageAdapter = PostDetailImageAdapter(clickImage = { position->
+    private fun showImages(post:Post){
+        val lp = binding.vpImages.layoutParams as ConstraintLayout.LayoutParams
+        if (!post.images.isNullOrEmpty()) {
+            val postDetailImageAdapter = PostDetailImageAdapter(clickImage = { position ->
                 val intent = Intent(requireContext(), ImagePopupActivity::class.java).apply {
-                    putIntegerArrayListExtra("imageList", ArrayList(post.images)) // List<Int> → ArrayList<Int>
+                    putIntegerArrayListExtra("imageList", ArrayList(post.images))
                     putExtra("startIndex", position)
                 }
                 startActivity(intent)
                 requireActivity().overridePendingTransition(0, 0)
             })
-            vpImages.adapter = postDetailImageAdapter
+
+            binding.vpImages.adapter = postDetailImageAdapter
             postDetailImageAdapter.getList(post.images)
-            vpImages.apply {
+
+            // ViewPager 간 마진 설정
+            binding.vpImages.apply {
                 val marginDecoration =
                     HorizontalMarginItemDecoration(requireContext(), R.dimen.viewpager_margin)
                 (getChildAt(0) as RecyclerView).addItemDecoration(marginDecoration)
             }
-            wdiImages.attachTo(vpImages)
+
+            // 인디케이터 연결
+            binding.wdiImages.attachTo(binding.vpImages)
+
+            lp.dimensionRatio = "2:1"
+
+        } else {
+            // 이미지 없을 경우 GONE 처리
+            binding.vpImages.visibility = View.GONE
+            binding.wdiImages.visibility = View.GONE
+            lp.dimensionRatio = null
         }
-        clickFollow()
-        clickLike()
+
     }
 
     private fun showComments(post: Post) {

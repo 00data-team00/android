@@ -1,7 +1,11 @@
 package com.data.app.presentation.community
 
+import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.recyclerview.widget.RecyclerView
 import coil3.load
 import coil3.request.transformations
@@ -41,9 +45,22 @@ class PostsAdapter(val clickPost: (Post) -> Unit) :
                 ivProfile.load(data.profile) {
                     transformations(CircleCropTransformation())
                 }
-                ivImage.load(data.images[0]) {
-                    transformations(RoundedCornersTransformation(30f))
+
+                val lp = binding.ivImage.layoutParams as ConstraintLayout.LayoutParams
+
+                if (!data.images.isNullOrEmpty()) {
+                    binding.ivImage.visibility = View.VISIBLE
+                    binding.ivImage.load(data.images[0]) {
+                        transformations(RoundedCornersTransformation(30f))
+                    }
+                    lp.dimensionRatio = "2:1"
+                } else {
+                    binding.ivImage.setImageDrawable(null)
+                    binding.ivImage.visibility = View.GONE
+                    lp.dimensionRatio = null
                 }
+
+                binding.ivImage.layoutParams = lp
 
                 tvName.text = root.context.getString(R.string.community_name, data.name)
                 tvTime.text = root.context.getString(R.string.community_time, data.time)
@@ -88,9 +105,13 @@ class PostsAdapter(val clickPost: (Post) -> Unit) :
         }
 
         private fun showDetail(data: Post){
-            listOf(binding.tvName, binding.ivImage).forEach {
+            listOf(binding.tvContent, binding.ivImage).forEach {
                 it.setOnClickListener { clickPost(data) }
             }
         }
+
+        private fun Int.dpToPx(context: Context): Int =
+            (this * context.resources.displayMetrics.density).toInt()
+
     }
 }
