@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    id ("kotlin-parcelize")
+    id("androidx.navigation.safeargs.kotlin")
 }
 
 android {
@@ -54,18 +56,21 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
-    //button
+    // Button
     implementation("com.google.android.material:material:1.11.0")
 
-    // coil
+    // Coil
     implementation("io.coil-kt.coil3:coil-compose:3.1.0")
 
-    //viewmodel
+    // ViewModel
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7")
     implementation("androidx.fragment:fragment-ktx:1.8.6")
     implementation("androidx.activity:activity-ktx:1.10.1")
 
-    //Timber
+    // Timber
     implementation("com.jakewharton.timber:timber:4.7.1")
 
+    // ViewPager2
+    implementation("androidx.viewpager2:viewpager2:1.1.0")
+    implementation ("com.tbuonomo:dotsindicator:5.1.0")
 }

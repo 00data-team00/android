@@ -47,6 +47,8 @@
     <string name="community_user_country">사용자 국가</string>
     <string name="community_name">\@%s</string>
     <string name="community_time"> · %dh</string>
+    <string name="post_write">작성</string>
+    <string name="post_detail_image_count">%d / %d</string>
 
     <!--mock-->
     <string name="practice_record_item_title">은행 업무에 대한 대화</string>

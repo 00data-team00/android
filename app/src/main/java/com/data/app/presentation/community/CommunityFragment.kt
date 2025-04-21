@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.data.app.R
 import com.data.app.databinding.FragmentCommunityBinding
 import com.google.android.material.tabs.TabLayout
@@ -18,7 +19,7 @@ class CommunityFragment:Fragment() {
         get() = requireNotNull(_binding) { "home fragment is null" }
 
     private val communityViewModel:CommunityViewModel by viewModels()
-    private lateinit var feedsAdapter:FeedsAdapter
+    private lateinit var postsAdapter:PostsAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -39,9 +40,15 @@ class CommunityFragment:Fragment() {
     }
 
     private fun showFeeds(){
-        feedsAdapter= FeedsAdapter()
-        binding.rvFeeds.adapter=feedsAdapter
-        feedsAdapter.getList(communityViewModel.allFeeds)
+        postsAdapter= PostsAdapter(
+            clickPost = {post->
+                val action=CommunityFragmentDirections
+                    .actionCommunityFragmentToPostDetailFragment(post)
+                findNavController().navigate(action)
+            }
+        )
+        binding.rvPosts.adapter=postsAdapter
+        postsAdapter.getList(communityViewModel.allFeeds)
 
         setupTabs()
 
@@ -59,15 +66,18 @@ class CommunityFragment:Fragment() {
         binding.tlCommunity.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 when (tab?.position) {
-                    0 -> feedsAdapter.getList(communityViewModel.allFeeds)
-                    1 -> feedsAdapter.getList(communityViewModel.followFeeds)
-                    2 -> feedsAdapter.getList(communityViewModel.countryFeeds)
+                    0 -> postsAdapter.getList(communityViewModel.allFeeds)
+                    1 -> postsAdapter.getList(communityViewModel.followFeeds)
+                    2 -> postsAdapter.getList(communityViewModel.countryFeeds)
                 }
+                binding.rvPosts.scrollToPosition(0)
                 Timber.d("tab position: ${tab?.position}")
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab?) {}
-            override fun onTabReselected(tab: TabLayout.Tab?) {}
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+                binding.rvPosts.scrollToPosition(0)
+            }
         })
     }
 
