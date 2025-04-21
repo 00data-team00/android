@@ -1,0 +1,136 @@
+package com.data.app.presentation.community
+
+import androidx.lifecycle.ViewModel
+import com.data.app.R
+import com.data.app.data.Feed
+
+class CommunityViewModel:ViewModel() {
+    val allFeeds = listOf(
+        Feed(
+            profile = R.drawable.ic_profile,
+            name = "Luna",
+            time = 2,
+            isFollowing = false,
+            content = "[전체] 고양이랑 남산 산책했어요! 🐾 너무 평화롭고 좋았어요.",
+            image = R.drawable.ic_image,
+            like = 120,
+            comments = listOf(
+                Feed.Comments(R.drawable.ic_profile2, "Emma", "와 남산 고양이 너무 귀여워요!", 8),
+                Feed.Comments(R.drawable.ic_profile3, "Noah", "부럽다.. 다음엔 같이가요!", 5)
+            )
+        ),
+        Feed(
+            profile = R.drawable.ic_profile3,
+            name = "Leo",
+            time = 5,
+            isFollowing = false,
+            content = "[전체] 고양이 용품 싸게 살 수 있는 오프라인 매장 어디 있을까요?",
+            image = R.drawable.ic_image2,
+            like = 70,
+            comments = listOf(
+                Feed.Comments(R.drawable.ic_profile, "Mina", "을지로 근처에 있어요!", 10)
+            )
+        ),
+        Feed(
+            profile = R.drawable.ic_profile4,
+            name = "Isla",
+            time = 8,
+            isFollowing = false,
+            content = "[전체] 한국 고양이 이름 짓기 너무 재밌어요~ 전 ‘참치’라고 지었어요 ㅎㅎ",
+            image = R.drawable.ic_image3,
+            like = 98,
+            comments = listOf(
+                Feed.Comments(R.drawable.ic_profile2, "Tom", "참치 ㅋㅋㅋ 귀엽다", 6),
+                Feed.Comments(R.drawable.ic_profile3, "Liam", "우리 집은 연어예요 ㅋㅋ", 4),
+                Feed.Comments(R.drawable.ic_profile, "Yuki", "고양이 이름 고민 중인데 참고해야겠다", 3)
+            )
+        )
+    )
+
+    val followFeeds = listOf(
+        Feed(
+            profile = R.drawable.ic_profile2,
+            name = "Milo",
+            time = 1,
+            isFollowing = true,
+            content = "[팔로우] 어제 고양이 미용했는데 표정이 완전 정색이에요 😾",
+            image = R.drawable.ic_image4,
+            like = 134,
+            comments = listOf(
+                Feed.Comments(R.drawable.ic_profile, "Sophie", "미용한 뒤 애들이 다 그래요 ㅋㅋ", 7),
+                Feed.Comments(R.drawable.ic_profile3, "Jack", "사진 공유해줘요!!", 6)
+            )
+        ),
+        Feed(
+            profile = R.drawable.ic_profile,
+            name = "Sasha",
+            time = 4,
+            isFollowing = true,
+            content = "[팔로우] 우리 고양이 건강검진 받고 왔어요. 다행히 건강하대요!",
+            image = R.drawable.ic_image2,
+            like = 150,
+            comments = listOf(
+                Feed.Comments(R.drawable.ic_profile4, "Leo", "건강하다니 다행이에요! ❤️", 10)
+            )
+        ),
+        Feed(
+            profile = R.drawable.ic_profile3,
+            name = "Yuna",
+            time = 6,
+            isFollowing = true,
+            content = "[팔로우] 냥이랑 첫 외출! 백팩 안에 들어가서 얌전히 있어줬어요 🐱🎒",
+            image = R.drawable.ic_image3,
+            like = 210,
+            comments = listOf(
+                Feed.Comments(R.drawable.ic_profile2, "Ben", "와 대박! 우리 애는 탈출 시도함 ㅠ", 13),
+                Feed.Comments(R.drawable.ic_profile, "Olivia", "용감한 고양이네요!", 8),
+                Feed.Comments(R.drawable.ic_profile4, "Nina", "귀엽다앙앙", 4)
+            )
+        )
+    )
+
+    val countryFeeds = listOf(
+        Feed(
+            profile = R.drawable.ic_profile,
+            name = "Jin",
+            time = 3,
+            isFollowing = false,
+            content = "[같은 국가] 한국 와서 처음 길고양이 밥주는 분 봤어요. 감동받았어요 😿",
+            image = R.drawable.ic_image,
+            like = 85,
+            comments = listOf(
+                Feed.Comments(R.drawable.ic_profile2, "Suji", "맞아요. 정 많으신 분들 많더라구요", 11),
+                Feed.Comments(R.drawable.ic_profile3, "Min", "고양이들 천국이네요", 6)
+            )
+        ),
+        Feed(
+            profile = R.drawable.ic_profile2,
+            name = "Soo",
+            time = 7,
+            isFollowing = false,
+            content = "[같은 국가] 한국 고양이 간식 중에 추천해줄 만한 거 있을까요?",
+            image = R.drawable.ic_image4,
+            like = 100,
+            comments = listOf(
+                Feed.Comments(R.drawable.ic_profile, "Hoon", "츄르 맛별로 다 좋아요 ㅋㅋ", 5),
+                Feed.Comments(R.drawable.ic_profile4, "Yena", "참치맛 강추!", 3),
+                Feed.Comments(R.drawable.ic_profile3, "Ray", "베베몬도 괜찮았어요!", 4)
+            )
+        ),
+        Feed(
+            profile = R.drawable.ic_profile4,
+            name = "Daniel",
+            time = 6,
+            isFollowing = false,
+            content = "[같은 국가] 한국에서 입양 절차 어떤가요? 유기묘 생각 중입니다",
+            image = R.drawable.ic_image2,
+            like = 172,
+            comments = listOf(
+                Feed.Comments(R.drawable.ic_profile3, "Jisoo", "지자체 보호소 추천드려요!", 9),
+                Feed.Comments(R.drawable.ic_profile, "Hyun", "절차는 생각보다 간단했어요!", 7)
+            )
+        )
+    )
+
+
+}

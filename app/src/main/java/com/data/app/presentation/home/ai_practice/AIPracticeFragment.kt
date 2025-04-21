@@ -47,31 +47,9 @@ class AIPracticeFragment:Fragment() {
         aiAdaper.getList(aiPracticeViewModel.mockDailyList)
 
         setupTabs()
-       /* binding.tlAiPractice.apply {
-            addTab(newTab().setText(getString(R.string.ai_practice_daily)))
-            addTab(newTab().setText(getString(R.string.ai_practice_culture)))
-            addTab(newTab().setText(getString(R.string.ai_practice_job)))
-        }
-
-        binding.tlAiPractice.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab) {
-                moveIndicatorTo(tab)
-                aiAdaper.getList(aiPracticeViewModel.mockList)
-            }
-
-            override fun onTabUnselected(tab: TabLayout.Tab?) {}
-            override fun onTabReselected(tab: TabLayout.Tab?) {}
-        })
-
-        binding.tlAiPractice.post {
-            val selectedTab = binding.tlAiPractice.getTabAt(binding.tlAiPractice.selectedTabPosition)
-            selectedTab?.let { moveIndicatorTo(it) }
-        }*/
     }
 
     private fun setupTabs(){
-        val tabTitles = listOf(getString(R.string.ai_practice_daily),getString(R.string.ai_practice_culture), getString(R.string.ai_practice_job) )
-
         binding.tlAiPractice.apply {
             addTab(newTab().setText(getString(R.string.ai_practice_daily)))
             addTab(newTab().setText(getString(R.string.ai_practice_culture)))
@@ -92,56 +70,6 @@ class AIPracticeFragment:Fragment() {
             override fun onTabUnselected(tab: TabLayout.Tab?) {}
             override fun onTabReselected(tab: TabLayout.Tab?) {}
         })
-
-        /* tabTitles.forEachIndexed { index, title ->
-             val tab = binding.tlAiPractice.newTab()
-             val tabBinding = ItemTabAiBinding.inflate(layoutInflater)
-             tabBinding.tvTabTitle.text = title
-             tab.customView = tabBinding.root
-             binding.tlAiPractice.addTab(tab)
-
-             // 기본 첫 번째 탭 선택 효과
-             if (index == 0) {
-                 tabBinding.tvTabTitle.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
-                 tabBinding.tvTabTitle.setBackgroundResource(R.drawable.indicator_white) // 선택된 탭 배경
-             }
-         }
-
-         binding.tlAiPractice.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-             override fun onTabSelected(tab: TabLayout.Tab?) {
-                 val customView = tab?.customView ?: return
-                 val tabBinding = ItemTabAiBinding.bind(customView)
-                 tabBinding.tvTabTitle.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
-                 tabBinding.tvTabTitle.setBackgroundResource(R.drawable.indicator_white)
-
-                 // 탭 위치에 따라 데이터 변경
-                 when (tab.position) {
-                     0 -> aiAdaper.getList(aiPracticeViewModel.mockDailyList)
-                     1 -> aiAdaper.getList(aiPracticeViewModel.mockCultureList)
-                     2 -> aiAdaper.getList(aiPracticeViewModel.mockJobList)
-                 }
-             }
-
-             override fun onTabUnselected(tab: TabLayout.Tab?) {
-                 val customView = tab?.customView ?: return
-                 val tabBinding = ItemTabAiBinding.bind(customView)
-                 tabBinding.tvTabTitle.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
-                 tabBinding.tvTabTitle.setBackgroundResource(android.R.color.transparent)
-             }
-
-             override fun onTabReselected(tab: TabLayout.Tab?) {}
-         })*/
-      /*  for (title in tabTitles) {
-            val tab = binding.tlAiPractice.newTab()
-
-            val tabBinding = ItemTabAiBinding.inflate(layoutInflater)
-            tabBinding.tvTabTitle.text = title
-
-            tab.customView = tabBinding.root
-            binding.tlAiPractice.addTab(tab)
-        }
-
-        setupTabListeners()*/
     }
 
     private fun applyTabMargins() {

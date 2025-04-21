@@ -2,9 +2,7 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/homeFragment"
-    app:popEnterAnim="@anim/slide_out_right"
-    app:popExitAnim="@anim/stay">
+    app:startDestination="@id/homeFragment">
 
     <fragment
         android:id="@+id/homeFragment"
@@ -27,7 +25,7 @@
 
         <action
             android:id="@+id/action_aiPractice_to_practiceRecords"
-            app:destination="@id/practiceRecordsFragment"
+            app:destination="@id/previousPracticeFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/stay"
             app:popEnterAnim="@anim/stay"
@@ -35,15 +33,15 @@
     </fragment>
 
     <fragment
-        android:id="@+id/practiceRecordsFragment"
+        android:id="@+id/previousPracticeFragment"
         android:name="com.data.app.presentation.home.ai_practice.previous_practice.PreviousPracticeFragment"
-        android:label="practice_records">
+        android:label="previous_practice">
     </fragment>
 
     <fragment
-        android:id="@+id/menuFragment"
-        android:name="com.data.app.presentation.MenuFragment"
-        android:label="menu">
+        android:id="@+id/communityFragment"
+        android:name="com.data.app.presentation.community.CommunityFragment"
+        android:label="community">
     </fragment>
 
     <fragment
