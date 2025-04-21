@@ -13,7 +13,9 @@ import com.data.app.data.Post
 import com.data.app.databinding.ItemCommentBinding
 import com.data.app.databinding.ItemCommentWriteBinding
 
-class PostDetailAdapter:RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class PostDetailAdapter(
+    val addComment:(Int)->Unit
+):RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private lateinit var user:Post
     private val commentsList = mutableListOf<Post.Comments>()
 
@@ -89,6 +91,7 @@ class PostDetailAdapter:RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
                     // focus 제거
                     binding.etCommentWrite.clearFocus()
+                    addComment(commentsList.size)
                 }
             }
         }

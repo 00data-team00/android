@@ -71,7 +71,7 @@ class PostDetailFragment : Fragment() {
         clickLike()
     }
 
-    private fun showImages(post:Post){
+    private fun showImages(post: Post) {
         val lp = binding.vpImages.layoutParams as ConstraintLayout.LayoutParams
         if (!post.images.isNullOrEmpty()) {
             val postDetailImageAdapter = PostDetailImageAdapter(clickImage = { position ->
@@ -108,7 +108,11 @@ class PostDetailFragment : Fragment() {
     }
 
     private fun showComments(post: Post) {
-        communityDetailAdapter = PostDetailAdapter()
+        communityDetailAdapter = PostDetailAdapter(addComment = { size ->
+            binding.tvCommentCount.text = size.toString()
+        }
+
+        )
         binding.rvComments.adapter = communityDetailAdapter
         communityDetailAdapter.getUser(post)
         communityDetailAdapter.getList(post.comments)

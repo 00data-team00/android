@@ -110,8 +110,5 @@ class PostsAdapter(val clickPost: (Post) -> Unit) :
             }
         }
 
-        private fun Int.dpToPx(context: Context): Int =
-            (this * context.resources.displayMetrics.density).toInt()
-
     }
 }
