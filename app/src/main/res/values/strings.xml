@@ -55,6 +55,7 @@
     <string name="other_profile_follower">팔로워</string>
     <string name="other_profile_following">팔로잉</string>
     <string name="other_profile_share">프로필 공유</string>
+    <string name="my_profile_edit">프로필 편집</string>
 
     <!--mock-->
     <string name="practice_record_item_title">은행 업무에 대한 대화</string>
