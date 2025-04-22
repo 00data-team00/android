@@ -51,7 +51,7 @@
             android:name="other_name"
             app:argType="string"/>
         <action
-            android:id="@+id/action_otherProfileFragment_to_otherProfileFragment"
+            android:id="@+id/action_otherProfileFragment_to_postDetailFragment"
             app:destination="@id/postDetailFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/stay"

@@ -75,7 +75,7 @@ class OtherProfileFragment: Fragment() {
                     is OtherState.Success->{
                         Timber.d("otherState is success")
                         otherProfileAdapter=OtherProfileAdapter(clickPost = {post->
-                            val action=OtherProfileFragmentDirections.actionOtherProfileFragmentToOtherProfileFragment(post)
+                            val action=OtherProfileFragmentDirections.actionOtherProfileFragmentToPostDetailFragment(post)
                             findNavController().navigate(action)
                         })
                         binding.rvPosts.adapter=otherProfileAdapter

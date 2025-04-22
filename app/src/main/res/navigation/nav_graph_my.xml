@@ -6,6 +6,23 @@
 
     <fragment
         android:id="@+id/myFragment"
-        android:name="com.data.app.presentation.MyFragment"
-        android:label="my"/>
+        android:name="com.data.app.presentation.my.MyFragment"
+        android:label="my">
+        <action
+            android:id="@+id/action_myFragment_to_myPostDetailFragment"
+            app:destination="@id/myPostDetailFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/stay"
+            app:popEnterAnim="@anim/stay"
+            app:popExitAnim="@anim/slide_out_right"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/myPostDetailFragment"
+        android:name="com.data.app.presentation.community.profile_detail.PostDetailFragment"
+        android:label="my_post_detail">
+        <argument
+            android:name="post"
+            app:argType="com.data.app.data.Post"/>
+    </fragment>
 </navigation>
