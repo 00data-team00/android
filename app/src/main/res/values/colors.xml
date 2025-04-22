@@ -36,6 +36,11 @@
     <color name="post_detail_indicator_gray">#80FCFCFC</color>
     <color name="post_detail_indicator_white">#FCFCFC</color>
 
+    <!--profile-->
+    <color name="other_profile_bg_country_green">#F3FFD3</color>
+    <color name="other_profile_share_gray">#D1D1D6</color>
+    <color name="other_profile_follow_green">#B7E632</color>
+
     <!--mock-->
     <color name="mock_ai_practice_title_gray">#767677</color>
 </resources>

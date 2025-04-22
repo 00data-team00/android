@@ -2,16 +2,16 @@
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:id="@+id/communityFragment"
+    <item android:id="@+id/menu_community"
         android:icon="@drawable/ic_menu_black_24"
         android:title="" />
-    <item android:id="@+id/homeFragment"
+    <item android:id="@+id/menu_home"
         android:icon="@drawable/ic_home_black_24"
         android:title="" />
-    <item android:id="@+id/mapFragment"
+    <item android:id="@+id/menu_explore"
         android:icon="@drawable/ic_map_black_24"
         android:title="" />
-    <item android:id="@+id/myFragment"
+    <item android:id="@+id/menu_my"
         android:icon="@drawable/ic_my_black_24"
         android:title="" />
 </menu>

@@ -8,8 +8,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.data.app.R
 import com.data.app.databinding.FragmentExploreBinding
+import com.data.app.presentation.OnTabReselectedListener
 
-class ExploreFragment : Fragment() {
+class ExploreFragment : Fragment(), OnTabReselectedListener {
     private var _binding: FragmentExploreBinding? = null
     private val binding: FragmentExploreBinding
         get() = requireNotNull(_binding) { "home fragment is null" }
@@ -69,5 +70,9 @@ class ExploreFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onTabReselected() {
+        binding.nsvExplore.smoothScrollTo(0,0)
     }
 }

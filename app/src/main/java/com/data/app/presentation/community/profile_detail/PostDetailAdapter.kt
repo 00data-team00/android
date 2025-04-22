@@ -1,4 +1,4 @@
-package com.data.app.presentation.community
+package com.data.app.presentation.community.profile_detail
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -8,13 +8,13 @@ import androidx.recyclerview.widget.RecyclerView
 import coil3.load
 import coil3.request.transformations
 import coil3.transform.CircleCropTransformation
-import com.data.app.R
 import com.data.app.data.Post
 import com.data.app.databinding.ItemCommentBinding
 import com.data.app.databinding.ItemCommentWriteBinding
 
 class PostDetailAdapter(
-    val addComment:(Int)->Unit
+    val addComment:(Int)->Unit,
+    val clickProfileOrId:(Int, String)->Unit,
 ):RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private lateinit var user:Post
     private val commentsList = mutableListOf<Post.Comments>()
@@ -104,9 +104,17 @@ class PostDetailAdapter(
                 ivProfile.load(comment.profile){
                     transformations(CircleCropTransformation())
                 }
-                tvName.text=comment.name
+                tvId.text=comment.name
                 tvContent.text=comment.content
                 tvLikeCount.text=comment.like.toString()
+
+
+            }
+
+            listOf(binding.ivProfile, binding.tvId).forEach {
+                it.setOnClickListener {
+                    clickProfileOrId(comment.profile, comment.name)
+                }
             }
 
             clickLike()

@@ -1,11 +1,9 @@
-package com.data.app.presentation.community
+package com.data.app.presentation.community.other
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ConstraintSet
 import androidx.recyclerview.widget.RecyclerView
 import coil3.load
 import coil3.request.transformations
@@ -16,19 +14,18 @@ import com.data.app.data.Post
 import com.data.app.databinding.ItemPostBinding
 import timber.log.Timber
 
-class PostsAdapter(val clickPost: (Post) -> Unit, val clickOtherUser:(Int, String)->Unit) :
-    RecyclerView.Adapter<PostsAdapter.FeedsViewHolder>() {
-
+class OtherProfileAdapter(val clickPost:(Post)->Unit):
+RecyclerView.Adapter<OtherProfileAdapter.OtherProfileViewHolder>(){
     private val postsList = mutableListOf<Post>()
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FeedsViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OtherProfileViewHolder {
         val binding = ItemPostBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return FeedsViewHolder(binding)
+        return OtherProfileViewHolder(binding)
     }
 
     override fun getItemCount(): Int = postsList.size
 
-    override fun onBindViewHolder(holder: FeedsViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: OtherProfileViewHolder, position: Int) {
         holder.bind(postsList[position])
     }
 
@@ -38,7 +35,7 @@ class PostsAdapter(val clickPost: (Post) -> Unit, val clickOtherUser:(Int, Strin
         notifyDataSetChanged()
     }
 
-    inner class FeedsViewHolder(private val binding: ItemPostBinding) :
+    inner class OtherProfileViewHolder(private val binding: ItemPostBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(data: Post) {
             with(binding) {
@@ -74,7 +71,6 @@ class PostsAdapter(val clickPost: (Post) -> Unit, val clickOtherUser:(Int, Strin
 
                 clickFollow()
                 clickLike()
-                clickProfileOrId(data)
 
                 showDetail(data)
             }
@@ -101,14 +97,6 @@ class PostsAdapter(val clickPost: (Post) -> Unit, val clickOtherUser:(Int, Strin
                             if (btnLike.isSelected) tvLikeCount.text.toString().toInt() + 1
                             else tvLikeCount.text.toString().toInt() - 1
                             ).toString()
-                }
-            }
-        }
-
-        private fun clickProfileOrId(data: Post){
-            listOf(binding.ivProfile, binding.tvId).forEach {
-                it.setOnClickListener {
-                    clickOtherUser(data.profile, data.name)
                 }
             }
         }

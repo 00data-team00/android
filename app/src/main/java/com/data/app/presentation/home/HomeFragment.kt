@@ -19,8 +19,9 @@ import coil3.transform.Transformation
 import com.data.app.R
 import com.data.app.data.Language
 import com.data.app.databinding.FragmentHomeBinding
+import com.data.app.presentation.OnTabReselectedListener
 
-class HomeFragment:Fragment() {
+class HomeFragment:Fragment(), OnTabReselectedListener {
     private var _binding:FragmentHomeBinding?=null
     private val binding:FragmentHomeBinding
         get() = requireNotNull(_binding){"home fragment is null"}
@@ -157,4 +158,7 @@ class HomeFragment:Fragment() {
         }
     }
 
+    override fun onTabReselected() {
+        binding.nsvHome.smoothScrollTo(0,0)
+    }
 }

@@ -10,10 +10,11 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.data.app.R
 import com.data.app.databinding.FragmentCommunityBinding
+import com.data.app.presentation.OnTabReselectedListener
 import com.google.android.material.tabs.TabLayout
 import timber.log.Timber
 
-class CommunityFragment:Fragment() {
+class CommunityFragment:Fragment(), OnTabReselectedListener {
     private var _binding: FragmentCommunityBinding? = null
     private val binding: FragmentCommunityBinding
         get() = requireNotNull(_binding) { "home fragment is null" }
@@ -44,6 +45,11 @@ class CommunityFragment:Fragment() {
             clickPost = {post->
                 val action=CommunityFragmentDirections
                     .actionCommunityFragmentToPostDetailFragment(post)
+                findNavController().navigate(action)
+            },
+            clickOtherUser = {profile, name->
+                val action=CommunityFragmentDirections
+                    .actionCommunityFragmentToOtherProfileFragment(profile, name)
                 findNavController().navigate(action)
             }
         )
@@ -102,5 +108,9 @@ class CommunityFragment:Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding=null
+    }
+
+    override fun onTabReselected() {
+        binding.rvPosts.smoothScrollToPosition(0)
     }
 }
