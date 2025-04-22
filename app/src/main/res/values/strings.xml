@@ -50,6 +50,12 @@
     <string name="post_write">작성</string>
     <string name="post_detail_image_count">%d / %d</string>
 
+    <!--profile-->
+    <string name="other_profile_post">게시물</string>
+    <string name="other_profile_follower">팔로워</string>
+    <string name="other_profile_following">팔로잉</string>
+    <string name="other_profile_share">프로필 공유</string>
+
     <!--mock-->
     <string name="practice_record_item_title">은행 업무에 대한 대화</string>
     <string name="practice_record_item_summation">예적금 방법과 은행 방문 목적에 관해 이야기 함</string>
@@ -64,4 +70,6 @@
     <string name="chat_item_date">11:31 AM</string>
 
     <string name="community_content_mock"></string>
+
+    <string name="other_profile_country_mock">일본</string>
 </resources>

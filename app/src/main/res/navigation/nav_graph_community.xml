@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph_community"
+    app:startDestination="@id/communityFragment">
+
+    <fragment
+        android:id="@+id/communityFragment"
+        android:name="com.data.app.presentation.community.CommunityFragment"
+        android:label="community">
+        <action
+            android:id="@+id/action_communityFragment_to_postDetailFragment"
+            app:destination="@id/postDetailFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/stay"
+            app:popEnterAnim="@anim/stay"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_communityFragment_to_otherProfileFragment"
+            app:destination="@id/otherProfileFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/stay"
+            app:popEnterAnim="@anim/stay"
+            app:popExitAnim="@anim/slide_out_right"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/postDetailFragment"
+        android:name="com.data.app.presentation.community.profile_detail.PostDetailFragment"
+        android:label="post_detail">
+        <argument
+            android:name="post"
+            app:argType="com.data.app.data.Post"/>
+        <action
+            android:id="@+id/action_postDetailFragment_to_otherProfileFragment"
+            app:destination="@id/otherProfileFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/stay"
+            app:popEnterAnim="@anim/stay"
+            app:popExitAnim="@anim/slide_out_right"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/otherProfileFragment"
+        android:name="com.data.app.presentation.community.other.OtherProfileFragment"
+        android:label="other_profile">
+        <argument
+            android:name="other_profile"
+            app:argType="integer"/>
+        <argument
+            android:name="other_name"
+            app:argType="string"/>
+        <action
+            android:id="@+id/action_otherProfileFragment_to_otherProfileFragment"
+            app:destination="@id/postDetailFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/stay"
+            app:popEnterAnim="@anim/stay"
+            app:popExitAnim="@anim/slide_out_right"/>
+    </fragment>
+
+</navigation>

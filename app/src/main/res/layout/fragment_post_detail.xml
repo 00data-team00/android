@@ -34,7 +34,7 @@
             app:layout_constraintWidth_percent="0.1" />
 
         <TextView
-            android:id='@+id/tv_name'
+            android:id='@+id/tv_id'
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
@@ -50,9 +50,9 @@
             android:layout_marginStart="5dp"
             android:text="@string/community_time"
             android:textColor="@color/community_name_gray"
-            app:layout_constraintBottom_toBottomOf="@id/tv_name"
-            app:layout_constraintStart_toEndOf="@id/tv_name"
-            app:layout_constraintTop_toTopOf="@id/tv_name" />
+            app:layout_constraintBottom_toBottomOf="@id/tv_id"
+            app:layout_constraintStart_toEndOf="@id/tv_id"
+            app:layout_constraintTop_toTopOf="@id/tv_id" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_follow"

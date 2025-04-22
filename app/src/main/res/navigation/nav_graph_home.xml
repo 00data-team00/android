@@ -35,36 +35,5 @@
     <fragment
         android:id="@+id/previousPracticeFragment"
         android:name="com.data.app.presentation.home.ai_practice.previous_practice.PreviousPracticeFragment"
-        android:label="previous_practice"></fragment>
-
-    <fragment
-        android:id="@+id/communityFragment"
-        android:name="com.data.app.presentation.community.CommunityFragment"
-        android:label="community">
-        <action
-            android:id="@+id/action_communityFragment_to_postDetailFragment"
-            app:destination="@id/postDetailFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/stay"
-            app:popEnterAnim="@anim/stay"
-            app:popExitAnim="@anim/slide_out_right" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/postDetailFragment"
-        android:name="com.data.app.presentation.community.PostDetailFragment"
-        android:label="post_detail">
-        <argument
-            android:name="post"
-            app:argType="com.data.app.data.Post"></argument>
-    </fragment>
-
-    <fragment
-        android:id="@+id/mapFragment"
-        android:name="com.data.app.presentation.explore.ExploreFragment"
-        android:label="map"></fragment>
-    <fragment
-        android:id="@+id/myFragment"
-        android:name="com.data.app.presentation.MyFragment"
-        android:label="my"></fragment>
+        android:label="previous_practice"/>
 </navigation>

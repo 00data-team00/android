@@ -1,9 +1,8 @@
-package com.data.app.presentation.community
+package com.data.app.presentation.community.profile_detail
 
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import coil3.load
 import coil3.request.transformations

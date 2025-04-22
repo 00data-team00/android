@@ -1,19 +1,15 @@
-package com.data.app.presentation.community
+package com.data.app.presentation.community.profile_detail
 
 import android.content.Intent
-import android.content.res.Resources
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import coil3.load
 import coil3.request.transformations
@@ -21,7 +17,6 @@ import coil3.transform.CircleCropTransformation
 import com.data.app.R
 import com.data.app.data.Post
 import com.data.app.databinding.FragmentPostDetailBinding
-import com.google.android.material.tabs.TabLayoutMediator
 import timber.log.Timber
 
 class PostDetailFragment : Fragment() {
@@ -58,13 +53,19 @@ class PostDetailFragment : Fragment() {
             ivProfile.load(post.profile) {
                 transformations(CircleCropTransformation())
             }
-            tvName.text = getString(R.string.community_name, post.name)
+            tvId.text = getString(R.string.community_name, post.name)
             tvTime.text = getString(R.string.community_time, post.time)
             tvContent.text = post.content
             tvLikeCount.text = post.like.toString()
             tvCommentCount.text = post.comments.size.toString()
 
             btnFollow.isSelected = post.isFollowing
+
+            listOf(ivProfile, tvId).forEach {
+                it.setOnClickListener {
+                    clickProfileOrId(post.profile, post.name)
+                }
+            }
         }
         showImages(post)
         clickFollow()
@@ -110,12 +111,19 @@ class PostDetailFragment : Fragment() {
     private fun showComments(post: Post) {
         communityDetailAdapter = PostDetailAdapter(addComment = { size ->
             binding.tvCommentCount.text = size.toString()
-        }
-
+        },
+            clickProfileOrId = {profile, name->
+                clickProfileOrId(profile, name)
+            }
         )
         binding.rvComments.adapter = communityDetailAdapter
         communityDetailAdapter.getUser(post)
         communityDetailAdapter.getList(post.comments)
+    }
+
+    private fun clickProfileOrId(profile:Int, name:String){
+        val action=PostDetailFragmentDirections.actionPostDetailFragmentToOtherProfileFragment(profile, name)
+        findNavController().navigate(action)
     }
 
     private fun clickFollow() {
