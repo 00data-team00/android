@@ -53,7 +53,7 @@ class PostDetailFragment : Fragment() {
             ivProfile.load(post.profile) {
                 transformations(CircleCropTransformation())
             }
-            tvId.text = getString(R.string.community_name, post.name)
+            tvId.text = getString(R.string.community_id, post.id)
             tvTime.text = getString(R.string.community_time, post.time)
             tvContent.text = post.content
             tvLikeCount.text = post.like.toString()
@@ -63,7 +63,7 @@ class PostDetailFragment : Fragment() {
 
             listOf(ivProfile, tvId).forEach {
                 it.setOnClickListener {
-                    clickProfileOrId(post.profile, post.name)
+                    clickProfileOrId(post.profile, post.id)
                 }
             }
         }

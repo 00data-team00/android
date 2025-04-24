@@ -8,7 +8,7 @@ class CommunityViewModel:ViewModel() {
     val allFeeds = listOf(
         Post(
             profile = R.drawable.ic_profile,
-            name = "Luna",
+            id = "Luna",
             time = 2,
             isFollowing = false,
             content = "[전체] 고양이랑 남산 산책했어요! 🐾 너무 평화롭고 좋았어요.",
@@ -25,7 +25,7 @@ class CommunityViewModel:ViewModel() {
         ),
         Post(
             profile = R.drawable.ic_profile3,
-            name = "Leo",
+            id = "Leo",
             time = 5,
             isFollowing = false,
             content = "[전체] 고양이 용품 싸게 살 수 있는 오프라인 매장 어디 있을까요?",
@@ -37,7 +37,7 @@ class CommunityViewModel:ViewModel() {
         ),
         Post(
             profile = R.drawable.ic_profile4,
-            name = "Isla",
+            id = "Isla",
             time = 8,
             isFollowing = false,
             content = "[전체] 한국 고양이 이름 짓기 너무 재밌어요~ 전 ‘참치’라고 지었어요 ㅎㅎ",
@@ -58,7 +58,7 @@ class CommunityViewModel:ViewModel() {
     val followFeeds = listOf(
         Post(
             profile = R.drawable.ic_profile2,
-            name = "Milo",
+            id = "Milo",
             time = 1,
             isFollowing = true,
             content = "[팔로우] 어제 고양이 미용했는데 표정이 완전 정색이에요 😾",
@@ -71,7 +71,7 @@ class CommunityViewModel:ViewModel() {
         ),
         Post(
             profile = R.drawable.ic_profile,
-            name = "Sasha",
+            id = "Sasha",
             time = 4,
             isFollowing = true,
             content = "[팔로우] 우리 고양이 건강검진 받고 왔어요. 다행히 건강하대요!",
@@ -87,7 +87,7 @@ class CommunityViewModel:ViewModel() {
         ),
         Post(
             profile = R.drawable.ic_profile3,
-            name = "Yuna",
+            id = "Yuna",
             time = 6,
             isFollowing = true,
             content = "[팔로우] 냥이랑 첫 외출! 백팩 안에 들어가서 얌전히 있어줬어요 🐱🎒",
@@ -107,7 +107,7 @@ class CommunityViewModel:ViewModel() {
     val countryFeeds = listOf(
         Post(
             profile = R.drawable.ic_profile,
-            name = "Jin",
+            id = "Jin",
             time = 3,
             isFollowing = false,
             content = "[같은 국가] 한국 와서 처음 길고양이 밥주는 분 봤어요. 감동받았어요 😿",
@@ -124,7 +124,7 @@ class CommunityViewModel:ViewModel() {
         ),
         Post(
             profile = R.drawable.ic_profile2,
-            name = "Soo",
+            id = "Soo",
             time = 7,
             isFollowing = false,
             content = "[같은 국가] 한국 고양이 간식 중에 추천해줄 만한 거 있을까요?",
@@ -140,7 +140,7 @@ class CommunityViewModel:ViewModel() {
         ),
         Post(
             profile = R.drawable.ic_profile4,
-            name = "Daniel",
+            id = "Daniel",
             time = 6,
             isFollowing = false,
             content = "[같은 국가] 한국에서 입양 절차 어떤가요? 유기묘 생각 중입니다",

@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.asStateFlow
 
 class MyViewModel:ViewModel() {
     private val profile = R.drawable.ic_my
-    private val name="구구"
+    private val id="구구"
 
     private val _myState = MutableStateFlow<MyState>(MyState.Loading)
     val myState:StateFlow<MyState> = _myState.asStateFlow()
@@ -19,7 +19,7 @@ class MyViewModel:ViewModel() {
         val myPosts = listOf(
             Post(
                 profile = profile,
-                name = name,
+                id = id,
                 time = 2,
                 isFollowing = false,
                 content = "고양이 생일파티 했어요 🎉 생선 케이크도 준비함ㅋㅋ",
@@ -32,7 +32,7 @@ class MyViewModel:ViewModel() {
             ),
             Post(
                 profile = profile,
-                name = name,
+                id = id,
                 time = 5,
                 isFollowing = false,
                 content = "냥이랑 소파에서 뒹굴뒹굴~ 이런 날이 제일 힐링이죠 ☁️",
@@ -44,7 +44,7 @@ class MyViewModel:ViewModel() {
             ),
             Post(
                 profile = profile,
-                name = name,
+                id = id,
                 time = 7,
                 isFollowing = false,
                 content = "고양이 옷 처음 입혀봤는데... 기분 나빴는지 삐졌어요ㅋㅋ",
@@ -57,7 +57,7 @@ class MyViewModel:ViewModel() {
             ),
             Post(
                 profile = profile,
-                name = name,
+                id = id,
                 time = 11,
                 isFollowing = false,
                 content = "캣타워 새로 설치했는데 하루종일 거기서 안 내려옴ㅋㅋ 만족한 듯!",

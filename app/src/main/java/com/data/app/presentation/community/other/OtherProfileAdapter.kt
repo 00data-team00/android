@@ -59,7 +59,7 @@ RecyclerView.Adapter<OtherProfileAdapter.OtherProfileViewHolder>(){
 
                 binding.ivImage.layoutParams = lp
 
-                tvId.text = root.context.getString(R.string.community_name, data.name)
+                tvId.text = root.context.getString(R.string.community_id, data.id)
                 tvTime.text = root.context.getString(R.string.community_time, data.time)
 
                 btnFollow.isSelected = data.isFollowing

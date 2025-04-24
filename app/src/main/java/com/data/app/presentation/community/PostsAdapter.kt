@@ -62,7 +62,7 @@ class PostsAdapter(val clickPost: (Post) -> Unit, val clickOtherUser:(Int, Strin
 
                 binding.ivImage.layoutParams = lp
 
-                tvId.text = root.context.getString(R.string.community_name, data.name)
+                tvId.text = root.context.getString(R.string.community_id, data.id)
                 tvTime.text = root.context.getString(R.string.community_time, data.time)
 
                 btnFollow.isSelected = data.isFollowing
@@ -108,7 +108,7 @@ class PostsAdapter(val clickPost: (Post) -> Unit, val clickOtherUser:(Int, Strin
         private fun clickProfileOrId(data: Post){
             listOf(binding.ivProfile, binding.tvId).forEach {
                 it.setOnClickListener {
-                    clickOtherUser(data.profile, data.name)
+                    clickOtherUser(data.profile, data.id)
                 }
             }
         }
