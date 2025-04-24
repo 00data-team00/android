@@ -68,7 +68,7 @@ class PostDetailAdapter(
                 transformations(CircleCropTransformation())
             }
 
-            clickWrite(data.name, data.profile)
+            clickWrite(data.id, data.profile)
         }
 
         private fun clickWrite(user:String, profile:Int){

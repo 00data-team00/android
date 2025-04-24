@@ -13,11 +13,11 @@ class OtherProfileViewModel:ViewModel() {
     private val _otherState = MutableStateFlow<OtherState>(OtherState.Loading)
     val otherState:StateFlow<OtherState> = _otherState.asStateFlow()
 
-    fun getOtherProfile(profile:Int, name:String){
+    fun getOtherProfile(profile:Int, id:String){
         val posts = listOf(
             Post(
                 profile = profile,
-                name = name,
+                id = id,
                 time = 1,
                 isFollowing = false,
                 content = "고양이랑 도심 속 카페 다녀왔어요. 사람보다 고양이가 더 인기 많았음ㅋㅋ",
@@ -30,7 +30,7 @@ class OtherProfileViewModel:ViewModel() {
             ),
             Post(
                 profile = profile,
-                name = name,
+                id = id,
                 time = 3,
                 isFollowing = false,
                 content = "오늘 날씨 좋아서 고양이랑 산책했어요. 벚꽃이랑 같이 찍은 사진 공개 🌸",
@@ -42,7 +42,7 @@ class OtherProfileViewModel:ViewModel() {
             ),
             Post(
                 profile = profile,
-                name = name,
+                id = id,
                 time = 6,
                 isFollowing = false,
                 content = "우리집 고양이 처음으로 츄르를 먹었어요. 중독된 듯한 눈빛ㅋㅋㅋ",
@@ -52,7 +52,7 @@ class OtherProfileViewModel:ViewModel() {
             ),
             Post(
                 profile = profile,
-                name = name,
+                id = id,
                 time = 10,
                 isFollowing = false,
                 content = "냥이랑 첫 여행! 캐리어 안에서도 얌전하게 있어줘서 감동...",

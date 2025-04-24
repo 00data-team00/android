@@ -1,11 +1,10 @@
 package com.data.app.presentation.my
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.addCallback
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -16,8 +15,6 @@ import coil3.transform.CircleCropTransformation
 import com.data.app.R
 import com.data.app.databinding.FragmentMyBinding
 import com.data.app.extension.MyState
-import com.data.app.presentation.community.other.OtherProfileAdapter
-import com.data.app.presentation.community.other.OtherProfileFragmentDirections
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -46,6 +43,7 @@ class MyFragment:Fragment() {
     private fun setting(){
         showPosts()
         makeList()
+        clickFollow()
     }
 
     private fun showPosts(){
@@ -54,7 +52,7 @@ class MyFragment:Fragment() {
                 when(myState){
                     is MyState.Success->{
                         Timber.d("myState is success")
-                        showProfile(myState.response[0].profile, myState.response[0].name)
+                        showProfile(myState.response[0].profile, myState.response[0].id)
                         myAdapter= MyAdapter(clickPost = { post->
                             val action= MyFragmentDirections.actionMyFragmentToMyPostDetailFragment(post)
                             findNavController().navigate(action)
@@ -90,6 +88,18 @@ class MyFragment:Fragment() {
 
     private fun makeList() {
        myViewModel.getPosts()
+    }
+
+    private fun clickFollow(){
+        listOf(
+            binding.vFollower to "follower",
+            binding.vFollowing to "following"
+        ).forEach { (view, title) ->
+            view.setOnClickListener {
+                val action=MyFragmentDirections.actionMyFragmentToFollowFragment(title)
+                findNavController().navigate(action)
+            }
+        }
     }
 
     override fun onDestroyView() {

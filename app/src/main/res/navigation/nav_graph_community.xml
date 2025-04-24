@@ -57,6 +57,30 @@
             app:exitAnim="@anim/stay"
             app:popEnterAnim="@anim/stay"
             app:popExitAnim="@anim/slide_out_right"/>
+        <action
+            android:id='@+id/action_otherProfileFragment_to_FollowFragment'
+            app:destination="@id/followFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/stay"
+            app:popEnterAnim="@anim/stay"
+            app:popExitAnim="@anim/slide_out_right"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/followFragment"
+        android:name="com.data.app.presentation.my.FollowFragment"
+        android:label="follow">
+        <argument
+            android:name="title"
+            app:argType="string"/>
+
+        <action
+            android:id="@+id/action_followFragment_to_otherProfileFragment"
+            app:destination="@id/otherProfileFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/stay"
+            app:popEnterAnim="@anim/stay"
+            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
 
 </navigation>

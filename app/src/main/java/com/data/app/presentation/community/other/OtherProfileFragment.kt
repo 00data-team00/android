@@ -1,5 +1,6 @@
 package com.data.app.presentation.community.other
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,20 +16,20 @@ import coil3.load
 import coil3.request.transformations
 import coil3.transform.CircleCropTransformation
 import com.data.app.R
-import com.data.app.data.Post
 import com.data.app.databinding.FragmentOtherProfileBinding
 import com.data.app.extension.OtherState
-import kotlinx.coroutines.flow.collect
+import com.data.app.presentation.my.FollowFragment
+import com.data.app.presentation.my.MyFragmentDirections
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class OtherProfileFragment: Fragment() {
+class OtherProfileFragment : Fragment() {
     private var _binding: FragmentOtherProfileBinding? = null
     private val binding: FragmentOtherProfileBinding
         get() = requireNotNull(_binding) { "home fragment is null" }
 
-    private val otherProfileFragmentArgs:OtherProfileFragmentArgs by navArgs()
-    private val otherProfileViewModel:OtherProfileViewModel by viewModels()
+    private val otherProfileFragmentArgs: OtherProfileFragmentArgs by navArgs()
+    private val otherProfileViewModel: OtherProfileViewModel by viewModels()
     private lateinit var otherProfileAdapter: OtherProfileAdapter
 
     override fun onCreateView(
@@ -45,46 +46,52 @@ class OtherProfileFragment: Fragment() {
         setting()
     }
 
-    private fun setting(){
-        val profile=otherProfileFragmentArgs.otherProfile
-        val name=otherProfileFragmentArgs.otherName
+    private fun setting() {
+        val profile = otherProfileFragmentArgs.otherProfile
+        val name = otherProfileFragmentArgs.otherName
         showProfile(profile, name)
         showPosts()
         makeList(profile, name)
+        clickFollowButton()
         clickFollow()
         clickBackButton()
     }
 
-    private fun showProfile(profile:Int, name:String){
-        with(binding){
-            ivProfile.load(profile){
+    private fun showProfile(profile: Int, name: String) {
+        with(binding) {
+            ivProfile.load(profile) {
                 transformations(CircleCropTransformation())
             }
-            tvName.text=name
-            tvCountry.text=getString(R.string.other_profile_country_mock)
-            tvPostCount.text="4"
-            tvFollowerCount.text="50"
-            tvFollowingCount.text="50"
+            tvName.text = name
+            tvCountry.text = getString(R.string.other_profile_country_mock)
+            tvPostCount.text = "4"
+            tvFollowerCount.text = "50"
+            tvFollowingCount.text = "50"
         }
     }
 
-    private fun showPosts(){
+    private fun showPosts() {
         lifecycleScope.launch {
-            otherProfileViewModel.otherState.collect{otherState->
-                when(otherState){
-                    is OtherState.Success->{
+            otherProfileViewModel.otherState.collect { otherState ->
+                when (otherState) {
+                    is OtherState.Success -> {
                         Timber.d("otherState is success")
-                        otherProfileAdapter=OtherProfileAdapter(clickPost = {post->
-                            val action=OtherProfileFragmentDirections.actionOtherProfileFragmentToPostDetailFragment(post)
+                        otherProfileAdapter = OtherProfileAdapter(clickPost = { post ->
+                            val action =
+                                OtherProfileFragmentDirections.actionOtherProfileFragmentToPostDetailFragment(
+                                    post
+                                )
                             findNavController().navigate(action)
                         })
-                        binding.rvPosts.adapter=otherProfileAdapter
+                        binding.rvPosts.adapter = otherProfileAdapter
                         otherProfileAdapter.getList(otherState.response)
                     }
-                    is OtherState.Loading->{
+
+                    is OtherState.Loading -> {
                         Timber.d("otherState is loading")
                     }
-                    is OtherState.Error ->{
+
+                    is OtherState.Error -> {
                         Timber.d("otherState is error")
                     }
                 }
@@ -92,11 +99,11 @@ class OtherProfileFragment: Fragment() {
         }
     }
 
-    private fun makeList(profile:Int, name:String) {
+    private fun makeList(profile: Int, name: String) {
         otherProfileViewModel.getOtherProfile(profile, name)
     }
 
-    private fun clickFollow(){
+    private fun clickFollowButton() {
         with(binding.btnFollow) {
             setOnClickListener {
                 isSelected = !isSelected
@@ -114,6 +121,18 @@ class OtherProfileFragment: Fragment() {
         }
     }
 
+    private fun clickFollow() {
+        listOf(
+            binding.vFollower to "follower",
+            binding.vFollowing to "following"
+        ).forEach { (view, title) ->
+            view.setOnClickListener {
+                val action = OtherProfileFragmentDirections.actionOtherProfileFragmentToFollowFragment(title)
+                findNavController().navigate(action)
+            }
+        }
+    }
+
     private fun clickBackButton() {
         binding.btnBack.setOnClickListener {
             findNavController().popBackStack()
@@ -126,7 +145,7 @@ class OtherProfileFragment: Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding=null
+        _binding = null
     }
 
 }

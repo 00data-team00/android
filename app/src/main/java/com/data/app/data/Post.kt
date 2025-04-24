@@ -6,7 +6,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class Post (
     val profile:Int,
-    val name:String,
+    val id:String,
     val time:Int,
     val isFollowing:Boolean,
     val content:String,

@@ -60,7 +60,7 @@ RecyclerView.Adapter<MyAdapter.MyViewHolder>(){
 
                 ivImage.layoutParams = lp
 
-                tvId.text = root.context.getString(R.string.community_name, data.name)
+                tvId.text = root.context.getString(R.string.community_id, data.id)
                 tvTime.text = root.context.getString(R.string.community_time, data.time)
 
                 tvContent.text = data.content
