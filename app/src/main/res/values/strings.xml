@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">app</string>
 
+    <!--login & signup-->
     <string name="login_landing">Speak Korean.\nPlay the Game.\nMaster It.</string>
     <string name="login_ruready">Ready to level up\nyour Korean?</string>
     <string name="login_tocontinue">Sign up with Social of fill the form to continue.</string>
@@ -11,6 +12,7 @@
     <string name="signup_writevalid">*Write valid email address (email@domain.com)</string>
     <string name="signup_codenotvalid">Code is not correct!</string>
 
+    <!--home-->
     <string name="home_title_kor">%s님의 학습기록</string>
     <string name="home_title_eng">%s\'s Learning Journey</string>
     <string name="home_not_give_up">포기하지 않는 %s님!</string>
@@ -21,7 +23,9 @@
     <string name="home_go_to_study_kor">공부하러가기</string>
     <string name="home_go_to_study_eng">Today\'s Learning Games</string>
     <string name="home_study_title">AI 튜터와\n한국어 실전 연습</string>
+    <string name="home_go_to_example">연습하러가기</string>
 
+    <!--ai practice-->
     <string name="ai_practice_title_kor">AI 한국어 실전연습</string>
     <string name="ai_practice_title_eng">Today\'s Learning Objectives</string>
     <string name="ai_practice_show_previous_practice">이전 연습 보기</string>
@@ -31,6 +35,17 @@
 
     <string name="practice_record_title_kor">나의 연습 기록</string>
     <string name="practice_record_title_eng">My Practice Records</string>
+
+    <!--game tab-->
+    <string name="game_tab_title_kor">한국어 퀴즈</string>
+    <string name="game_tab_subtitle_kor">오늘도 열심히 공부해볼까요?</string>
+    <string name="game_tab_week_mon">월</string>
+    <string name="game_tab_week_tue">화</string>
+    <string name="game_tab_week_wed">수</string>
+    <string name="game_tab_week_thu">목</string>
+    <string name="game_tab_week_fri">금</string>
+    <string name="game_tab_week_sat">토</string>
+    <string name="game_tab_week_sun">일</string>
 
     <!--explore-->
     <string name="explore_title">마감 기한이 코앞으로 다가왔어요!</string>

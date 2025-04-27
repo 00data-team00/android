@@ -1,44 +1,41 @@
 package com.data.app.presentation.home.ai_practice
 
+import android.content.Intent
 import android.content.res.Resources
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.findNavController
 import com.data.app.R
-import com.data.app.databinding.FragmentAiPracticeBinding
+import com.data.app.databinding.ActivityAiPracticeBinding
+import com.data.app.presentation.home.ai_practice.previous_practice.PreviousPracticeActivity
 import com.google.android.material.tabs.TabLayout
 
-class AIPracticeFragment:Fragment() {
-    private var _binding:FragmentAiPracticeBinding?=null
-    private val binding:FragmentAiPracticeBinding
-        get()= requireNotNull(_binding){"AI Practice Fragment is null"}
+class AIPracticeActivity:AppCompatActivity() {
+    private lateinit var binding:ActivityAiPracticeBinding
 
     private lateinit var aiAdaper: AIPracticeAdapter
     private val aiPracticeViewModel: AIPracticeViewModel by viewModels()
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        _binding= FragmentAiPracticeBinding.inflate(inflater, container, false)
-        return binding.root
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        initBinds()
+        setting()
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        setting()
+    private fun initBinds(){
+        binding=ActivityAiPracticeBinding.inflate(layoutInflater)
+        setContentView(binding.root)
     }
 
     private fun setting(){
         showList()
         clickPracticeRecord()
-        clickBackButton()
+        clickBack()
     }
 
     private fun showList(){
@@ -92,23 +89,21 @@ class AIPracticeFragment:Fragment() {
 
     private fun clickPracticeRecord(){
         binding.btnShowPreviousPractice.setOnClickListener{
-            findNavController().navigate(R.id.action_aiPractice_to_practiceRecords)
+            val intent = Intent(this, PreviousPracticeActivity::class.java)
+            startActivity(intent)
+            this.overridePendingTransition(R.anim.slide_in_right, R.anim.stay)
         }
     }
 
-    private fun clickBackButton(){
+    private fun clickBack(){
         binding.btnBack.setOnClickListener {
-            findNavController().popBackStack()
+            finish()
+            overridePendingTransition(R.anim.stay, R.anim.slide_out_right)
         }
 
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-            findNavController().popBackStack()
+        onBackPressedDispatcher.addCallback(this) {
+            finish()
+            overridePendingTransition(R.anim.stay, R.anim.slide_out_right)
         }
-    }
-
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding=null
     }
 }

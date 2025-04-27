@@ -73,4 +73,7 @@ dependencies {
     // ViewPager2
     implementation("androidx.viewpager2:viewpager2:1.1.0")
     implementation ("com.tbuonomo:dotsindicator:5.1.0")
+
+    // flexbox
+    implementation ("com.google.android.flexbox:flexbox:3.0.0")
 }

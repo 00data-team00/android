@@ -8,32 +8,5 @@
         android:id="@+id/homeFragment"
         android:name="com.data.app.presentation.home.HomeFragment"
         android:label="Home">
-
-        <action
-            android:id="@+id/action_home_to_aiPractice"
-            app:destination="@id/aiPracticeFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/stay"
-            app:popEnterAnim="@anim/stay"
-            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
-
-    <fragment
-        android:id="@+id/aiPracticeFragment"
-        android:name="com.data.app.presentation.home.ai_practice.AIPracticeFragment"
-        android:label="ai_practice">
-
-        <action
-            android:id="@+id/action_aiPractice_to_practiceRecords"
-            app:destination="@id/previousPracticeFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/stay"
-            app:popEnterAnim="@anim/stay"
-            app:popExitAnim="@anim/slide_out_right" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/previousPracticeFragment"
-        android:name="com.data.app.presentation.home.ai_practice.previous_practice.PreviousPracticeFragment"
-        android:label="previous_practice"/>
 </navigation>

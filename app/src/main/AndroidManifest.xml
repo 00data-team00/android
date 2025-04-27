@@ -24,16 +24,18 @@
         <activity
             android:name=".presentation.login.LandingActivity"
             android:exported="false">
-
         </activity>
+
         <activity
             android:name=".presentation.login.LoginActivity"
             android:exported="false">
         </activity>
+
         <activity
             android:name=".presentation.login.SignupActivity"
             android:exported="false">
         </activity>
+
         <activity
             android:name=".presentation.MainActivity"
             android:exported="true">
@@ -43,6 +45,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".presentation.home.game.GameTabActivity"
+            android:exported="false">
+        </activity>
+
+        <activity android:name=".presentation.home.ai_practice.AIPracticeActivity"
+            android:exported="false">
+        </activity>
+
+        <activity android:name=".presentation.home.ai_practice.previous_practice.PreviousPracticeActivity"
+            android:exported="false">
+        </activity>
+
         <activity
             android:name=".presentation.community.profile_detail.ImagePopupActivity"
             android:exported="false">
