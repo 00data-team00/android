@@ -22,7 +22,8 @@
     <color name="chat_gray">#F2F2F7</color>
 
     <!--game-->
-    <color name="game_flag_true">#D54515</color>
+    <color name="game_flag_red">#D54515</color>
+    <color name="game_flag_black">#1B1B1B</color>
     <color name="game_level_green">#EBFFB3</color>
     <color name="game_level_gray">#7F7F7F</color>
 
