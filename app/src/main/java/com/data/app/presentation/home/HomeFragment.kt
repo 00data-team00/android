@@ -1,5 +1,6 @@
 package com.data.app.presentation.home
 
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Paint
 import android.graphics.RectF
@@ -20,6 +21,8 @@ import com.data.app.R
 import com.data.app.data.Language
 import com.data.app.databinding.FragmentHomeBinding
 import com.data.app.presentation.OnTabReselectedListener
+import com.data.app.presentation.home.ai_practice.AIPracticeActivity
+import com.data.app.presentation.home.game.GameTabActivity
 
 class HomeFragment:Fragment(), OnTabReselectedListener {
     private var _binding:FragmentHomeBinding?=null
@@ -43,6 +46,7 @@ class HomeFragment:Fragment(), OnTabReselectedListener {
     private fun setting(){
         inputMockData()
         clickPractice()
+        clickGame()
     }
 
     private fun inputMockData(){
@@ -90,8 +94,18 @@ class HomeFragment:Fragment(), OnTabReselectedListener {
     }
 
     private fun clickPractice(){
+        binding.ivStudy3.setOnClickListener{
+            val intent= Intent(requireActivity(), AIPracticeActivity::class.java)
+            startActivity(intent)
+            requireActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.stay)
+        }
+    }
+
+    private fun clickGame(){
         binding.ivStudy1.setOnClickListener{
-            findNavController().navigate(R.id.action_home_to_aiPractice)
+            val intent= Intent(requireActivity(), GameTabActivity::class.java)
+            startActivity(intent)
+            requireActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.stay)
         }
     }
 

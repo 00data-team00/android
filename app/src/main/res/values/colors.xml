@@ -21,6 +21,13 @@
 
     <color name="chat_gray">#F2F2F7</color>
 
+    <!--game-->
+    <color name="game_flag_red">#D54515</color>
+    <color name="game_flag_black">#1B1B1B</color>
+    <color name="game_level_green">#EBFFB3</color>
+    <color name="game_level_gray">#7F7F7F</color>
+
+    <!--explore-->
     <color name="explore_enroll_dark_green">#5C7418</color>
     <color name="explore_enroll_click_dark_green">#475914</color>
     <color name="explore_price_click_green">#A3D80D</color>

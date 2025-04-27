@@ -9,41 +9,40 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.addCallback
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.data.app.databinding.FragmentPreviousPracticeBinding
+import com.data.app.R
+import com.data.app.databinding.ActivityPreviousPracticeBinding
 import java.util.Locale
 
-class PreviousPracticeFragment:Fragment() {
-    private var _binding: FragmentPreviousPracticeBinding?=null
-    private val binding: FragmentPreviousPracticeBinding
-        get()= requireNotNull(_binding){"AI Practice Fragment is null"}
+class PreviousPracticeActivity:AppCompatActivity() {
+    private lateinit var binding: ActivityPreviousPracticeBinding
 
     private val practiceRecordsViewModel: PreviousPracticeViewModel by viewModels()
     private lateinit var practiceRecordsAdapter: PreviousPracticeAdapter
 
     private lateinit var tts: TextToSpeech
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        _binding= FragmentPreviousPracticeBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        initBinds()
         setting()
     }
 
-    private fun setting(){
+    private fun initBinds() {
+        binding = ActivityPreviousPracticeBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+    }
+
+    private fun setting() {
         binding.ivSearch.setOnClickListener {
             // 키보드 내리기
-            val inputMethodManager = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            val inputMethodManager =
+                this.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             inputMethodManager.hideSoftInputFromWindow(binding.etSearch.windowToken, 0)
             binding.etSearch.clearFocus()
         }
@@ -51,7 +50,8 @@ class PreviousPracticeFragment:Fragment() {
         binding.etSearch.setOnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_SEARCH) {
                 // 키보드 내리기
-                val imm = v.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                val imm =
+                    v.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 imm.hideSoftInputFromWindow(v.windowToken, 0)
                 v.clearFocus()
                 true
@@ -62,19 +62,19 @@ class PreviousPracticeFragment:Fragment() {
 
         resetTTS()
         setRecords()
-        clickBackButton()
+        clickBack()
     }
 
-    private fun setRecords(){
-        practiceRecordsAdapter=PreviousPracticeAdapter { chat ->
+    private fun setRecords() {
+        practiceRecordsAdapter = PreviousPracticeAdapter { chat ->
             speakOut(chat)
         }
-        binding.rvPracticeRecords.adapter=practiceRecordsAdapter
+        binding.rvPracticeRecords.adapter = practiceRecordsAdapter
         practiceRecordsAdapter.getRecordsList(practiceRecordsViewModel.mockPracticeRecordList)
     }
 
-    private fun resetTTS(){
-        tts = TextToSpeech(requireContext()) { status ->
+    private fun resetTTS() {
+        tts = TextToSpeech(this) { status ->
             if (status == TextToSpeech.SUCCESS) {
                 tts.language = Locale.KOREAN
 
@@ -89,18 +89,15 @@ class PreviousPracticeFragment:Fragment() {
         }
     }
 
-    private fun clickBackButton(){
+    private fun clickBack() {
         binding.btnBack.setOnClickListener {
-            findNavController().popBackStack()
+            finish()
+            overridePendingTransition(R.anim.stay, R.anim.slide_out_right)
         }
 
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-            findNavController().popBackStack()
+        onBackPressedDispatcher.addCallback(this) {
+            finish()
+            overridePendingTransition(R.anim.stay, R.anim.slide_out_right)
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding=null
     }
 }

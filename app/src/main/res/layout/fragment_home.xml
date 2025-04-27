@@ -251,13 +251,26 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="20dp"
-            android:layout_marginBottom="20dp"
+            android:layout_marginBottom="5dp"
             android:text="@string/home_study_title"
             android:textAlignment="textEnd"
             android:textSize="18sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@id/iv_study_3"
+            app:layout_constraintBottom_toTopOf="@id/btn_ai_practice"
             app:layout_constraintEnd_toEndOf="@id/iv_study_3" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_ai_practice"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:text="@string/home_go_to_example"
+            android:textSize="12sp"
+            android:background="@drawable/bg_post_white"
+            android:layout_marginBottom="10dp"
+            app:layout_constraintHeight_percent="0.03"
+            app:layout_constraintWidth_percent="0.33"
+            app:layout_constraintBottom_toBottomOf="@id/iv_study_3"
+            app:layout_constraintEnd_toEndOf="@id/tv_study_title"/>
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cv_language_list"
