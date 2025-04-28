@@ -13,7 +13,9 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
-class ExploreProgramAdapter:RecyclerView.Adapter<ExploreProgramAdapter.ExploreProgramViewHolder>() {
+class ExploreProgramAdapter(
+    val clickProgram:()->Unit,
+):RecyclerView.Adapter<ExploreProgramAdapter.ExploreProgramViewHolder>() {
     private val programList = mutableListOf<Program>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ExploreProgramViewHolder {
@@ -40,6 +42,10 @@ class ExploreProgramAdapter:RecyclerView.Adapter<ExploreProgramAdapter.ExplorePr
             binding.ivImage.load(data.image)
             binding.tvTitle.text=data.title
             binding.tvDate.text=data.date
+
+            binding.itemProgram.setOnClickListener{
+                clickProgram()
+            }
 
             val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
             try {

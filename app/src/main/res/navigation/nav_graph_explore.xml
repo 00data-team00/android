@@ -7,5 +7,19 @@
     <fragment
         android:id="@+id/exploreFragment"
         android:name="com.data.app.presentation.explore.ExploreFragment"
-        android:label="explore"/>
+        android:label="explore">
+
+        <action
+            android:id="@+id/action_exploreFragment_to_programFragment"
+            app:destination="@id/programFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/stay"
+            app:popEnterAnim="@anim/stay"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/programFragment"
+        android:name="com.data.app.presentation.explore.ProgramFragment"
+        android:label="program"/>
 </navigation>
