@@ -16,11 +16,22 @@ import androidx.core.view.isGone
 import androidx.core.widget.addTextChangedListener
 import com.data.app.presentation.MainActivity
 import androidx.core.graphics.toColorInt
+import androidx.lifecycle.lifecycleScope
+import com.data.app.extension.RegisterState
+import com.data.app.extension.SendMailState
+import com.data.app.extension.VerifyMailState
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.count
+import kotlinx.coroutines.launch
+import timber.log.Timber
+import kotlin.math.sign
 
-class SignupActivity:AppCompatActivity() {
+@AndroidEntryPoint
+class SignupActivity : AppCompatActivity() {
 
-    private lateinit var binding:ActivitySignupBinding
-    private val viewModel: SignupViewmodel by viewModels()
+    private lateinit var binding: ActivitySignupBinding
+    private val signUpViewModel: SignupViewmodel by viewModels()
 
     private var nameFilled = false
     private var pwFilled = false
@@ -31,6 +42,10 @@ class SignupActivity:AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivitySignupBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        showValid()
+        showElse()
+        register()
 
         clickBackButton()
         clickQuitButton()
@@ -54,94 +69,59 @@ class SignupActivity:AppCompatActivity() {
         val adapter = ArrayAdapter(this, R.layout.simple_dropdown_item_1line, nationalityList)
         et_nation.setAdapter(adapter)
 
-        val timer = object : CountDownTimer(5 * 60 * 1000L, 1000L) {
-            override fun onTick(millisUntilFinished: Long) {
-                val minutes = millisUntilFinished / 1000 / 60
-                val seconds = (millisUntilFinished / 1000) % 60
-                tv_timer.text = String.format("%01d:%02d", minutes, seconds)
-            }
-            override fun onFinish() {
-                tv_timer.text = "0:00"
-                if(btn_verified.isGone){
-                    btn_send.visibility = View.VISIBLE
-                }
-            }
-        }
-
-        et_email.addTextChangedListener(object:TextWatcher{
+        et_email.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
+
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             }
+
             override fun afterTextChanged(s: Editable?) {
                 val email = s?.toString() ?: ""
-                if(isValidEmail(email)){
+                if (isValidEmail(email)) {
                     tv_valid.visibility = View.GONE
                     btn_send.visibility = View.VISIBLE
-                    viewModel.email = email
-                }
-                else if(email == "1"){
+
+                    btn_send.setOnClickListener {
+                        verifyCode = "1234"
+                        signUpViewModel.sendMail(email)
+                    }
+
+                    btn_veri.setOnClickListener {
+                        val inputCode = et_code.text.toString()
+                        signUpViewModel.verifyMail(inputCode)
+                    }
+                } else if (email == "1") {
                     tv_valid.visibility = View.GONE
                     tv_already.visibility = View.VISIBLE
-                }
-                else{
+                } else {
                     tv_valid.visibility = View.VISIBLE
                     tv_already.visibility = View.GONE
                 }
             }
         })
 
-        btn_send.setOnClickListener{
-            verifyCode = "1234"
-
-            et_code.visibility = View.VISIBLE
-            btn_veri.visibility = View.VISIBLE
-            tv_timer.visibility = View.VISIBLE
-            timer.start()
-
-            btn_send.visibility = View.GONE
-        }
-
-        btn_veri.setOnClickListener{
-            val inputCode = et_code.text.toString()
-            if(inputCode == verifyCode){
-                btn_veri.visibility = View.GONE
-                binding.tvCodenotvalid.visibility = View.GONE
-                btn_verified.visibility = View.VISIBLE
-                tv_timer.visibility = View.GONE
-                et_name.visibility = View.VISIBLE
-                et_nation.visibility = View.VISIBLE
-                et_pw.visibility = View.VISIBLE
-                tv_pw.visibility = View.VISIBLE
-                btn_privacy.visibility = View.VISIBLE
-            }
-            else{
-                binding.tvCodenotvalid.visibility = View.VISIBLE
-            }
-        }
-
-        et_name.addTextChangedListener{
-            viewModel.username = it.toString()
+        et_name.addTextChangedListener {
+            signUpViewModel.username = it.toString()
             nameFilled = true
             updateSignupButtonVisibility()
         }
-        et_pw.addTextChangedListener{
-            if(isValidPW(it.toString())) {
+        et_pw.addTextChangedListener {
+            if (isValidPW(it.toString())) {
                 tv_pw.setTextColor("#c5c5c5".toColorInt())
-                viewModel.password = it.toString()
+                signUpViewModel.password = it.toString()
                 pwFilled = true
                 updateSignupButtonVisibility()
-            }
-            else{
+            } else {
                 tv_pw.setTextColor("#aa1100".toColorInt())
             }
         }
-        et_nation.setOnClickListener{
+        et_nation.setOnClickListener {
             et_nation.showDropDown()
         }
-        et_nation.setOnItemClickListener {parent, view, position, id ->
+        et_nation.setOnItemClickListener { parent, view, position, id ->
             val selected = parent.getItemAtPosition(position).toString()
-            viewModel.nationality = selected
+            signUpViewModel.nationality = selected
             nationFilled = true
             updateSignupButtonVisibility()
         }
@@ -150,51 +130,136 @@ class SignupActivity:AppCompatActivity() {
             updateSignupButtonVisibility()
         }
 
-        btn_signup.setOnClickListener{
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
+        btn_signup.setOnClickListener {
+            val name=et_name.text.toString()
+            val pw=et_pw.text.toString()
+            val nation=et_nation.text.toString()
+            signUpViewModel.register(name,pw, nation)
         }
     }
 
-    private fun isValidEmail(email:String):Boolean{
-        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
-    }
+    private fun showValid() {
+        lifecycleScope.launch {
+            signUpViewModel.sendMailState.collect { sendMailState ->
+                when (sendMailState) {
+                    is SendMailState.Success -> {
+                        val timer = object : CountDownTimer(5 * 60 * 1000L, 1000L) {
+                            override fun onTick(millisUntilFinished: Long) {
+                                val minutes = millisUntilFinished / 1000 / 60
+                                val seconds = (millisUntilFinished / 1000) % 60
+                                binding.tvTimer.text = String.format("%01d:%02d", minutes, seconds)
+                            }
 
-    private fun isValidPW(password: String): Boolean {
-        val regex = Regex("^(?=.*[A-Z])(?=.*\\d)(?=.*[!@#\$%^&*()_+=\\-{}|:;\"'<>,.?/]).{8,}$")
-        return regex.matches(password)
-    }
+                            override fun onFinish() {
+                                binding.tvTimer.text = "0:00"
+                                if (binding.btnVerified.isGone) {
+                                    binding.btnSend.visibility = View.VISIBLE
+                                }
+                            }
+                        }
 
-    private fun updateSignupButtonVisibility() {
-        binding.btnSignup.visibility =
-            if (nameFilled && pwFilled && nationFilled && binding.btnPrivacy.isChecked)
-                View.VISIBLE else View.GONE
-    }
+                        with(binding) {
+                            etVerifycode.visibility = View.VISIBLE
+                            btnVerify.visibility = View.VISIBLE
+                            tvTimer.visibility = View.VISIBLE
+                            timer.start()
 
-    private fun clickBackButton(){
-        binding.btnSignupBack.setOnClickListener{
-            binding.etSignupEmail.setText("")
-            binding.tvWritevalid.visibility = View.GONE
-            binding.tvAlreadyuse.visibility = View.GONE
-            binding.btnSend.visibility = View.GONE
-            binding.etVerifycode.visibility = View.GONE
-            binding.tvCodenotvalid.visibility = View.GONE
-            binding.btnVerify.visibility = View.GONE
-            binding.tvTimer.visibility = View.GONE
-            binding.btnVerified.visibility = View.GONE
-            binding.etSignupName.visibility = View.GONE
-            binding.etNationality.visibility = View.GONE
-            binding.etSignupPassword.visibility = View.GONE
-            binding.tvPwcondition.visibility = View.GONE
-            binding.btnPrivacy.visibility = View.GONE
-            binding.btnSignup.visibility = View.GONE
+                            btnSend.visibility = View.GONE
+                        }
+                    }
+
+                    is SendMailState.Loading -> {}
+                    is SendMailState.Error -> {
+                        Timber.e("get send mail state error!")
+                    }
+                }
+            }
         }
     }
 
-    private fun clickQuitButton(){
-        binding.btnSignupExit.setOnClickListener{
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
+    private fun showElse() {
+        lifecycleScope.launch {
+            signUpViewModel.verifyMailState.collect { verifyMailState ->
+                when (verifyMailState) {
+                    is VerifyMailState.Success -> {
+                        with(binding) {
+                            btnVerify.visibility = View.GONE
+                            tvCodenotvalid.visibility = View.GONE
+                            btnVerified.visibility = View.VISIBLE
+                            tvTimer.visibility = View.GONE
+                            etSignupName.visibility = View.VISIBLE
+                            etNationality.visibility = View.VISIBLE
+                            etSignupPassword.visibility = View.VISIBLE
+                            tvPwcondition.visibility = View.VISIBLE
+                            btnPrivacy.visibility = View.VISIBLE
+                        }
+                    }
+
+                    is VerifyMailState.Loading -> {}
+                    is VerifyMailState.Error -> {
+                        binding.tvCodenotvalid.visibility = View.VISIBLE
+                        Timber.e("get verify mail state error!")
+                    }
+                }
+            }
         }
     }
-}
+
+    private fun register() {
+        val intent = Intent(this, LoginActivity::class.java)
+        lifecycleScope.launch {
+            signUpViewModel.registerState.collect{ registerState ->
+                when (registerState) {
+                    is RegisterState.Success -> {
+                        startActivity(intent)
+                    }
+                    is RegisterState.Loading->{}
+                    is RegisterState.Error->{
+                        Timber.e("get register state error!")
+                    }
+                }
+            }
+        }
+    }
+        private fun isValidEmail(email: String): Boolean {
+            return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
+        }
+
+        private fun isValidPW(password: String): Boolean {
+            val regex = Regex("^(?=.*[A-Z])(?=.*\\d)(?=.*[!@#\$%^&*()_+=\\-{}|:;\"'<>,.?/]).{8,}$")
+            return regex.matches(password)
+        }
+
+        private fun updateSignupButtonVisibility() {
+            binding.btnSignup.visibility =
+                if (nameFilled && pwFilled && nationFilled && binding.btnPrivacy.isChecked)
+                    View.VISIBLE else View.GONE
+        }
+
+        private fun clickBackButton() {
+            binding.btnSignupBack.setOnClickListener {
+                binding.etSignupEmail.setText("")
+                binding.tvWritevalid.visibility = View.GONE
+                binding.tvAlreadyuse.visibility = View.GONE
+                binding.btnSend.visibility = View.GONE
+                binding.etVerifycode.visibility = View.GONE
+                binding.tvCodenotvalid.visibility = View.GONE
+                binding.btnVerify.visibility = View.GONE
+                binding.tvTimer.visibility = View.GONE
+                binding.btnVerified.visibility = View.GONE
+                binding.etSignupName.visibility = View.GONE
+                binding.etNationality.visibility = View.GONE
+                binding.etSignupPassword.visibility = View.GONE
+                binding.tvPwcondition.visibility = View.GONE
+                binding.btnPrivacy.visibility = View.GONE
+                binding.btnSignup.visibility = View.GONE
+            }
+        }
+
+        private fun clickQuitButton() {
+            binding.btnSignupExit.setOnClickListener {
+                val intent = Intent(this, LoginActivity::class.java)
+                startActivity(intent)
+            }
+        }
+    }
