@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.data.app.R
 import com.data.app.databinding.FragmentExploreBinding
 import com.data.app.presentation.OnTabReselectedListener
@@ -43,7 +44,10 @@ class ExploreFragment : Fragment(), OnTabReselectedListener {
     }
 
     private fun clickPriceButton(){
-        val programAdapter = ExploreProgramAdapter()
+        val programAdapter = ExploreProgramAdapter(clickProgram = {
+            val action=ExploreFragmentDirections.actionExploreFragmentToProgramFragment()
+            findNavController().navigate(action)
+        })
         binding.rvAllProgram.adapter=programAdapter
         programAdapter.getList(exploreViewModel.freeProgramList)
         with(binding){

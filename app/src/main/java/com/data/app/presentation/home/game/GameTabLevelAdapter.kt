@@ -1,43 +1,54 @@
 package com.data.app.presentation.home.game
 
-import android.content.res.Resources
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.RecyclerView
 import com.data.app.data.GameLevel
-import com.data.app.databinding.ItemGamePrograssBinding
+import com.data.app.databinding.ItemGameLevelBinding
+import timber.log.Timber
 
-class GameTabLevelAdapter:RecyclerView.Adapter<GameTabLevelAdapter.GameTabLevelViewHolder>() {
+class GameTabLevelAdapter(
+    val clickLevel: () -> Unit,
+) : RecyclerView.Adapter<GameTabLevelAdapter.GameTabLevelViewHolder>() {
     private val levels = mutableListOf<GameLevel>()
     private var recyclerViewWidth = 0
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GameTabLevelViewHolder {
-        val binding=ItemGamePrograssBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding =
+            ItemGameLevelBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return GameTabLevelViewHolder(binding)
     }
 
     override fun getItemCount(): Int = levels.size
 
     override fun onBindViewHolder(holder: GameTabLevelViewHolder, position: Int) {
-       holder.bind(levels[position])
+        holder.bind(levels[position])
     }
 
-    fun getList(list: List<GameLevel>){
+    fun getList(list: List<GameLevel>) {
         levels.clear()
         levels.addAll(list)
         notifyDataSetChanged()
     }
 
-    fun getRecyclerViewWidth(width:Int){
-        recyclerViewWidth=width
+    fun getRecyclerViewWidth(width: Int) {
+        recyclerViewWidth = width
         notifyDataSetChanged()
     }
 
-    inner class GameTabLevelViewHolder(private val binding:ItemGamePrograssBinding):RecyclerView.ViewHolder(binding.root){
-        fun bind(level:GameLevel){
-            binding.tvLevel.text=level.level
-            binding.btnLevel.isSelected=level.isComplete
+    inner class GameTabLevelViewHolder(private val binding: ItemGameLevelBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind(level: GameLevel) {
+            binding.tvLevel.text = level.level
+            binding.btnLevel.isSelected = level.isComplete
+
+            binding.itemLevel.setOnClickListener {
+                Timber.d("goquiz click level")
+                if (level.isComplete) {
+                    clickLevel()
+                }
+            }
 
             val params = binding.root.layoutParams as ViewGroup.MarginLayoutParams
 
@@ -53,11 +64,13 @@ class GameTabLevelAdapter:RecyclerView.Adapter<GameTabLevelAdapter.GameTabLevelV
                         marginStart = recyclerViewWidth * 2 / 3
                     }
                 }
+
                 1, 3 -> { // 1, 3, 5, 7번째: 가운데
                     binding.root.updateLayoutParams<RecyclerView.LayoutParams> {
                         marginStart = recyclerViewWidth / 3
                     }
                 }
+
                 2 -> { // 2, 6, 10번째: 왼쪽
                     binding.root.updateLayoutParams<RecyclerView.LayoutParams> {
                         marginStart = 0
@@ -66,6 +79,16 @@ class GameTabLevelAdapter:RecyclerView.Adapter<GameTabLevelAdapter.GameTabLevelV
             }
 
             binding.root.layoutParams = params
+        }
+
+        private fun goQuiz(complete: Boolean) {
+            binding.itemLevel.setOnClickListener {
+                Timber.d("goquiz click level")
+                if (complete) {
+                    clickLevel()
+                }
+            }
+
         }
     }
 }

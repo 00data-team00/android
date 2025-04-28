@@ -50,6 +50,10 @@
             android:exported="false">
         </activity>
 
+        <activity android:name=".presentation.home.game.word.GameQuizActivity"
+            android:exported="false">
+        </activity>
+
         <activity android:name=".presentation.home.ai_practice.AIPracticeActivity"
             android:exported="false">
         </activity>

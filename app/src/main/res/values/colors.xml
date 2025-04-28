@@ -2,6 +2,7 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="primary">#A3D80D</color>
 
     <color name="bnv_clicked_green">#A3D80D</color>
     <color name="bnv_unclicked_black">#1B1B1B</color>
@@ -26,6 +27,9 @@
     <color name="game_flag_black">#1B1B1B</color>
     <color name="game_level_green">#EBFFB3</color>
     <color name="game_level_gray">#7F7F7F</color>
+
+    <color name="game_word_bg_green">#F3FFD3</color>
+    <color name="game_complete_gray">#CDCDCD</color>
 
     <!--explore-->
     <color name="explore_enroll_dark_green">#5C7418</color>

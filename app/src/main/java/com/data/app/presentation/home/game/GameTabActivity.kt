@@ -1,5 +1,6 @@
 package com.data.app.presentation.home.game
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.addCallback
 import androidx.activity.viewModels
@@ -7,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.data.app.R
 import com.data.app.databinding.ActivityGameTabBinding
+import com.data.app.presentation.home.game.word.GameQuizActivity
 
 class GameTabActivity:AppCompatActivity() {
     private lateinit var binding:ActivityGameTabBinding
@@ -41,7 +43,13 @@ class GameTabActivity:AppCompatActivity() {
             stackFromEnd = true
         }
         binding.rvLevels.layoutManager = layoutManager
-        val levelAdapter=GameTabLevelAdapter()
+        val levelAdapter=GameTabLevelAdapter(
+            clickLevel = {
+                val intent=Intent(this, GameQuizActivity::class.java)
+                startActivity(intent)
+                this.overridePendingTransition(R.anim.slide_in_right, R.anim.stay)
+            }
+        )
         binding.rvLevels.post {
             levelAdapter.getRecyclerViewWidth(binding.rvLevels.width)
             binding.rvLevels.adapter = levelAdapter
