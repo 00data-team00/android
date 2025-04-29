@@ -31,6 +31,8 @@
     <color name="game_word_bg_green">#F3FFD3</color>
     <color name="game_complete_gray">#CDCDCD</color>
 
+    <color name="game_half_transparent_black">#80000000</color> <!-- 50% 투명 블랙 -->
+
     <!--explore-->
     <color name="explore_enroll_dark_green">#5C7418</color>
     <color name="explore_enroll_click_dark_green">#475914</color>

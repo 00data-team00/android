@@ -1,4 +1,4 @@
-package com.data.app.presentation.home.game.word
+package com.data.app.presentation.home.game.quiz
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
