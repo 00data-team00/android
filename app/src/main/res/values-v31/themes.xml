@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.BlurDialog" parent="Theme.MaterialComponents.Dialog">
+        <!-- 뒤 화면을 블러 처리할 수 있게 창을 반투명으로 -->
+        <item name="android:windowIsTranslucent">true</item>
+        <!-- 창 뒤쪽 블러 활성화 -->
+        <item name="android:windowBlurBehindEnabled">true</item>
+        <!-- 창 배경(내부) 블러 반경(px) -->
+        <item name="android:windowBackgroundBlurRadius">80dp</item>
+        <!-- 창 뒤 블러 반경(px) -->
+        <item name="android:windowBlurBehindRadius">20dp</item>
+        <!-- 기본 dim(어둡게) 효과는 꺼둘게 (블러로 충분하니까) -->
+        <item name="android:backgroundDimEnabled">false</item>
+        <!-- 창 배경은 투명하게 -->
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
+</resources>

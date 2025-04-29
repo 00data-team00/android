@@ -1,4 +1,4 @@
-package com.data.app.presentation.home.game.word
+package com.data.app.presentation.home.game.quiz
 
 import androidx.lifecycle.ViewModel
 import com.data.app.R

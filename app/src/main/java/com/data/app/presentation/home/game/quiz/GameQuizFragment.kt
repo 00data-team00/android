@@ -1,8 +1,6 @@
-package com.data.app.presentation.home.game.word
+package com.data.app.presentation.home.game.quiz
 
-import android.Manifest
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.speech.tts.TextToSpeech
 import android.util.Log
@@ -11,8 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintSet
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import coil3.load
@@ -35,6 +31,8 @@ class GameQuizFragment : Fragment() {
     private var textToSpeech: TextToSpeech? = null
     var isTTSReady = false // TTS 준비 상태 플래그
 
+    private var isCorrectAnswer:Boolean ?=null
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -50,34 +48,36 @@ class GameQuizFragment : Fragment() {
     }
 
     private fun setting() {
-        requestPermission()
         resetTTS()
 
         showQuestion()
 
         binding.btnComplete.setOnClickListener {
+            Timber.d("isanswerselected: $isAnswerSelected")
             if (isAnswerSelected) {  // 선택했을 때만 넘어가게
-                currentIndex++
-                isAnswerSelected = false
-                binding.btnComplete.setTextColor(requireActivity().getColor(R.color.black))
-                binding.btnComplete.isSelected=false
-                showQuestion()
-                Timber.d("currentIndex: $currentIndex")
+                val fragment = isCorrectAnswer?.let { it ->
+                    GameSuccessOrNotFragment.newInstance(
+                        it
+                    )
+                }
+                fragment?.setOnNextClickListener(object : GameSuccessOrNotFragment.OnNextClickListener {
+                    override fun onNextClicked(success: Boolean) {
+                        if (success) {
+                            moveToNextQuestion()
+                        } else {
+                            // 문제 다시 풀게 하기
+                        }
+                    }
+                })
+                if (fragment != null) {
+                    requireActivity().supportFragmentManager.beginTransaction()
+                        .add(R.id.fcv_result, fragment) // 또는 .replace()
+                        .commit()
+                }
+                (requireActivity() as GameQuizActivity).barToFront()
             } else {
                 Toast.makeText(requireContext(), "답변을 선택해주세요.", Toast.LENGTH_SHORT).show()
             }
-        }
-    }
-
-    private fun requestPermission() {
-        // 버전 체크, 권한 허용했는지 체크
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.RECORD_AUDIO)
-            != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                requireActivity(),
-                arrayOf(Manifest.permission.RECORD_AUDIO), 0
-            )
         }
     }
 
@@ -121,6 +121,8 @@ class GameQuizFragment : Fragment() {
             return
         }
 
+        updateProgressBar()
+
         val question = gameQuizViewModel.quiz[currentIndex]
 
         with(binding) {
@@ -159,12 +161,18 @@ class GameQuizFragment : Fragment() {
         }
     }
 
+    private fun updateProgressBar() {
+        (activity as? GameQuizActivity)?.updateProgress(currentIndex, gameQuizViewModel.quiz.size)
+    }
+
+
     private fun showAnswer(answer: List<Quiz.Word.Answer>) {
         val answerAdapter = GameQuizAnswerAdapter(
             clickAnswer = { isCorrect ->
                 with(binding.btnComplete) {
                     isSelected = true
                     setTextColor(requireActivity().getColor(R.color.white))
+                    isCorrectAnswer=isCorrect
                 }
                 isAnswerSelected = true
             }
@@ -204,6 +212,15 @@ class GameQuizFragment : Fragment() {
         } else {
             Log.d("aifragment", "tts is not ready")
         }
+    }
+
+    private fun moveToNextQuestion() {
+        currentIndex++
+        isAnswerSelected = false
+        binding.btnComplete.setTextColor(requireActivity().getColor(R.color.black))
+        binding.btnComplete.isSelected = false
+        showQuestion()
+        Timber.d("currentIndex: $currentIndex")
     }
 
     override fun onDestroyView() {

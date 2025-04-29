@@ -48,6 +48,11 @@
     <string name="game_tab_week_sun">일</string>
 
     <string name="game_quiz_complete">확인</string>
+    <string name="game_quiz_success">정답이에요!</string>
+    <string name="game_quiz_fail">오답이에요!</string>
+    <string name="game_quiz_success_next">다음으로</string>
+    <string name="game_quiz_fail_next">다시 도전</string>
+    <string name="game_quiz_skip">정답 보고 건너뛰기</string>
 
     <!--explore-->
     <string name="explore_title">마감 기한이 코앞으로 다가왔어요!</string>

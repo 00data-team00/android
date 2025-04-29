@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.data.app.R
 import com.data.app.databinding.ActivityGameTabBinding
-import com.data.app.presentation.home.game.word.GameQuizActivity
+import com.data.app.presentation.home.game.quiz.GameQuizActivity
 
 class GameTabActivity:AppCompatActivity() {
     private lateinit var binding:ActivityGameTabBinding

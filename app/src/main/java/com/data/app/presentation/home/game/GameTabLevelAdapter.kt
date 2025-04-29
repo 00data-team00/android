@@ -78,6 +78,12 @@ class GameTabLevelAdapter(
                 }
             }
 
+            if (position == 0) {
+                params.bottomMargin = dpToPx(20)
+            } else {
+                params.bottomMargin = 0
+            }
+
             binding.root.layoutParams = params
         }
 
@@ -90,5 +96,10 @@ class GameTabLevelAdapter(
             }
 
         }
+
+        private fun dpToPx(dp: Int): Int {
+            return (dp * binding.root.context.resources.displayMetrics.density).toInt()
+        }
+
     }
 }
