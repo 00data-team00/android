@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/exploreFragment"
-        android:name="com.data.app.presentation.explore.ExploreFragment"
+        android:name="com.data.app.presentation.main.explore.ExploreFragment"
         android:label="explore">
 
         <action
@@ -20,6 +20,6 @@
 
     <fragment
         android:id="@+id/programFragment"
-        android:name="com.data.app.presentation.explore.ProgramFragment"
+        android:name="com.data.app.presentation.main.explore.ProgramFragment"
         android:label="program"/>
 </navigation>

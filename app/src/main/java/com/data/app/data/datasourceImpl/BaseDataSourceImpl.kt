@@ -5,6 +5,8 @@ import com.data.app.data.request_dto.RequestLoginDto
 import com.data.app.data.request_dto.RequestRegisterDto
 import com.data.app.data.request_dto.RequestSendMailDto
 import com.data.app.data.request_dto.RequestVerifyMailDto
+import com.data.app.data.response_dto.ResponseAITopicsDto
+import com.data.app.data.response_dto.ResponseAllProgramDto
 import com.data.app.data.response_dto.ResponseLoginDto
 import com.data.app.data.response_dto.ResponseRegisterDto
 import com.data.app.data.service.BaseService
@@ -20,4 +22,13 @@ class BaseDataSourceImpl @Inject constructor(
     override suspend fun register(requestRegisterDto: RequestRegisterDto): ResponseRegisterDto = baseService.register(requestRegisterDto)
 
     override suspend fun login(requestLoginDto: RequestLoginDto): ResponseLoginDto = baseService.login(requestLoginDto)
+
+    override suspend fun getAIChatTopics(token: String): ResponseAITopicsDto = baseService.getAIChatTopics(token)
+
+    override suspend fun getAllPrograms(
+        isFree: Boolean,
+        sort: String,
+        page: Int,
+        size: Int
+    ): ResponseAllProgramDto = baseService.getAllPrograms(isFree, sort, page, size)
 }

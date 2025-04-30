@@ -5,6 +5,8 @@ import com.data.app.data.request_dto.RequestLoginDto
 import com.data.app.data.request_dto.RequestRegisterDto
 import com.data.app.data.request_dto.RequestSendMailDto
 import com.data.app.data.request_dto.RequestVerifyMailDto
+import com.data.app.data.response_dto.ResponseAITopicsDto
+import com.data.app.data.response_dto.ResponseAllProgramDto
 import com.data.app.data.response_dto.ResponseLoginDto
 import com.data.app.data.response_dto.ResponseRegisterDto
 import com.data.app.domain.repository.BaseRepository
@@ -51,6 +53,26 @@ class BaseRepositoryImpl @Inject constructor(
             baseDataSource.login(RequestLoginDto(email, pw))
         }.onFailure {
             Timber.e("base repository login fail: $it")
+        }
+    }
+
+    override suspend fun getAIChatTopics(token: String): Result<ResponseAITopicsDto> {
+        return runCatching {
+            baseDataSource.getAIChatTopics(token)
+        }.onFailure {
+            Timber.d("base repository get ai chat topics fail: $it")
+        }
+    }
+
+    override suspend fun getAllPrograms(
+        isFree: Boolean,
+        page: Int,
+        size: Int
+    ): Result<ResponseAllProgramDto> {
+        return runCatching {
+            baseDataSource.getAllPrograms(isFree, "regDt", page, size)
+        }.onFailure {
+            Timber.d("base repository get all programs fail: $it")
         }
     }
 }

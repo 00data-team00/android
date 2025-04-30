@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/communityFragment"
-        android:name="com.data.app.presentation.community.CommunityFragment"
+        android:name="com.data.app.presentation.main.community.CommunityFragment"
         android:label="community">
         <action
             android:id="@+id/action_communityFragment_to_postDetailFragment"
@@ -26,7 +26,7 @@
 
     <fragment
         android:id="@+id/postDetailFragment"
-        android:name="com.data.app.presentation.community.profile_detail.PostDetailFragment"
+        android:name="com.data.app.presentation.main.community.profile_detail.PostDetailFragment"
         android:label="post_detail">
         <argument
             android:name="post"
@@ -42,7 +42,7 @@
 
     <fragment
         android:id="@+id/otherProfileFragment"
-        android:name="com.data.app.presentation.community.other.OtherProfileFragment"
+        android:name="com.data.app.presentation.main.community.other.OtherProfileFragment"
         android:label="other_profile">
         <argument
             android:name="other_profile"
@@ -68,7 +68,7 @@
 
     <fragment
         android:id="@+id/followFragment"
-        android:name="com.data.app.presentation.my.FollowFragment"
+        android:name="com.data.app.presentation.main.my.FollowFragment"
         android:label="follow">
         <argument
             android:name="title"

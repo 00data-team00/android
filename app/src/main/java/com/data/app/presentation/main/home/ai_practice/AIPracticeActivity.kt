@@ -1,0 +1,111 @@
+package com.data.app.presentation.main.home.ai_practice
+
+import android.content.Intent
+import android.content.res.Resources
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.activity.addCallback
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.fragment.findNavController
+import com.data.app.R
+import com.data.app.databinding.ActivityAiPracticeBinding
+import com.data.app.presentation.main.home.ai_practice.previous_practice.PreviousPracticeActivity
+import com.google.android.material.tabs.TabLayout
+
+class AIPracticeActivity:AppCompatActivity() {
+    private lateinit var binding:ActivityAiPracticeBinding
+
+    private lateinit var aiAdaper: AIPracticeAdapter
+    private val aiPracticeViewModel: AIPracticeViewModel by viewModels()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        initBinds()
+        setting()
+    }
+
+    private fun initBinds(){
+        binding=ActivityAiPracticeBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+    }
+
+    private fun setting(){
+        val token = intent.getStringExtra("accessToken")
+
+        showList()
+        clickPracticeRecord()
+        clickBack()
+    }
+
+    private fun showList(){
+        aiAdaper= AIPracticeAdapter()
+        binding.rvAiPractice.adapter=aiAdaper
+        aiAdaper.getList(aiPracticeViewModel.mockDailyList)
+
+        setupTabs()
+    }
+
+    private fun setupTabs(){
+        binding.tlAiPractice.apply {
+            addTab(newTab().setText(getString(R.string.ai_practice_daily)))
+            addTab(newTab().setText(getString(R.string.ai_practice_culture)))
+            addTab(newTab().setText(getString(R.string.ai_practice_job)))
+        }
+
+        applyTabMargins()
+
+        binding.tlAiPractice.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                when (tab?.position) {
+                    0 -> aiAdaper.getList(aiPracticeViewModel.mockDailyList)
+                    1 -> aiAdaper.getList(aiPracticeViewModel.mockCultureList)
+                    2 -> aiAdaper.getList(aiPracticeViewModel.mockJobList)
+                }
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {}
+            override fun onTabReselected(tab: TabLayout.Tab?) {}
+        })
+    }
+
+    private fun applyTabMargins() {
+        binding.tlAiPractice.post {
+            val tabLayout = binding.tlAiPractice.getChildAt(0) as? ViewGroup ?: return@post
+            for (i in 0 until tabLayout.childCount) {
+                val tab = tabLayout.getChildAt(i)
+                val layoutParams = tab.layoutParams as ViewGroup.MarginLayoutParams
+                layoutParams.marginStart = 6.dpToPx()
+                layoutParams.marginEnd = 8.dpToPx()
+                tab.layoutParams = layoutParams
+                tab.requestLayout()
+            }
+        }
+    }
+
+    private fun Int.dpToPx(): Int {
+        return (this * Resources.getSystem().displayMetrics.density).toInt()
+    }
+
+    private fun clickPracticeRecord(){
+        binding.btnShowPreviousPractice.setOnClickListener{
+            val intent = Intent(this, PreviousPracticeActivity::class.java)
+            startActivity(intent)
+            this.overridePendingTransition(R.anim.slide_in_right, R.anim.stay)
+        }
+    }
+
+    private fun clickBack(){
+        binding.btnBack.setOnClickListener {
+            finish()
+            overridePendingTransition(R.anim.stay, R.anim.slide_out_right)
+        }
+
+        onBackPressedDispatcher.addCallback(this) {
+            finish()
+            overridePendingTransition(R.anim.stay, R.anim.slide_out_right)
+        }
+    }
+}
