@@ -28,7 +28,6 @@ interface BaseRepository {
     ):Result<ResponseLoginDto>
 
     suspend fun getAIChatTopics(
-        token:String,
     ):Result<ResponseAITopicsDto>
 
     suspend fun getAllPrograms(

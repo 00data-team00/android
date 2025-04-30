@@ -22,6 +22,7 @@ import com.data.app.presentation.main.MainViewModel
 import com.data.app.presentation.main.OnTabReselectedListener
 import com.data.app.presentation.main.home.ai_practice.AIPracticeActivity
 import com.data.app.presentation.main.home.game.GameTabActivity
+import timber.log.Timber
 
 class HomeFragment:Fragment(), OnTabReselectedListener {
     private var _binding:FragmentHomeBinding?=null
@@ -46,9 +47,10 @@ class HomeFragment:Fragment(), OnTabReselectedListener {
     }
 
     private fun setting(){
-        mainViewModel.accessToken.observe(viewLifecycleOwner){token->
+       /* mainViewModel.accessToken.observe(viewLifecycleOwner){token->
             clickPractice(token)
-        }
+        }*/
+        clickPractice()
         inputMockData()
         clickGame()
     }
@@ -97,10 +99,11 @@ class HomeFragment:Fragment(), OnTabReselectedListener {
         }
     }
 
-    private fun clickPractice(token: String) {
+    private fun clickPractice() {
         binding.ivStudy3.setOnClickListener{
+            Timber.d("click study")
             val intent= Intent(requireActivity(), AIPracticeActivity::class.java)
-            intent.putExtra("accessToken", token)
+            //intent.putExtra("accessToken", token)
             startActivity(intent)
             requireActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.stay)
         }

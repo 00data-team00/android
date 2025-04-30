@@ -56,9 +56,9 @@ class BaseRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getAIChatTopics(token: String): Result<ResponseAITopicsDto> {
+    override suspend fun getAIChatTopics(): Result<ResponseAITopicsDto> {
         return runCatching {
-            baseDataSource.getAIChatTopics(token)
+            baseDataSource.getAIChatTopics()
         }.onFailure {
             Timber.d("base repository get ai chat topics fail: $it")
         }

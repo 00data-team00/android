@@ -5,11 +5,15 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import coil3.load
 import com.data.app.data.AIPractice
+import com.data.app.data.response_dto.ResponseAITopicsDto
 import com.data.app.databinding.ItemAiPracticeBinding
+import timber.log.Timber
 
-class AIPracticeAdapter : RecyclerView.Adapter<AIPracticeAdapter.AIPracticeViewHolder>() {
+class AIPracticeAdapter(
+    private val clickPractice:()->Unit
+) : RecyclerView.Adapter<AIPracticeAdapter.AIPracticeViewHolder>() {
 
-    private val aiPracticeList = mutableListOf<AIPractice>()
+    private val aiPracticeList = mutableListOf<ResponseAITopicsDto.TopicDto>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AIPracticeViewHolder {
         val binding=ItemAiPracticeBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -22,7 +26,8 @@ class AIPracticeAdapter : RecyclerView.Adapter<AIPracticeAdapter.AIPracticeViewH
         holder.bind(aiPracticeList[position])
     }
 
-    fun getList(list:List<AIPractice>){
+    fun getList(list:List<ResponseAITopicsDto.TopicDto>){
+        Timber.d("list: $aiPracticeList")
         aiPracticeList.clear()
         aiPracticeList.addAll(list)
         notifyDataSetChanged()
@@ -30,11 +35,15 @@ class AIPracticeAdapter : RecyclerView.Adapter<AIPracticeAdapter.AIPracticeViewH
 
     inner class AIPracticeViewHolder(private val binding: ItemAiPracticeBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: AIPractice) {
+        fun bind(item: ResponseAITopicsDto.TopicDto) {
             with(binding) {
-                ivBackground.load(item.image)
+                //ivBackground.load(item.image)
                 tvTitle.text = item.title
-                tvSubTitle.text = item.subTitle
+                tvSubTitle.text = item.description
+
+                ivBackground.setOnClickListener{
+                    clickPractice()
+                }
             }
         }
     }

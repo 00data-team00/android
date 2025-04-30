@@ -1,15 +1,13 @@
 package com.data.app.presentation.main.home.ai_practice
 
-import android.adservices.topics.Topic
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.data.app.R
 import com.data.app.data.AIPractice
+import com.data.app.data.response_dto.ResponseAITopicsDto
 import com.data.app.domain.repository.BaseRepository
 import com.data.app.extension.AIChatTopicsState
-import com.data.app.extension.LoginState
-import com.data.app.extension.SendMailState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -25,25 +23,20 @@ import javax.inject.Inject
 class AIPracticeViewModel @Inject constructor(
     private val baseRepository: BaseRepository
 ):ViewModel() {
-    private var _aiTopicsState = MutableStateFlow<AIChatTopicsState>(AIChatTopicsState.Loading)
-    val aiTopicsState: StateFlow<AIChatTopicsState> = _aiTopicsState.asStateFlow()
+    val essentialTopics = MutableLiveData<List<ResponseAITopicsDto.TopicDto>>()
+    val cultureTopics = MutableLiveData<List<ResponseAITopicsDto.TopicDto>>()
+    val businessTopics = MutableLiveData<List<ResponseAITopicsDto.TopicDto>>()
 
-    val essentialTopics = MutableLiveData<List<Topic>>()
-    val cultureTopics = MutableLiveData<List<Topic>>()
-    val workTopics = MutableLiveData<List<Topic>>()
-
-    fun getAiTopics(token:String){
+    fun getAiTopics(){
         viewModelScope.launch {
-            baseRepository.getAIChatTopics(token).onSuccess{response->
-                _aiTopicsState.value=AIChatTopicsState.Success(response)
+            baseRepository.getAIChatTopics().onSuccess{response->
 
-               /* essentialTopics.value = response.filter { it.category == "필수/일상" }
-                cultureTopics.value = response.filter { it.category == "문화/여가" }
-                workTopics.value = response.filter { it.category == "취업/업무" }*/
+                essentialTopics.value = response.essentialTopics
+                cultureTopics.value = response.culturalTopics
+                businessTopics.value = response.businessTopics
 
                 Timber.d("get ai topics is success!!")
             }.onFailure {
-                _aiTopicsState.value= AIChatTopicsState.Error("Error response failure: ${it.message}")
                 if (it is HttpException) {
                     try {
                         val errorBody: ResponseBody? = it.response()?.errorBody()

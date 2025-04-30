@@ -9,17 +9,25 @@ import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.data.app.R
 import com.data.app.databinding.ActivityAiPracticeBinding
+import com.data.app.presentation.main.home.ai_practice.ai_chat.AIChatActivity
 import com.data.app.presentation.main.home.ai_practice.previous_practice.PreviousPracticeActivity
 import com.google.android.material.tabs.TabLayout
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import timber.log.Timber
 
-class AIPracticeActivity:AppCompatActivity() {
-    private lateinit var binding:ActivityAiPracticeBinding
+@AndroidEntryPoint
+class AIPracticeActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityAiPracticeBinding
 
-    private lateinit var aiAdaper: AIPracticeAdapter
+    private lateinit var aiAdapter: AIPracticeAdapter
     private val aiPracticeViewModel: AIPracticeViewModel by viewModels()
+
+    private var currentTab = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,28 +35,39 @@ class AIPracticeActivity:AppCompatActivity() {
         setting()
     }
 
-    private fun initBinds(){
-        binding=ActivityAiPracticeBinding.inflate(layoutInflater)
+    private fun initBinds() {
+        binding = ActivityAiPracticeBinding.inflate(layoutInflater)
         setContentView(binding.root)
     }
 
-    private fun setting(){
-        val token = intent.getStringExtra("accessToken")
+    private fun setting() {
+        val token = intent?.getStringExtra("accessToken")
 
         showList()
         clickPracticeRecord()
         clickBack()
     }
 
-    private fun showList(){
-        aiAdaper= AIPracticeAdapter()
-        binding.rvAiPractice.adapter=aiAdaper
-        aiAdaper.getList(aiPracticeViewModel.mockDailyList)
+    private fun showList() {
+        aiAdapter = AIPracticeAdapter(clickPractice = {
+            val intent = Intent(this, AIChatActivity::class.java)
+            startActivity(intent)
+        }
+        )
+        binding.rvAiPractice.adapter = aiAdapter
 
+        aiPracticeViewModel.essentialTopics.observe(this) { essential ->
+            Timber.d("Observed essential topic list: size=${essential.size}")
+            aiAdapter.getList(essential)
+
+        }
+        //aiAdapter.getList(aiPracticeViewModel.mockDailyList)
+
+        aiPracticeViewModel.getAiTopics()
         setupTabs()
     }
 
-    private fun setupTabs(){
+    private fun setupTabs() {
         binding.tlAiPractice.apply {
             addTab(newTab().setText(getString(R.string.ai_practice_daily)))
             addTab(newTab().setText(getString(R.string.ai_practice_culture)))
@@ -59,10 +78,11 @@ class AIPracticeActivity:AppCompatActivity() {
 
         binding.tlAiPractice.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
+                currentTab = tab?.position ?: 0
                 when (tab?.position) {
-                    0 -> aiAdaper.getList(aiPracticeViewModel.mockDailyList)
-                    1 -> aiAdaper.getList(aiPracticeViewModel.mockCultureList)
-                    2 -> aiAdaper.getList(aiPracticeViewModel.mockJobList)
+                    0 -> aiAdapter.getList(aiPracticeViewModel.essentialTopics.value ?: emptyList())
+                    1 -> aiAdapter.getList(aiPracticeViewModel.cultureTopics.value ?: emptyList())
+                    2 -> aiAdapter.getList(aiPracticeViewModel.businessTopics.value ?: emptyList())
                 }
             }
 
@@ -89,15 +109,15 @@ class AIPracticeActivity:AppCompatActivity() {
         return (this * Resources.getSystem().displayMetrics.density).toInt()
     }
 
-    private fun clickPracticeRecord(){
-        binding.btnShowPreviousPractice.setOnClickListener{
+    private fun clickPracticeRecord() {
+        binding.btnShowPreviousPractice.setOnClickListener {
             val intent = Intent(this, PreviousPracticeActivity::class.java)
             startActivity(intent)
             this.overridePendingTransition(R.anim.slide_in_right, R.anim.stay)
         }
     }
 
-    private fun clickBack(){
+    private fun clickBack() {
         binding.btnBack.setOnClickListener {
             finish()
             overridePendingTransition(R.anim.stay, R.anim.slide_out_right)

@@ -27,7 +27,7 @@ interface BaseDataSource {
     ):ResponseLoginDto
 
     suspend fun getAIChatTopics(
-        token:String,
+        //token:String,
     ):ResponseAITopicsDto
 
     suspend fun getAllPrograms(

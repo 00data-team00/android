@@ -23,7 +23,7 @@ class BaseDataSourceImpl @Inject constructor(
 
     override suspend fun login(requestLoginDto: RequestLoginDto): ResponseLoginDto = baseService.login(requestLoginDto)
 
-    override suspend fun getAIChatTopics(token: String): ResponseAITopicsDto = baseService.getAIChatTopics(token)
+    override suspend fun getAIChatTopics(): ResponseAITopicsDto = baseService.getAIChatTopics()
 
     override suspend fun getAllPrograms(
         isFree: Boolean,
