@@ -14,7 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.data.app.databinding.ActivitySignupBinding
 import androidx.core.view.isGone
 import androidx.core.widget.addTextChangedListener
-import com.data.app.presentation.MainActivity
+import com.data.app.presentation.main.MainActivity
 import androidx.core.graphics.toColorInt
 import androidx.lifecycle.lifecycleScope
 import com.data.app.extension.RegisterState

@@ -38,7 +38,13 @@
             android:exported="false">
         </activity>
 
-        <activity android:name=".presentation.home.ai_practice.ai_chat.AIChatActivity"
+        <activity android:name=".presentation.main.home.ai_practice.ai_chat.AIChatActivity"
+            android:exported="false">
+
+        </activity>
+
+        <activity
+            android:name=".presentation.main.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -47,29 +53,24 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".presentation.MainActivity"
+        <activity android:name=".presentation.main.home.game.GameTabActivity"
             android:exported="false">
         </activity>
 
-        <activity android:name=".presentation.home.game.GameTabActivity"
+        <activity android:name=".presentation.main.home.game.quiz.GameQuizActivity"
             android:exported="false">
         </activity>
 
-        <activity android:name=".presentation.home.game.quiz.GameQuizActivity"
+        <activity android:name=".presentation.main.home.ai_practice.AIPracticeActivity"
             android:exported="false">
         </activity>
 
-        <activity android:name=".presentation.home.ai_practice.AIPracticeActivity"
-            android:exported="false">
-        </activity>
-
-        <activity android:name=".presentation.home.ai_practice.previous_practice.PreviousPracticeActivity"
+        <activity android:name=".presentation.main.home.ai_practice.previous_practice.PreviousPracticeActivity"
             android:exported="false">
         </activity>
 
         <activity
-            android:name=".presentation.community.profile_detail.ImagePopupActivity"
+            android:name=".presentation.main.community.profile_detail.ImagePopupActivity"
             android:exported="false">
         </activity>
     </application>

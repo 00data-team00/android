@@ -1,5 +1,7 @@
 package com.data.app.domain.repository
 
+import com.data.app.data.response_dto.ResponseAITopicsDto
+import com.data.app.data.response_dto.ResponseAllProgramDto
 import com.data.app.data.response_dto.ResponseLoginDto
 import com.data.app.data.response_dto.ResponseRegisterDto
 
@@ -24,4 +26,14 @@ interface BaseRepository {
         email:String,
         pw:String,
     ):Result<ResponseLoginDto>
+
+    suspend fun getAIChatTopics(
+        token:String,
+    ):Result<ResponseAITopicsDto>
+
+    suspend fun getAllPrograms(
+        isFree:Boolean,
+        page:Int,
+        size:Int,
+    ):Result<ResponseAllProgramDto>
 }
