@@ -39,7 +39,7 @@ interface BaseService {
 
     @GET("api/chat/topics")
     suspend fun getAIChatTopics(
-        @Header("Authorization") token:String,
+        //@Header("Authorization") token:String,
     ):ResponseAITopicsDto
 
     @GET("api/edu-info")

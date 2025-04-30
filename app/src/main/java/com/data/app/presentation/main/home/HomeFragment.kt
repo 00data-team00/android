@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.Paint
 import android.graphics.RectF
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +15,7 @@ import coil3.Canvas
 import coil3.load
 import coil3.request.transformations
 import coil3.size.Size
+import coil3.transform.RoundedCornersTransformation
 import coil3.transform.Transformation
 import com.data.app.R
 import com.data.app.data.Language
@@ -22,6 +24,7 @@ import com.data.app.presentation.main.MainViewModel
 import com.data.app.presentation.main.OnTabReselectedListener
 import com.data.app.presentation.main.home.ai_practice.AIPracticeActivity
 import com.data.app.presentation.main.home.game.GameTabActivity
+import timber.log.Timber
 
 class HomeFragment:Fragment(), OnTabReselectedListener {
     private var _binding:FragmentHomeBinding?=null
@@ -46,11 +49,35 @@ class HomeFragment:Fragment(), OnTabReselectedListener {
     }
 
     private fun setting(){
-        mainViewModel.accessToken.observe(viewLifecycleOwner){token->
+       /* mainViewModel.accessToken.observe(viewLifecycleOwner){token->
             clickPractice(token)
-        }
+        }*/
+        showImage()
+        clickPractice()
         inputMockData()
         clickGame()
+    }
+
+    private fun showImage(){
+        val radiusPx = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP, 20f, resources.displayMetrics
+        )
+
+        binding.ivOnline.load(R.drawable.iv_online){
+            transformations(
+                RoundedCornersTransformation(radiusPx)
+            )
+        }
+        binding.ivQuiz.load(R.drawable.iv_quiz){
+            transformations(
+                RoundedCornersTransformation(radiusPx)
+            )
+        }
+        binding.ivAiPractice.load(R.drawable.iv_ai_practice) {
+            transformations(
+                RoundedCornersTransformation(radiusPx)
+            )
+        }
     }
 
     private fun inputMockData(){
@@ -97,17 +124,18 @@ class HomeFragment:Fragment(), OnTabReselectedListener {
         }
     }
 
-    private fun clickPractice(token: String) {
-        binding.ivStudy3.setOnClickListener{
+    private fun clickPractice() {
+        binding.ivAiPractice.setOnClickListener{
+            Timber.d("click study")
             val intent= Intent(requireActivity(), AIPracticeActivity::class.java)
-            intent.putExtra("accessToken", token)
+            //intent.putExtra("accessToken", token)
             startActivity(intent)
             requireActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.stay)
         }
     }
 
     private fun clickGame(){
-        binding.ivStudy1.setOnClickListener{
+        binding.ivQuiz.setOnClickListener{
             val intent= Intent(requireActivity(), GameTabActivity::class.java)
             startActivity(intent)
             requireActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.stay)

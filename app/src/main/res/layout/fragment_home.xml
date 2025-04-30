@@ -11,7 +11,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingStart="20dp"
+        android:paddingStart="30dp"
         android:paddingEnd="0dp">
 
         <TextView
@@ -40,7 +40,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:src="@drawable/ic_korea"
-            android:layout_marginEnd="20dp"
+            android:layout_marginEnd="30dp"
             android:scaleType="centerCrop"
             app:layout_constraintBottom_toBottomOf="@id/tv_title_eng"
             app:layout_constraintDimensionRatio="1:1"
@@ -56,7 +56,7 @@
             android:background="@drawable/bg_pink"
             android:paddingStart="20dp"
             android:paddingEnd="20dp"
-            android:layout_marginEnd="20dp"
+            android:layout_marginEnd="30dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_percent="0.1"
             app:layout_constraintStart_toStartOf="parent"
@@ -107,7 +107,7 @@
             android:background="@drawable/bg_green"
             android:paddingStart="20dp"
             android:paddingEnd="20dp"
-            android:layout_marginEnd="20dp"
+            android:layout_marginEnd="30dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_percent="0.16"
             app:layout_constraintStart_toStartOf="parent"
@@ -210,47 +210,50 @@
             app:layout_constraintTop_toBottomOf="@id/tv_go_to_study_kor" />
 
         <ImageView
-            android:id="@+id/iv_study_1"
+            android:id="@+id/iv_online"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginTop="20dp"
-            android:src="@drawable/bg_gray"
+            android:src="@drawable/iv_online"
+            android:scaleType="centerCrop"
             app:layout_constraintDimensionRatio="1.2:1"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_go_to_study_eng"
             app:layout_constraintWidth_percent="0.45" />
 
         <ImageView
-            android:id="@+id/iv_study_2"
+            android:id="@+id/iv_quiz"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginTop="20dp"
-            android:src="@drawable/bg_gray"
-            android:layout_marginEnd="20dp"
+            android:src="@drawable/iv_quiz"
+            android:layout_marginEnd="30dp"
+            android:scaleType="centerCrop"
             app:layout_constraintDimensionRatio="1.2:1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_go_to_study_eng"
             app:layout_constraintWidth_percent="0.45" />
 
         <ImageView
-            android:id="@+id/iv_study_3"
+            android:id="@+id/iv_ai_practice"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="20dp"
-            android:layout_marginEnd="20dp"
-            android:src="@drawable/bg_gray"
+            android:layout_marginEnd="30dp"
+            android:src="@drawable/iv_ai_practice"
+            android:scaleType="centerCrop"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_percent="0.2"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/iv_study_1" />
+            app:layout_constraintTop_toBottomOf="@id/iv_online" />
 
-        <TextView
+       <!-- <TextView
             android:id="@+id/tv_study_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="20dp"
+            android:layout_marginEnd="30dp"
             android:layout_marginBottom="5dp"
             android:text="@string/home_study_title"
             android:textAlignment="textEnd"
@@ -270,7 +273,7 @@
             app:layout_constraintHeight_percent="0.03"
             app:layout_constraintWidth_percent="0.33"
             app:layout_constraintBottom_toBottomOf="@id/iv_study_3"
-            app:layout_constraintEnd_toEndOf="@id/tv_study_title"/>
+            app:layout_constraintEnd_toEndOf="@id/tv_study_title"/>-->
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cv_language_list"
