@@ -36,6 +36,10 @@
     <string name="practice_record_title_kor">나의 연습 기록</string>
     <string name="practice_record_title_eng">My Practice Records</string>
 
+    <!--ai chhat-->
+    <string name="ai_chat_essential">필수</string>
+    <string name="ai_chat_listening">Listening .. ..</string>
+
     <!--game tab-->
     <string name="game_tab_title_kor">한국어 퀴즈</string>
     <string name="game_tab_subtitle_kor">오늘도 열심히 공부해볼까요?</string>

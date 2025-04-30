@@ -2,10 +2,11 @@ package com.data.app.data
 
 data class PreviousPractice (
     val title:String,
+    val titleEn:String,
     val summation:String,
-    val date:String,
+    val date:String?,
     val type:String,
-    val chatList:List<ChatItem>
+    var chatList:List<ChatItem>
 ){
     sealed class ChatItem {
         abstract val chat: String

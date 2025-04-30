@@ -9,7 +9,8 @@ class PreviousPracticeViewModel:ViewModel() {
         // 적금 상담
         PreviousPractice(
             title = "하이금리 적금 상담 기록",
-            summation = "고금리 적금 상품에 대해 금리, 가입 조건, 해지 가능 여부를 중심으로 AI 상담을 진함.",
+            titleEn = "Conversation record about HighGumlee",
+            summation = "고금리 적금 상품에 대해 금리, 가입 조건, 해지 가능 여부를 중심으로 AI 상담을 진행함.",
             date = "2025-04-17",
             type = "예금/적금",
             chatList = listOf(
@@ -24,6 +25,7 @@ class PreviousPracticeViewModel:ViewModel() {
         // 대출 상담
         PreviousPractice(
             title = "소액 대출 상담 기록",
+            titleEn = "Conversation record about Soek rent",
             summation = "소액 비상금 대출에 대해 금리, 상환 방식, 조건에 대해 AI 상담을 진행했습니다.",
             date = "2025-04-12",
             type = "대출",
@@ -40,6 +42,7 @@ class PreviousPracticeViewModel:ViewModel() {
         // 카드 상담
         PreviousPractice(
             title = "신용카드 발급 상담 기록",
+            titleEn = "Conversation record about credit card",
             summation = "연회비, 혜택, 발급 조건 등에 대해 AI 카드 상담사와 질의응답을 진행했습니다.",
             date = "2025-04-05",
             type = "카드",
@@ -55,6 +58,7 @@ class PreviousPracticeViewModel:ViewModel() {
         // 환전 상담
         PreviousPractice(
             title = "외화 환전 상담 기록",
+            titleEn = "Conversation record about exchange",
             summation = "달러 환전 수수료, 방법, 환율 우대 조건에 대해 AI 상담을 진행했습니다.",
             date = "2025-03-28",
             type = "외화/환전",
