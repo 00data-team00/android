@@ -14,6 +14,7 @@ import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -59,6 +60,7 @@ class AIChatActivity:AppCompatActivity() {
         clickExitButton()
         clickSendButton()
         clickAIButton()
+        clickBack()
     }
 
     private fun setting() {
@@ -319,5 +321,15 @@ class AIChatActivity:AppCompatActivity() {
         }
     }
 
+    private fun clickBack() {
+        binding.btnBack.setOnClickListener {
+            finish()
+            overridePendingTransition(R.anim.stay, R.anim.slide_out_right)
+        }
 
+        onBackPressedDispatcher.addCallback(this) {
+            finish()
+            overridePendingTransition(R.anim.stay, R.anim.slide_out_right)
+        }
+    }
 }
