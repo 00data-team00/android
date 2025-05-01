@@ -9,6 +9,7 @@ import com.data.app.data.response_dto.ResponseAIPreviousChatMessagesDto
 import com.data.app.data.response_dto.ResponseAIPreviousRecordsDto
 import com.data.app.data.response_dto.ResponseAITopicsDto
 import com.data.app.data.response_dto.ResponseAllProgramDto
+import com.data.app.data.response_dto.ResponseDeadlineDto
 import com.data.app.data.response_dto.ResponseLoginDto
 import com.data.app.data.response_dto.ResponseRegisterDto
 import com.data.app.data.service.BaseService
@@ -17,18 +18,17 @@ import javax.inject.Inject
 class BaseDataSourceImpl @Inject constructor(
     private val baseService: BaseService
 ):BaseDataSource {
+    // sign up
     override suspend fun sendMail(email: RequestSendMailDto): ResponseRegisterDto = baseService.sendMail(email)
-
     override suspend fun verifyMail(requestVerifyMailDto: RequestVerifyMailDto): ResponseRegisterDto = baseService.verifyMail(requestVerifyMailDto)
-
     override suspend fun register(requestRegisterDto: RequestRegisterDto): ResponseRegisterDto = baseService.register(requestRegisterDto)
 
+    // login
     override suspend fun login(requestLoginDto: RequestLoginDto): ResponseLoginDto = baseService.login(requestLoginDto)
 
+    // ai chat
     override suspend fun getAIChatTopics(): ResponseAITopicsDto = baseService.getAIChatTopics()
-
     override suspend fun getAIPreviousList(token: String): ResponseAIPreviousRecordsDto = baseService.getAIPreviousList(token)
-
     override suspend fun getAIPreviousChatMessages(
         token: String,
         chatRoomId: Int
@@ -41,4 +41,6 @@ class BaseDataSourceImpl @Inject constructor(
         page: Int,
         size: Int
     ): ResponseAllProgramDto = baseService.getAllPrograms(isFree, sort, page, size)
+
+    override suspend fun getDeadLinePrograms(): ResponseDeadlineDto = baseService.getDeadLinePrograms()
 }

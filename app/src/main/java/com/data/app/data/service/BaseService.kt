@@ -8,6 +8,7 @@ import com.data.app.data.response_dto.ResponseAIPreviousChatMessagesDto
 import com.data.app.data.response_dto.ResponseAIPreviousRecordsDto
 import com.data.app.data.response_dto.ResponseAITopicsDto
 import com.data.app.data.response_dto.ResponseAllProgramDto
+import com.data.app.data.response_dto.ResponseDeadlineDto
 import com.data.app.data.response_dto.ResponseLoginDto
 import com.data.app.data.response_dto.ResponseRegisterDto
 import retrofit2.http.Body
@@ -17,6 +18,7 @@ import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface BaseService {
+    // sign up
     @POST("api/mail/send")
     suspend fun sendMail(
         @Body email:RequestSendMailDto,
@@ -32,13 +34,13 @@ interface BaseService {
         @Body requestRegisterDto: RequestRegisterDto
     ):ResponseRegisterDto
 
-
+    // login
     @POST("api/login")
     suspend fun login(
         @Body requestLoginDto: RequestLoginDto
     ):ResponseLoginDto
 
-
+    // ai chat
     @GET("api/chat/topics")
     suspend fun getAIChatTopics(
         //@Header("Authorization") token:String,
@@ -55,6 +57,7 @@ interface BaseService {
         @Query("chatRoomId") chatRoomId:Int
     ):ResponseAIPreviousChatMessagesDto
 
+    // explore
     @GET("api/edu-info")
     suspend fun getAllPrograms(
         @Query ("isFree") isFree:Boolean,
@@ -62,4 +65,7 @@ interface BaseService {
         @Query("page") page:Int,
         @Query("size") size:Int,
     ):ResponseAllProgramDto
+
+    @GET("api/edu-info/closing-soon")
+    suspend fun getDeadLinePrograms():ResponseDeadlineDto
 }

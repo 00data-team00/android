@@ -37,21 +37,25 @@ class LoginViewModel @Inject constructor(
                     } catch (e: Exception) {
                         // JSON 파싱 실패 시 로깅
                         Timber.e("Error parsing error body: ${e}")
+                        _loginState.value = LoginState.Error("알 수 없는 에러가 발생했습니다.")
                     }
+                }else {
+                    _loginState.value = LoginState.Error("네트워크 에러 또는 알 수 없는 오류: ${it.message}")
                 }
             }
         }
     }
 
     private fun httpError(errorBody: String) {
-        // 전체 에러 바디를 로깅하여 디버깅
-        Timber.e("Full error body: $errorBody")
+        try {
+            val jsonObject = JSONObject(errorBody)
+            val errorMessage = jsonObject.optString("msg", "알 수 없는 오류입니다.")
+            Timber.e("Parsed error message: $errorMessage")
 
-        // JSONObject를 사용하여 메시지 추출
-        val jsonObject = JSONObject(errorBody)
-        val errorMessage = jsonObject.optString("message", "Unknown error")
-
-        // 추출된 에러 메시지 로깅
-        Timber.e( "Error message: $errorMessage")
+            _loginState.value = LoginState.Error(errorMessage) // ✅ 여기서 실제 메시지로 상태 전달
+        } catch (e: Exception) {
+            Timber.e("JSON 파싱 실패: $e")
+            _loginState.value = LoginState.Error("에러 응답을 처리할 수 없습니다.")
+        }
     }
 }

@@ -2,6 +2,7 @@ package com.data.app.presentation.login
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.InputType
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
 import androidx.appcompat.app.AppCompatActivity
@@ -70,6 +71,7 @@ class LoginActivity : AppCompatActivity() {
 
     private fun setting() {
         getLoginState()
+        changeShowPassword()
         clickLoginButton()
     }
 
@@ -85,7 +87,25 @@ class LoginActivity : AppCompatActivity() {
 
                     is LoginState.Loading -> {}
                     is LoginState.Error -> {
-                        Timber.e("get login state error!")
+                        val message = loginState.message
+
+                        when {
+                            message.contains("이메일") -> {
+                                //binding.tvEmailError.text = message
+                                binding.tvEmailError.visibility=View.VISIBLE
+                                binding.tvPasswordError.visibility = View.GONE
+                            }
+                            message.contains("비밀번호") -> {
+                                //binding.tvPasswordError.text = message
+                                binding.tvEmailError.visibility=View.GONE
+                                binding.tvPasswordError.visibility = View.VISIBLE
+                            }
+                            else -> {
+                                // 기타 에러 처리
+                                binding.tvEmailError.visibility=View.GONE
+                                binding.tvPasswordError.visibility = View.GONE
+                            }
+                        }
                     }
                 }
             }
@@ -97,6 +117,25 @@ class LoginActivity : AppCompatActivity() {
         val intent = Intent(this, MainActivity::class.java)
         intent.putExtra("accessToken", token)
         startActivity(intent)
+    }
+
+    private fun changeShowPassword(){
+        with(binding){
+            btnPwShowable.setOnClickListener{
+                btnPwShowable.isSelected=!btnPwShowable.isSelected
+
+                if(btnPwShowable.isSelected){
+                    etLoginPassword.inputType =
+                        InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+                }else {
+                    etLoginPassword.inputType =
+                        InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+                }
+
+                // 커서를 항상 맨 뒤로 이동
+                etLoginPassword.setSelection(etLoginPassword.text?.length ?: 0)
+            }
+        }
     }
 
     // login process to be implemented

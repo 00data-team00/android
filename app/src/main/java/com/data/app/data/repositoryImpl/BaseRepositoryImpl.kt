@@ -9,6 +9,7 @@ import com.data.app.data.response_dto.ResponseAIPreviousChatMessagesDto
 import com.data.app.data.response_dto.ResponseAIPreviousRecordsDto
 import com.data.app.data.response_dto.ResponseAITopicsDto
 import com.data.app.data.response_dto.ResponseAllProgramDto
+import com.data.app.data.response_dto.ResponseDeadlineDto
 import com.data.app.data.response_dto.ResponseLoginDto
 import com.data.app.data.response_dto.ResponseRegisterDto
 import com.data.app.domain.repository.BaseRepository
@@ -18,6 +19,7 @@ import javax.inject.Inject
 class BaseRepositoryImpl @Inject constructor(
     private val baseDataSource: BaseDataSource
 ):BaseRepository {
+    // sign up
     override suspend fun sendMail(email: String): Result<ResponseRegisterDto> {
         return runCatching {
             baseDataSource.sendMail(RequestSendMailDto(email))
@@ -50,6 +52,7 @@ class BaseRepositoryImpl @Inject constructor(
         }
     }
 
+    // login
     override suspend fun login(email: String, pw: String): Result<ResponseLoginDto> {
         return runCatching {
             baseDataSource.login(RequestLoginDto(email, pw))
@@ -58,6 +61,7 @@ class BaseRepositoryImpl @Inject constructor(
         }
     }
 
+    // ai chat
     override suspend fun getAIChatTopics(): Result<ResponseAITopicsDto> {
         return runCatching {
             baseDataSource.getAIChatTopics()
@@ -95,6 +99,14 @@ class BaseRepositoryImpl @Inject constructor(
             baseDataSource.getAllPrograms(isFree, "regDt", page, size)
         }.onFailure {
             Timber.d("base repository get all programs fail: $it")
+        }
+    }
+
+    override suspend fun getDeadLinePrograms(): Result<ResponseDeadlineDto> {
+        return runCatching {
+            baseDataSource.getDeadLinePrograms()
+        }.onFailure {
+            Timber.d("base repository get deadline programs fail: $it")
         }
     }
 }

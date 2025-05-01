@@ -12,11 +12,13 @@ import androidx.navigation.fragment.findNavController
 import com.data.app.R
 import com.data.app.databinding.FragmentExploreBinding
 import com.data.app.extension.AllProgramsState
+import com.data.app.extension.DeadLineProgramState
 import com.data.app.presentation.main.OnTabReselectedListener
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import kotlin.math.exp
 
 @AndroidEntryPoint
 class ExploreFragment : Fragment(), OnTabReselectedListener {
@@ -49,7 +51,23 @@ class ExploreFragment : Fragment(), OnTabReselectedListener {
     private fun getDeadLineList() {
         val deadlineAdapter = ExploreDeadLineAdapter()
         binding.rvDeadline.adapter = deadlineAdapter
-        deadlineAdapter.getList(exploreViewModel.mockDeadlineList)
+
+        lifecycleScope.launch {
+            exploreViewModel.deadLineProgramState.collect{deadLineProgramState ->
+                when(deadLineProgramState){
+                    is DeadLineProgramState.Success->{
+                        Timber.d("deadlineprogram: ${deadLineProgramState.response.eduPrograms}")
+                        deadlineAdapter.getList(deadLineProgramState.response.eduPrograms)
+                    }
+                    is DeadLineProgramState.Loading->{}
+                    is DeadLineProgramState.Error->{
+                        Timber.e("get deadline list error")
+                    }
+                }
+            }
+        }
+
+        exploreViewModel.getDeadLinePrograms()
     }
 
     private fun getProgramList() {
