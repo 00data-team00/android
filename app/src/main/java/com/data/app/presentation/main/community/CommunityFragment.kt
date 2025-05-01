@@ -1,17 +1,23 @@
 package com.data.app.presentation.main.community
 
+import android.content.Intent
 import android.content.res.Resources
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.data.app.R
 import com.data.app.databinding.FragmentCommunityBinding
+import com.data.app.presentation.main.MainViewModel
 import com.data.app.presentation.main.OnTabReselectedListener
+import com.data.app.presentation.main.community.write.WritePostActivity
 import com.google.android.material.tabs.TabLayout
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class CommunityFragment:Fragment(), OnTabReselectedListener {
@@ -19,6 +25,7 @@ class CommunityFragment:Fragment(), OnTabReselectedListener {
     private val binding: FragmentCommunityBinding
         get() = requireNotNull(_binding) { "home fragment is null" }
 
+    private val mainViewModel:MainViewModel by activityViewModels()
     private val communityViewModel:CommunityViewModel by viewModels()
     private lateinit var postsAdapter:PostsAdapter
 
@@ -38,6 +45,7 @@ class CommunityFragment:Fragment(), OnTabReselectedListener {
 
     private fun setting() {
         showFeeds()
+        writePost()
     }
 
     private fun showFeeds(){
@@ -103,6 +111,25 @@ class CommunityFragment:Fragment(), OnTabReselectedListener {
 
     private fun Int.dpToPx(): Int {
         return (this * Resources.getSystem().displayMetrics.density).toInt()
+    }
+
+    private fun writePost(){
+        binding.btnWritePost.setOnClickListener{
+            val intent=Intent(requireActivity(), WritePostActivity::class.java)
+            //intent.putExtra("accessToken", token)
+            startActivity(intent)
+            requireActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.stay)
+        }
+       /* lifecycleScope.launch {
+            mainViewModel.accessToken.observe(viewLifecycleOwner){token->
+                binding.btnWritePost.setOnClickListener{
+                    val intent=Intent(requireActivity(), WritePostActivity::class.java)
+                    intent.putExtra("accessToken", token)
+                    startActivity(intent)
+                    requireActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.stay)
+                }
+            }
+        }*/
     }
 
     override fun onDestroyView() {

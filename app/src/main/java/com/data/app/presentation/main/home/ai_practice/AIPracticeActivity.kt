@@ -47,6 +47,7 @@ class AIPracticeActivity : AppCompatActivity() {
         aiAdapter = AIPracticeAdapter(clickPractice = {
             val intent = Intent(this, AIChatActivity::class.java)
             startActivity(intent)
+            overridePendingTransition(R.anim.slide_in_right, R.anim.stay)
         }
         )
         binding.rvAiPractice.adapter = aiAdapter
