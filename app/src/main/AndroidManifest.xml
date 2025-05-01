@@ -37,16 +37,6 @@
 
         <activity
             android:name=".presentation.login.LoginActivity"
-            android:exported="false">
-
-        </activity>
-
-        <activity
-            android:name=".presentation.login.SignupActivity"
-            android:exported="false">
-        </activity>
-
-        <activity android:name=".presentation.main.home.ai_practice.ai_chat.AIChatActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -56,10 +46,17 @@
         </activity>
 
         <activity
-            android:name=".presentation.main.MainActivity"
+            android:name=".presentation.login.SignupActivity"
             android:exported="false">
+        </activity>
 
+        <activity android:name=".presentation.main.home.ai_practice.ai_chat.AIChatActivity"
+            android:exported="false">
+        </activity>
 
+        <activity
+            android:name=".presentation.main.MainActivity"
+            android:exported="false"> add
         </activity>
 
         <activity android:name=".presentation.main.home.game.GameTabActivity"
