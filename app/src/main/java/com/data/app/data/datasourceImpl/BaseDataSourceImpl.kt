@@ -5,6 +5,8 @@ import com.data.app.data.request_dto.RequestLoginDto
 import com.data.app.data.request_dto.RequestRegisterDto
 import com.data.app.data.request_dto.RequestSendMailDto
 import com.data.app.data.request_dto.RequestVerifyMailDto
+import com.data.app.data.response_dto.ResponseAIPreviousChatMessagesDto
+import com.data.app.data.response_dto.ResponseAIPreviousRecordsDto
 import com.data.app.data.response_dto.ResponseAITopicsDto
 import com.data.app.data.response_dto.ResponseAllProgramDto
 import com.data.app.data.response_dto.ResponseLoginDto
@@ -25,6 +27,14 @@ class BaseDataSourceImpl @Inject constructor(
 
     override suspend fun getAIChatTopics(): ResponseAITopicsDto = baseService.getAIChatTopics()
 
+    override suspend fun getAIPreviousList(token: String): ResponseAIPreviousRecordsDto = baseService.getAIPreviousList(token)
+
+    override suspend fun getAIPreviousChatMessages(
+        token: String,
+        chatRoomId: Int
+    ): ResponseAIPreviousChatMessagesDto = baseService.getAIPreviousChatMessages(token, chatRoomId)
+
+    // explore
     override suspend fun getAllPrograms(
         isFree: Boolean,
         sort: String,

@@ -1,5 +1,7 @@
 package com.data.app.domain.repository
 
+import com.data.app.data.response_dto.ResponseAIPreviousChatMessagesDto
+import com.data.app.data.response_dto.ResponseAIPreviousRecordsDto
 import com.data.app.data.response_dto.ResponseAITopicsDto
 import com.data.app.data.response_dto.ResponseAllProgramDto
 import com.data.app.data.response_dto.ResponseLoginDto
@@ -30,6 +32,16 @@ interface BaseRepository {
     suspend fun getAIChatTopics(
     ):Result<ResponseAITopicsDto>
 
+    suspend fun getAIPreviousList(
+        token:String,
+    ):Result<ResponseAIPreviousRecordsDto>
+
+    suspend fun getAIPreviousChatMessages(
+        token:String,
+        chatRoomId:Int,
+    ):Result<ResponseAIPreviousChatMessagesDto>
+
+    // explore
     suspend fun getAllPrograms(
         isFree:Boolean,
         page:Int,

@@ -10,6 +10,7 @@ import androidx.navigation.fragment.NavHostFragment
 import com.data.app.R
 import com.data.app.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -41,6 +42,7 @@ class MainActivity : AppCompatActivity() {
         val token=intent.getStringExtra("accessToken")
         if (token != null) {
             mainViewModel.saveToken(token)
+            Timber.d("token: $token")
         }
 
         binding.bnvMain.selectedItemId = R.id.menu_home

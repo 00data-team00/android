@@ -4,6 +4,8 @@ import com.data.app.data.request_dto.RequestLoginDto
 import com.data.app.data.request_dto.RequestRegisterDto
 import com.data.app.data.request_dto.RequestSendMailDto
 import com.data.app.data.request_dto.RequestVerifyMailDto
+import com.data.app.data.response_dto.ResponseAIPreviousChatMessagesDto
+import com.data.app.data.response_dto.ResponseAIPreviousRecordsDto
 import com.data.app.data.response_dto.ResponseAITopicsDto
 import com.data.app.data.response_dto.ResponseAllProgramDto
 import com.data.app.data.response_dto.ResponseLoginDto
@@ -29,6 +31,15 @@ interface BaseDataSource {
     suspend fun getAIChatTopics(
         //token:String,
     ):ResponseAITopicsDto
+
+    suspend fun getAIPreviousList(
+        token:String,
+    ):ResponseAIPreviousRecordsDto
+
+    suspend fun getAIPreviousChatMessages(
+        token:String,
+        chatRoomId:Int
+    ):ResponseAIPreviousChatMessagesDto
 
     suspend fun getAllPrograms(
         isFree:Boolean,

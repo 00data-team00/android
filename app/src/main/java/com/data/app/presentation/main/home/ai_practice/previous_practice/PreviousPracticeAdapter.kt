@@ -5,57 +5,98 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.data.app.data.PreviousPractice
+import com.data.app.data.response_dto.ResponseAIPreviousChatMessagesDto
+import com.data.app.data.response_dto.ResponseAIPreviousRecordsDto
 import com.data.app.databinding.ItemPreviousPracticeBinding
 import timber.log.Timber
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 
 class PreviousPracticeAdapter(
+    private val showChatMessages:(Int)->Unit,
     private val clickChat:(String)->Unit
-):RecyclerView.Adapter<PreviousPracticeAdapter.PracticeRecordsViewHolder>(){
+):RecyclerView.Adapter<PreviousPracticeAdapter.PreviousPracticeViewHolder>(){
 
-    private val practiceRecordsList = mutableListOf<PreviousPractice>()
+    private val practiceRecordsList = mutableListOf<ResponseAIPreviousRecordsDto.ChatRoom>()
+    private var selectedPosition: Int? = null
+    private val practiceChatMessagesMap = mutableMapOf<Int, List<ResponseAIPreviousChatMessagesDto.Message>>()
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PracticeRecordsViewHolder {
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PreviousPracticeViewHolder {
        val binding=ItemPreviousPracticeBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return PracticeRecordsViewHolder(binding)
+        return PreviousPracticeViewHolder(binding)
     }
 
     override fun getItemCount(): Int = practiceRecordsList.size
 
-    override fun onBindViewHolder(holder: PracticeRecordsViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: PreviousPracticeViewHolder, position: Int) {
         holder.bind(practiceRecordsList[position])
     }
 
-    fun getRecordsList(list: List<PreviousPractice>){
+    fun getRecordsList(list: List<ResponseAIPreviousRecordsDto.ChatRoom>){
         Timber.d("getRecordsList")
         practiceRecordsList.clear()
         practiceRecordsList.addAll(list)
         notifyDataSetChanged()
     }
 
-    inner class PracticeRecordsViewHolder(private val binding:ItemPreviousPracticeBinding):
+    fun getMessages(chatRoomId:Int, list:List<ResponseAIPreviousChatMessagesDto.Message>){
+        selectedPosition?.let { pos ->
+            // 메시지 맵에 저장
+            practiceChatMessagesMap[chatRoomId] = list
+            notifyItemChanged(pos)
+        }
+    }
+
+    inner class PreviousPracticeViewHolder(private val binding:ItemPreviousPracticeBinding):
         RecyclerView.ViewHolder(binding.root){
-        fun bind(data:PreviousPractice){
+        fun bind(data:ResponseAIPreviousRecordsDto.ChatRoom){
             with(binding){
                 tvTitle.text=data.title
-                tvSummation.text=data.summation
-                tvDate.text=data.date
-                tvType.text=data.type
+                tvSummation.text=data.description
+                tvDate.text=formatToDateOnly(data.createdAt)
+                tvType.text="일상/대화"
 
-                val chatAdapter=PreviousPracticeChatAdapter{
+                val chatAdapter = PreviousPracticeChatAdapter { chat ->
+                    clickChat(chat)
+                }
+                rvChat.adapter = chatAdapter
+
+                // chatRoomId로 메시지 있는지 확인
+                val messageList = practiceChatMessagesMap[data.chatRoomId]
+                if (messageList != null) {
+                    chatAdapter.getList(messageList)
+                    clChatContent.visibility = View.VISIBLE
+                    clChatContent.alpha = 0f
+                    clChatContent.translationY = -30f
+                    clChatContent.animate()
+                        .alpha(1f)
+                        .translationY(0f)
+                        .setDuration(300)
+                        .start()
+                } else {
+                    clChatContent.visibility = View.GONE
+                    btnArrow.isSelected = false
+                }
+
+               /* val chatAdapter=PreviousPracticeChatAdapter{
                     chat->clickChat(chat)
                 }
                 rvChat.adapter=chatAdapter
                 chatAdapter.getList(data.chatList)
 
                 clChatContent.visibility = View.GONE
-                btnArrow.isSelected = false
+                btnArrow.isSelected = false*/
             }
 
-            showChats()
+            showChats(data.chatRoomId)
         }
 
-        private fun showChats(){
+        private fun showChats(chatRoomId:Int){
             binding.itemPreviousPractice.setOnClickListener {
+                selectedPosition = bindingAdapterPosition // 현재 position 저장
+                showChatMessages(chatRoomId) // ViewModel에게 요청
+
                 val isExpanding = !binding.btnArrow.isSelected
                 binding.btnArrow.isSelected = isExpanding
 
@@ -82,6 +123,15 @@ class PreviousPracticeAdapter(
                             .start()
                     }
                 }
+            }
+        }
+
+        private fun formatToDateOnly(isoString: String): String {
+            return try {
+                val zonedDateTime = ZonedDateTime.parse(isoString)
+                zonedDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+            } catch (e: Exception) {
+                "-"
             }
         }
     }

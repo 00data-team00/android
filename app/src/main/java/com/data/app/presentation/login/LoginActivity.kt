@@ -78,7 +78,7 @@ class LoginActivity : AppCompatActivity() {
             loginViewModel.loginState.collect { loginState ->
                 when (loginState) {
                     is LoginState.Success -> {
-                        val token = loginState.response.accessToken
+                        val token = "Bearer " + loginState.response.accessToken
                         if (token != null)
                             startMain(token)
                     }

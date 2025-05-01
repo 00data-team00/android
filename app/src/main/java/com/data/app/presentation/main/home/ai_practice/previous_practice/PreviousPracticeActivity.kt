@@ -3,27 +3,27 @@ package com.data.app.presentation.main.home.ai_practice.previous_practice
 import android.content.Context
 import android.os.Bundle
 import android.speech.tts.TextToSpeech
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat.getSystemService
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
+import androidx.lifecycle.lifecycleScope
 import com.data.app.R
 import com.data.app.databinding.ActivityPreviousPracticeBinding
+import com.data.app.extension.AIPreviousChatMessageState
+import com.data.app.extension.AIPreviousPracticeState
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.util.Locale
 
+@AndroidEntryPoint
 class PreviousPracticeActivity:AppCompatActivity() {
     private lateinit var binding: ActivityPreviousPracticeBinding
 
-    private val practiceRecordsViewModel: PreviousPracticeViewModel by viewModels()
-    private lateinit var practiceRecordsAdapter: PreviousPracticeAdapter
+    private val previousPracticeViewModel: PreviousPracticeViewModel by viewModels()
+    private lateinit var previousPracticeAdapter: PreviousPracticeAdapter
 
     private lateinit var tts: TextToSpeech
 
@@ -39,6 +39,11 @@ class PreviousPracticeActivity:AppCompatActivity() {
     }
 
     private fun setting() {
+        val token = intent.getStringExtra("accessToken")
+        previousPracticeViewModel.saveToken(token!!)
+
+        getRecords()
+
         binding.ivSearch.setOnClickListener {
             // 키보드 내리기
             val inputMethodManager =
@@ -65,12 +70,48 @@ class PreviousPracticeActivity:AppCompatActivity() {
         clickBack()
     }
 
-    private fun setRecords() {
-        practiceRecordsAdapter = PreviousPracticeAdapter { chat ->
-            speakOut(chat)
+    private fun getRecords(){
+        previousPracticeViewModel.accessToken.observe(this){token->
+            previousPracticeViewModel.getAIPreviousRecords()
         }
-        binding.rvPracticeRecords.adapter = practiceRecordsAdapter
-        practiceRecordsAdapter.getRecordsList(practiceRecordsViewModel.mockPracticeRecordList)
+    }
+
+    private fun setRecords() {
+        previousPracticeAdapter = PreviousPracticeAdapter (
+            showChatMessages = {id->
+                previousPracticeViewModel.getMessages(id)
+            },
+            clickChat = {chat->speakOut(chat)}
+        )
+        binding.rvPracticeRecords.adapter = previousPracticeAdapter
+
+        lifecycleScope.launch {
+            previousPracticeViewModel.aiPreviousRecordsState.collect{state->
+                when(state){
+                    is AIPreviousPracticeState.Success->{
+                        previousPracticeAdapter.getRecordsList(state.response.chatRooms)
+                    }
+                    is AIPreviousPracticeState.Loading->{}
+                    is AIPreviousPracticeState.Error->{
+                        Timber.e("set records ai previous records state error")
+                    }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            previousPracticeViewModel.aiPreviousChatMessagesState.collect{state->
+                when(state){
+                    is AIPreviousChatMessageState.Success->{
+                        previousPracticeAdapter.getMessages(state.chatRoomId, state.response.messages)
+                    }
+                    is AIPreviousChatMessageState.Loading->{}
+                    is AIPreviousChatMessageState.Error->{
+                        Timber.e("set records ai previous chat messages state error")
+                    }
+                }
+            }
+        }
     }
 
     private fun resetTTS() {
