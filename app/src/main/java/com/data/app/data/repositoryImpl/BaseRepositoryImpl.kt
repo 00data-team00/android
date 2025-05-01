@@ -5,6 +5,8 @@ import com.data.app.data.request_dto.RequestLoginDto
 import com.data.app.data.request_dto.RequestRegisterDto
 import com.data.app.data.request_dto.RequestSendMailDto
 import com.data.app.data.request_dto.RequestVerifyMailDto
+import com.data.app.data.response_dto.ResponseAIPreviousChatMessagesDto
+import com.data.app.data.response_dto.ResponseAIPreviousRecordsDto
 import com.data.app.data.response_dto.ResponseAITopicsDto
 import com.data.app.data.response_dto.ResponseAllProgramDto
 import com.data.app.data.response_dto.ResponseLoginDto
@@ -64,6 +66,26 @@ class BaseRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getAIPreviousList(token: String): Result<ResponseAIPreviousRecordsDto> {
+        return runCatching {
+            baseDataSource.getAIPreviousList(token)
+        }.onFailure {
+            Timber.d("base repository get ai previous list fail: $it")
+        }
+    }
+
+    override suspend fun getAIPreviousChatMessages(
+        token: String,
+        chatRoomId: Int
+    ): Result<ResponseAIPreviousChatMessagesDto> {
+        return runCatching {
+            baseDataSource.getAIPreviousChatMessages(token, chatRoomId)
+        }.onFailure {
+            Timber.d("base repository get ai previous chat message fail: $it")
+        }
+    }
+
+    // explore
     override suspend fun getAllPrograms(
         isFree: Boolean,
         page: Int,

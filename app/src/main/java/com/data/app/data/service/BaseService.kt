@@ -4,6 +4,8 @@ import com.data.app.data.request_dto.RequestLoginDto
 import com.data.app.data.request_dto.RequestRegisterDto
 import com.data.app.data.request_dto.RequestSendMailDto
 import com.data.app.data.request_dto.RequestVerifyMailDto
+import com.data.app.data.response_dto.ResponseAIPreviousChatMessagesDto
+import com.data.app.data.response_dto.ResponseAIPreviousRecordsDto
 import com.data.app.data.response_dto.ResponseAITopicsDto
 import com.data.app.data.response_dto.ResponseAllProgramDto
 import com.data.app.data.response_dto.ResponseLoginDto
@@ -41,6 +43,17 @@ interface BaseService {
     suspend fun getAIChatTopics(
         //@Header("Authorization") token:String,
     ):ResponseAITopicsDto
+
+    @GET("api/me/chat/chatrooms")
+    suspend fun getAIPreviousList(
+        @Header("Authorization") token:String,
+    ):ResponseAIPreviousRecordsDto
+
+    @GET("api/me/chat/messages")
+    suspend fun getAIPreviousChatMessages(
+        @Header("Authorization") token:String,
+        @Query("chatRoomId") chatRoomId:Int
+    ):ResponseAIPreviousChatMessagesDto
 
     @GET("api/edu-info")
     suspend fun getAllPrograms(

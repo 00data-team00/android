@@ -3,21 +3,16 @@ package com.data.app.presentation.main.home.ai_practice
 import android.content.Intent
 import android.content.res.Resources
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import com.data.app.R
 import com.data.app.databinding.ActivityAiPracticeBinding
 import com.data.app.presentation.main.home.ai_practice.ai_chat.AIChatActivity
 import com.data.app.presentation.main.home.ai_practice.previous_practice.PreviousPracticeActivity
 import com.google.android.material.tabs.TabLayout
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @AndroidEntryPoint
@@ -44,7 +39,7 @@ class AIPracticeActivity : AppCompatActivity() {
         val token = intent?.getStringExtra("accessToken")
 
         showList()
-        clickPracticeRecord()
+        clickPracticeRecord(token)
         clickBack()
     }
 
@@ -109,9 +104,10 @@ class AIPracticeActivity : AppCompatActivity() {
         return (this * Resources.getSystem().displayMetrics.density).toInt()
     }
 
-    private fun clickPracticeRecord() {
+    private fun clickPracticeRecord(token: String?) {
         binding.btnShowPreviousPractice.setOnClickListener {
             val intent = Intent(this, PreviousPracticeActivity::class.java)
+            intent.putExtra("accessToken", token)
             startActivity(intent)
             this.overridePendingTransition(R.anim.slide_in_right, R.anim.stay)
         }

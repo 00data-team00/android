@@ -1,10 +1,100 @@
 package com.data.app.presentation.main.home.ai_practice.previous_practice
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.data.app.R
 import com.data.app.data.PreviousPractice
+import com.data.app.domain.repository.BaseRepository
+import com.data.app.extension.AIPreviousChatMessageState
+import com.data.app.extension.AIPreviousPracticeState
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import okhttp3.ResponseBody
+import org.json.JSONObject
+import retrofit2.HttpException
+import timber.log.Timber
+import javax.inject.Inject
 
-class PreviousPracticeViewModel:ViewModel() {
+@HiltViewModel
+class PreviousPracticeViewModel @Inject constructor(
+    private val baseRepository: BaseRepository
+) :ViewModel() {
+    private val _accessToken = MutableLiveData<String>()
+    val accessToken: LiveData<String> get()=_accessToken
+
+    private val _aiPreviousRecordsState = MutableStateFlow<AIPreviousPracticeState>(AIPreviousPracticeState.Loading)
+    private val _aiPreviousChatMessagesState = MutableStateFlow<AIPreviousChatMessageState>(AIPreviousChatMessageState.Loading)
+
+    val aiPreviousRecordsState:StateFlow<AIPreviousPracticeState> = _aiPreviousRecordsState.asStateFlow()
+    val aiPreviousChatMessagesState:StateFlow<AIPreviousChatMessageState> = _aiPreviousChatMessagesState.asStateFlow()
+
+    fun saveToken(token:String){
+        _accessToken.value=token
+    }
+
+    fun getAIPreviousRecords(){
+        viewModelScope.launch {
+            _accessToken.value?.let {
+                baseRepository.getAIPreviousList(it).onSuccess { response->
+                    _aiPreviousRecordsState.value=AIPreviousPracticeState.Success(response)
+                    Timber.d("ai previous records state is success!")
+                }.onFailure {
+                    _aiPreviousRecordsState.value=AIPreviousPracticeState.Error("ai previous records state error: $it")
+                    if (it is HttpException) {
+                        try {
+                            val errorBody: ResponseBody? = it.response()?.errorBody()
+                            val errorBodyString = errorBody?.string() ?: ""
+                            httpError(errorBodyString)
+                        } catch (e: Exception) {
+                            // JSON 파싱 실패 시 로깅
+                            Timber.e("Error parsing error body: ${e}")
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    fun getMessages(id:Int){
+        viewModelScope.launch {
+            _accessToken.value?.let{
+                baseRepository.getAIPreviousChatMessages(it, id).onSuccess { response->
+                    _aiPreviousChatMessagesState.value=AIPreviousChatMessageState.Success(id, response)
+                    Timber.d("ai previous chat messages state is success!")
+                }.onFailure {
+                    _aiPreviousChatMessagesState.value=AIPreviousChatMessageState.Error("ai previous chat message state error: $it")
+                    if (it is HttpException) {
+                        try {
+                            val errorBody: ResponseBody? = it.response()?.errorBody()
+                            val errorBodyString = errorBody?.string() ?: ""
+                            httpError(errorBodyString)
+                        } catch (e: Exception) {
+                            // JSON 파싱 실패 시 로깅
+                            Timber.e("Error parsing error body: ${e}")
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun httpError(errorBody: String) {
+        // 전체 에러 바디를 로깅하여 디버깅
+        Timber.e("Full error body: $errorBody")
+
+        // JSONObject를 사용하여 메시지 추출
+        val jsonObject = JSONObject(errorBody)
+        val errorMessage = jsonObject.optString("message", "Unknown error")
+
+        // 추출된 에러 메시지 로깅
+        Timber.e( "Error message: $errorMessage")
+    }
+
     val mockPracticeRecordList = listOf(
         // 적금 상담
         PreviousPractice(
