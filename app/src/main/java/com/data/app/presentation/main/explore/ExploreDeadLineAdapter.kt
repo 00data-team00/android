@@ -4,11 +4,14 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import coil3.load
+import com.data.app.R
 import com.data.app.data.DeadLine
+import com.data.app.data.response_dto.ResponseDeadlineDto
 import com.data.app.databinding.ItemDeadlineBinding
+import timber.log.Timber
 
 class ExploreDeadLineAdapter:RecyclerView.Adapter<ExploreDeadLineAdapter.ExploreDeadLineViewHolder>() {
-    private val deadlineList = mutableListOf<DeadLine>()
+    private val deadlineList = mutableListOf<ResponseDeadlineDto.EduProgram>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ExploreDeadLineViewHolder {
         val binding=ItemDeadlineBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -30,7 +33,7 @@ class ExploreDeadLineAdapter:RecyclerView.Adapter<ExploreDeadLineAdapter.Explore
         holder.itemView.layoutParams = layoutParams
     }
 
-    fun getList(list:List<DeadLine>){
+    fun getList(list:List<ResponseDeadlineDto.EduProgram>){
         deadlineList.clear()
         deadlineList.addAll(list)
         notifyDataSetChanged()
@@ -41,13 +44,14 @@ class ExploreDeadLineAdapter:RecyclerView.Adapter<ExploreDeadLineAdapter.Explore
 
     inner class ExploreDeadLineViewHolder(private val binding:ItemDeadlineBinding):
         RecyclerView.ViewHolder(binding.root){
-        fun bind(data:DeadLine){
+        fun bind(data:ResponseDeadlineDto.EduProgram){
+            Timber.d("text: ${data.titleNm}")
             with(binding){
-                ivImage.load(data.image)
-                tvDeadlineDate.text=data.deadline
-                tvPrice.text=data.price
-                tvTitle.text=data.title
-                tvAddress.text=data.address
+                ivImage.load(R.drawable.ic_image)
+                tvDeadlineDate.text=data.appEndDate
+                tvPrice.text="무료"
+                tvTitle.text=data.titleNm
+                tvAddress.text=data.appQual
             }
         }
     }

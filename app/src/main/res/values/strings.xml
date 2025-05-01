@@ -11,6 +11,8 @@
     <string name="signup_privacy">By Signing up, you agree to the Terms of Service and Privacy Policy</string>
     <string name="signup_writevalid">*Write valid email address (email@domain.com)</string>
     <string name="signup_codenotvalid">Code is not correct!</string>
+    <string name="login_email_error">Your email address has not been registered.</string>
+    <string name="login_password_error">Passwords do not match.</string>
 
     <!--home-->
     <string name="home_title_kor">%s님의 학습기록</string>

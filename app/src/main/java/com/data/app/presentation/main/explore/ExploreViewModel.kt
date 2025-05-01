@@ -7,6 +7,7 @@ import com.data.app.data.DeadLine
 import com.data.app.data.Program
 import com.data.app.domain.repository.BaseRepository
 import com.data.app.extension.AllProgramsState
+import com.data.app.extension.DeadLineProgramState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,7 +24,11 @@ class ExploreViewModel @Inject constructor(
     private val baseRepository: BaseRepository
 ) :ViewModel() {
     private var _allProgramsState = MutableStateFlow<AllProgramsState>(AllProgramsState.Loading)
+    private var _deadLineProgramState = MutableStateFlow<DeadLineProgramState>(DeadLineProgramState.Loading)
+
     val allProgramsState:StateFlow<AllProgramsState> = _allProgramsState.asStateFlow()
+    val deadLineProgramState:StateFlow<DeadLineProgramState> = _deadLineProgramState.asStateFlow()
+
     private var currentPage = 0
     private var isLastPage = false
     private var isLoading = false
@@ -51,6 +56,29 @@ class ExploreViewModel @Inject constructor(
                 Timber.d("all program state success!")
             }.onFailure {
                 _allProgramsState.value=AllProgramsState.Error("Error response failure: ${it.message}")
+                isLoading = false
+
+                if (it is HttpException) {
+                    try {
+                        val errorBody: ResponseBody? = it.response()?.errorBody()
+                        val errorBodyString = errorBody?.string() ?: ""
+                        httpError(errorBodyString)
+                    } catch (e: Exception) {
+                        // JSON 파싱 실패 시 로깅
+                        Timber.e("Error parsing error body: ${e}")
+                    }
+                }
+            }
+        }
+    }
+
+    fun getDeadLinePrograms(){
+        viewModelScope.launch {
+            baseRepository.getDeadLinePrograms().onSuccess { response->
+                _deadLineProgramState.value=DeadLineProgramState.Success(response)
+                Timber.d("dead line program state is success!")
+            }.onFailure {
+                _deadLineProgramState.value=DeadLineProgramState.Error("Error response failure: ${it.message}")
                 isLoading = false
 
                 if (it is HttpException) {

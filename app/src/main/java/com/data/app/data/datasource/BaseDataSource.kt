@@ -8,10 +8,12 @@ import com.data.app.data.response_dto.ResponseAIPreviousChatMessagesDto
 import com.data.app.data.response_dto.ResponseAIPreviousRecordsDto
 import com.data.app.data.response_dto.ResponseAITopicsDto
 import com.data.app.data.response_dto.ResponseAllProgramDto
+import com.data.app.data.response_dto.ResponseDeadlineDto
 import com.data.app.data.response_dto.ResponseLoginDto
 import com.data.app.data.response_dto.ResponseRegisterDto
 
 interface BaseDataSource {
+    // sign up
     suspend fun sendMail(
         email:RequestSendMailDto,
     ):ResponseRegisterDto
@@ -24,10 +26,12 @@ interface BaseDataSource {
         requestRegisterDto: RequestRegisterDto
     ):ResponseRegisterDto
 
+    // login
     suspend fun login(
         requestLoginDto: RequestLoginDto
     ):ResponseLoginDto
 
+    // ai chat
     suspend fun getAIChatTopics(
         //token:String,
     ):ResponseAITopicsDto
@@ -41,10 +45,13 @@ interface BaseDataSource {
         chatRoomId:Int
     ):ResponseAIPreviousChatMessagesDto
 
+    // explore
     suspend fun getAllPrograms(
         isFree:Boolean,
         sort:String,
         page:Int,
         size:Int,
     ):ResponseAllProgramDto
+
+    suspend fun getDeadLinePrograms():ResponseDeadlineDto
 }
