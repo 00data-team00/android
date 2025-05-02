@@ -38,14 +38,16 @@ class AIPracticeActivity : AppCompatActivity() {
     private fun setting() {
         val token = intent?.getStringExtra("accessToken")
 
-        showList()
+        showList(token)
         clickPracticeRecord(token)
         clickBack()
     }
 
-    private fun showList() {
-        aiAdapter = AIPracticeAdapter(clickPractice = {
+    private fun showList(token: String?) {
+        aiAdapter = AIPracticeAdapter(clickPractice = { id->
             val intent = Intent(this, AIChatActivity::class.java)
+            intent.putExtra("accessToken", token)
+            intent.putExtra("topicId", id)
             startActivity(intent)
             overridePendingTransition(R.anim.slide_in_right, R.anim.stay)
         }

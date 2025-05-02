@@ -1,5 +1,6 @@
 package com.data.app.data.datasource
 
+import com.data.app.data.request_dto.RequestChatAiMessageDto
 import com.data.app.data.request_dto.RequestLoginDto
 import com.data.app.data.request_dto.RequestRegisterDto
 import com.data.app.data.request_dto.RequestSendMailDto
@@ -8,6 +9,8 @@ import com.data.app.data.response_dto.ResponseAIPreviousChatMessagesDto
 import com.data.app.data.response_dto.ResponseAIPreviousRecordsDto
 import com.data.app.data.response_dto.ResponseAITopicsDto
 import com.data.app.data.response_dto.ResponseAllProgramDto
+import com.data.app.data.response_dto.ResponseChatAiMessageDto
+import com.data.app.data.response_dto.ResponseChatStartDto
 import com.data.app.data.response_dto.ResponseDeadlineDto
 import com.data.app.data.response_dto.ResponseLoginDto
 import com.data.app.data.response_dto.ResponseRegisterDto
@@ -35,6 +38,16 @@ interface BaseDataSource {
     suspend fun getAIChatTopics(
         //token:String,
     ):ResponseAITopicsDto
+
+    suspend fun startChat(
+        token: String,
+        topicId:Int,
+    ):ResponseChatStartDto
+
+    suspend fun getAiChat(
+        token:String,
+        requestChatAiMessageDto: RequestChatAiMessageDto
+    ):ResponseChatAiMessageDto
 
     suspend fun getAIPreviousList(
         token:String,

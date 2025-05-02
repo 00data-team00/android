@@ -9,6 +9,7 @@ import com.data.app.data.response_dto.ResponseAIPreviousChatMessagesDto
 import com.data.app.data.response_dto.ResponseAIPreviousRecordsDto
 import com.data.app.databinding.ItemPreviousPracticeBinding
 import timber.log.Timber
+import java.time.LocalDateTime
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
@@ -41,11 +42,19 @@ class PreviousPracticeAdapter(
     }
 
     fun getMessages(chatRoomId:Int, list:List<ResponseAIPreviousChatMessagesDto.Message>){
-        selectedPosition?.let { pos ->
-            // 메시지 맵에 저장
-            practiceChatMessagesMap[chatRoomId] = list
+        practiceChatMessagesMap[chatRoomId] = list
+
+        // chatRoomId에 해당하는 position 찾기
+        val pos = practiceRecordsList.indexOfFirst { it.chatRoomId == chatRoomId }
+        if (pos != -1) {
             notifyItemChanged(pos)
         }
+       /* selectedPosition?.let { pos ->
+            // 메시지 맵에 저장
+            Timber.d("list: $list")
+            practiceChatMessagesMap[chatRoomId] = list
+            notifyItemChanged(pos)
+        }*/
     }
 
     inner class PreviousPracticeViewHolder(private val binding:ItemPreviousPracticeBinding):
@@ -94,14 +103,14 @@ class PreviousPracticeAdapter(
 
         private fun showChats(chatRoomId:Int){
             binding.itemPreviousPractice.setOnClickListener {
-                selectedPosition = bindingAdapterPosition // 현재 position 저장
-                showChatMessages(chatRoomId) // ViewModel에게 요청
-
                 val isExpanding = !binding.btnArrow.isSelected
                 binding.btnArrow.isSelected = isExpanding
 
                 with(binding){
                     if (isExpanding) {
+                        selectedPosition = bindingAdapterPosition // 현재 position 저장
+                        Timber.d("chatRoomid: $chatRoomId")
+                        showChatMessages(chatRoomId) // ViewModel에게 요청
                         // 아래로 슬라이드 (보이게)
                         clChatContent.visibility = View.VISIBLE
                         clChatContent.alpha = 0f
@@ -128,8 +137,8 @@ class PreviousPracticeAdapter(
 
         private fun formatToDateOnly(isoString: String): String {
             return try {
-                val zonedDateTime = ZonedDateTime.parse(isoString)
-                zonedDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                val localDateTime = LocalDateTime.parse(isoString)
+                localDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-ddt "))
             } catch (e: Exception) {
                 "-"
             }

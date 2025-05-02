@@ -1,6 +1,7 @@
 package com.data.app.data.repositoryImpl
 
 import com.data.app.data.datasource.BaseDataSource
+import com.data.app.data.request_dto.RequestChatAiMessageDto
 import com.data.app.data.request_dto.RequestLoginDto
 import com.data.app.data.request_dto.RequestRegisterDto
 import com.data.app.data.request_dto.RequestSendMailDto
@@ -9,6 +10,8 @@ import com.data.app.data.response_dto.ResponseAIPreviousChatMessagesDto
 import com.data.app.data.response_dto.ResponseAIPreviousRecordsDto
 import com.data.app.data.response_dto.ResponseAITopicsDto
 import com.data.app.data.response_dto.ResponseAllProgramDto
+import com.data.app.data.response_dto.ResponseChatAiMessageDto
+import com.data.app.data.response_dto.ResponseChatStartDto
 import com.data.app.data.response_dto.ResponseDeadlineDto
 import com.data.app.data.response_dto.ResponseLoginDto
 import com.data.app.data.response_dto.ResponseRegisterDto
@@ -66,7 +69,27 @@ class BaseRepositoryImpl @Inject constructor(
         return runCatching {
             baseDataSource.getAIChatTopics()
         }.onFailure {
-            Timber.d("base repository get ai chat topics fail: $it")
+            Timber.e("base repository get ai chat topics fail: $it")
+        }
+    }
+
+    override suspend fun startChat(token: String, topicId: Int): Result<ResponseChatStartDto> {
+        return runCatching {
+            baseDataSource.startChat(token,topicId)
+        }.onFailure {
+            Timber.e("base repository start chat fail: $it")
+        }
+    }
+
+    override suspend fun getAiChat(
+        token: String,
+        chatRoomId: Int,
+        text: String
+    ): Result<ResponseChatAiMessageDto> {
+        return runCatching {
+            baseDataSource.getAiChat(token, RequestChatAiMessageDto(chatRoomId, text, true))
+        }.onFailure {
+            Timber.e("base repository get ai chat fail: $it")
         }
     }
 
@@ -74,7 +97,7 @@ class BaseRepositoryImpl @Inject constructor(
         return runCatching {
             baseDataSource.getAIPreviousList(token)
         }.onFailure {
-            Timber.d("base repository get ai previous list fail: $it")
+            Timber.e("base repository get ai previous list fail: $it")
         }
     }
 
@@ -85,7 +108,7 @@ class BaseRepositoryImpl @Inject constructor(
         return runCatching {
             baseDataSource.getAIPreviousChatMessages(token, chatRoomId)
         }.onFailure {
-            Timber.d("base repository get ai previous chat message fail: $it")
+            Timber.e("base repository get ai previous chat message fail: $it")
         }
     }
 
@@ -98,7 +121,7 @@ class BaseRepositoryImpl @Inject constructor(
         return runCatching {
             baseDataSource.getAllPrograms(isFree, "regDt", page, size)
         }.onFailure {
-            Timber.d("base repository get all programs fail: $it")
+            Timber.e("base repository get all programs fail: $it")
         }
     }
 
@@ -106,7 +129,7 @@ class BaseRepositoryImpl @Inject constructor(
         return runCatching {
             baseDataSource.getDeadLinePrograms()
         }.onFailure {
-            Timber.d("base repository get deadline programs fail: $it")
+            Timber.e("base repository get deadline programs fail: $it")
         }
     }
 }

@@ -4,9 +4,11 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ResponseAIPreviousChatMessagesDto (
-    @SerialName("messages")
-    val messages:List<Message>
+data class ResponseChatAiMessageDto (
+    @SerialName("userMessage")
+    val userMessage:Message,
+    @SerialName("aiMessage")
+    val aiMessage:Message
 ){
     @Serializable
     data class Message(
@@ -17,10 +19,6 @@ data class ResponseAIPreviousChatMessagesDto (
         @SerialName("isUser")
         val isUser:Boolean,
         @SerialName("storedAt")
-        val storedAt:String,
-        @SerialName("feedbackLang")
-        val feedbackLang:String?,
-        @SerialName("feedbackContent")
-        val feedbackContent:String?,
+        val storedAt:String
     )
 }

@@ -43,6 +43,7 @@
         android:inputType="text"
         android:hint="Email"
         android:drawableLeft="@drawable/ic_email_black_24"
+        android:autofillHints="user1@example.com"
         app:layout_constraintTop_toBottomOf="@id/tv_tocontinue"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
@@ -72,6 +73,7 @@
         android:backgroundTint="#d6d6d6"
         android:inputType="textPassword"
         android:hint="Password"
+        android:autofillHints="TestPassword123@@"
         app:layout_constraintTop_toBottomOf="@id/et_login_email"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>

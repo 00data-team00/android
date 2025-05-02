@@ -11,6 +11,7 @@ import com.data.app.data.PreviousPractice
 import com.data.app.data.response_dto.ResponseAIPreviousChatMessagesDto
 import com.data.app.databinding.ItemChatAiBinding
 import com.data.app.databinding.ItemChatMyBinding
+import java.time.LocalDateTime
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
@@ -67,7 +68,7 @@ class PreviousPracticeChatAdapter(
         RecyclerView.ViewHolder(binding.root) {
         fun bind(content: ResponseAIPreviousChatMessagesDto.Message, isFirstOfType: Boolean) {
             binding.tvChat.text = content.text
-            binding.tvTime.text = formatToTimeOnly(content.storeAt)
+            binding.tvTime.text = formatToTimeOnly(content.storedAt)
             binding.ivFirst.visibility = if (isFirstOfType) View.VISIBLE else View.INVISIBLE
 
             val screenWidth = itemView.context.resources.displayMetrics.widthPixels
@@ -86,7 +87,7 @@ class PreviousPracticeChatAdapter(
                 ivProfile.load(R.drawable.ic_basic_profile)
                 tvName.text = "AI"
                 tvChat.text = content.text
-                tvTime.text = formatToTimeOnly(content.storeAt)
+                tvTime.text = formatToTimeOnly(content.storedAt)
 
                 val screenWidth = itemView.context.resources.displayMetrics.widthPixels
                 binding.tvChat.maxWidth = (screenWidth * 0.6).toInt()
@@ -113,8 +114,8 @@ class PreviousPracticeChatAdapter(
 
     private fun formatToTimeOnly(isoString: String): String {
         return try {
-            val zonedDateTime = ZonedDateTime.parse(isoString)
-            zonedDateTime.format(DateTimeFormatter.ofPattern("HH:mm"))
+            val localDateTime = LocalDateTime.parse(isoString)
+            localDateTime.format(DateTimeFormatter.ofPattern("HH:mm"))
         } catch (e: Exception) {
             "-"
         }

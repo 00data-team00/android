@@ -79,6 +79,7 @@ class PreviousPracticeActivity:AppCompatActivity() {
     private fun setRecords() {
         previousPracticeAdapter = PreviousPracticeAdapter (
             showChatMessages = {id->
+                Timber.d("click chat: $id")
                 previousPracticeViewModel.getMessages(id)
             },
             clickChat = {chat->speakOut(chat)}
