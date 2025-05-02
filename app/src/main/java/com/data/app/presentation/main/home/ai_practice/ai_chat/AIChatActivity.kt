@@ -3,7 +3,6 @@ package com.data.app.presentation.main.home.ai_practice.ai_chat
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -19,7 +18,6 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.ViewModel
 import com.data.app.databinding.ActivityAiChatBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -30,12 +28,16 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.Locale
 import androidx.core.graphics.toColorInt
+import androidx.lifecycle.lifecycleScope
 import com.data.app.R
 import com.data.app.data.PreviousPractice
-import org.xml.sax.SAXNotRecognizedException
+import com.data.app.extension.AiChatState
+import com.data.app.extension.StartChatState
+import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
 import java.util.Date
 
+@AndroidEntryPoint
 class AIChatActivity:AppCompatActivity() {
     private lateinit var binding:ActivityAiChatBinding
 
@@ -56,28 +58,38 @@ class AIChatActivity:AppCompatActivity() {
         setContentView(binding.root)
 
         setting()
-        clickButton()
-        clickExitButton()
-        clickSendButton()
-        clickAIButton()
-        clickBack()
+
     }
 
     private fun setting() {
-        speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this)
-        speechRecognizer.setRecognitionListener(recognitionListener)
-        recognizerIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
-            putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE,packageName) //여분의 키
-            putExtra(RecognizerIntent.EXTRA_LANGUAGE, "ko-KR")
-            // 자동 종료 시간을없애는건 불가능 -> 30초로 바꿈
-            putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, 30000) // 30초
-            putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_POSSIBLY_COMPLETE_SILENCE_LENGTH_MILLIS, 30000) // 30초
-            putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_MINIMUM_LENGTH_MILLIS, 30000) // 최소 듣기 시간 (30초)
+        val token=intent.getStringExtra("accessToken")
+        val topicId=intent.getIntExtra("topicId", -1)
+
+        aiChatViewModel.accessToken.observe(this){
+            speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this)
+            speechRecognizer.setRecognitionListener(recognitionListener)
+            recognizerIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+                putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE,packageName) //여분의 키
+                putExtra(RecognizerIntent.EXTRA_LANGUAGE, "ko-KR")
+                // 자동 종료 시간을없애는건 불가능 -> 30초로 바꿈
+                putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, 30000) // 30초
+                putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_POSSIBLY_COMPLETE_SILENCE_LENGTH_MILLIS, 30000) // 30초
+                putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_MINIMUM_LENGTH_MILLIS, 30000) // 최소 듣기 시간 (30초)
+            }
+
+            setTitle()
+            requestPermission()
+            resetTTS()
+            setChats(topicId)
+
+            clickButton()
+            clickExitButton()
+            clickSendButton()
+            // clickAIButton()
+            clickBack()
         }
-        setTitle()
-        requestPermission()
-        resetTTS()
-        setChats()
+
+        aiChatViewModel.saveToken(token!!)
     }
 
     // 대화 제목, 영어제목, 필수여부 표시
@@ -89,21 +101,52 @@ class AIChatActivity:AppCompatActivity() {
         else binding.tvAichatEssential.visibility = View.GONE
     }
 
-    private fun setChats() {
+    private fun setChats(topicId:Int) {
         aiChatAdapter = AIChatAdapter{chat -> speakMessage(chat)}
         binding.rvChat.adapter = aiChatAdapter
-        aiChatAdapter.getList(aiChatViewModel.mockAIChat.chatList)
+        lifecycleScope.launch {
+            aiChatViewModel.startChatState.collect{state->
+                when(state){
+                    is StartChatState.Success->{
+                        aiChatAdapter.startAiMessage(state.response)
+                        binding.rvChat.scrollToPosition(aiChatAdapter.itemCount - 1)
+                    }
+                    is StartChatState.Loading->{}
+                    is StartChatState.Error->{
+                        Timber.e("setChats start chat state is error!!")
+                    }
+                }
+            }
+        }
+
+        aiChatViewModel.startChat(topicId)
+        getAiChat()
+        //aiChatAdapter.getList(aiChatViewModel.mockAIChat.chatList)
     }
 
-    private fun clickAIButton(){
-        binding.btnTemp.setOnClickListener{
+    private fun getAiChat(){
+        lifecycleScope.launch {
+            aiChatViewModel.aiChatState.collect{ state->
+                when(state){
+                    is AiChatState.Success->{
+                        aiChatAdapter.addAiMessage(state.response.aiMessage)
+                    }
+                    is AiChatState.Loading->{}
+                    is AiChatState.Error->{
+                        Timber.e("get ai chat error!!")
+                    }
+                }
+
+            }
+        }
+        /*binding.btnTemp.setOnClickListener{
             val newstring = "우리가 서버에서 받아올 AI 채팅메세지"
             val currentTime = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())
             var newchat = PreviousPractice.ChatItem.Ai(name = "홍대의", profile = R.drawable.ic_profile2, chat = newstring, time = currentTime)
-            aiChatViewModel.addchat(newchat)
-            aiChatAdapter.addList(newchat)
-            binding.rvChat.scrollToPosition(aiChatAdapter.itemCount - 1)
-        }
+            //aiChatViewModel.addchat(newchat)
+            //aiChatAdapter.addList(newchat)
+            //binding.rvChat.scrollToPosition(aiChatAdapter.itemCount - 1)
+        }*/
     }
 
     private fun clickSendButton() {
@@ -123,10 +166,12 @@ class AIChatActivity:AppCompatActivity() {
             }
             Toast.makeText(this@AIChatActivity, "전송 완료!", Toast.LENGTH_SHORT).show()
             val currentTime = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())
-            var newchat = PreviousPractice.ChatItem.My(chat = newstring, time = currentTime)
-            aiChatViewModel.addchat(newchat)
-            aiChatAdapter.addList(newchat)
+            //var newchat = PreviousPractice.ChatItem.My(chat = newstring, time = currentTime)
+            //aiChatViewModel.addchat(newchat)
+            aiChatAdapter.addUserMessage(newstring, currentTime)
             binding.rvChat.scrollToPosition(aiChatAdapter.itemCount - 1)
+
+            aiChatViewModel.getAiChat(newstring)
         }
     }
 

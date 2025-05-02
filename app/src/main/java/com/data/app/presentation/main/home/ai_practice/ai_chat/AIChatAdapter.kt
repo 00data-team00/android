@@ -8,7 +8,9 @@ import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import coil3.load
-import com.data.app.data.PreviousPractice
+import com.data.app.R
+import com.data.app.data.response_dto.ResponseChatAiMessageDto
+import com.data.app.data.response_dto.ResponseChatStartDto
 import com.data.app.databinding.ItemChatAiBinding
 import com.data.app.databinding.ItemChatMyBinding
 import kotlinx.coroutines.CoroutineScope
@@ -16,6 +18,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 
 
 class AIChatAdapter(
@@ -26,7 +31,7 @@ class AIChatAdapter(
         private const val TYPE_AI_CHAT = 1
     }
 
-    private val chatList = mutableListOf<PreviousPractice.ChatItem>()
+    private val chatList = mutableListOf<ResponseChatAiMessageDto.Message>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -45,33 +50,26 @@ class AIChatAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val currentItem = chatList[position]
-        val isFirstOfType = position == 0 || currentItem::class != chatList[position - 1]::class
+        val isFirstOfType = position == 0 || currentItem.isUser != chatList[position - 1].isUser
 
-        when (currentItem) {
-            is PreviousPractice.ChatItem.My -> {
-                (holder as ChatMyViewHolder).bind(currentItem, isFirstOfType)
-            }
-
-            is PreviousPractice.ChatItem.Ai -> {
-                (holder as ChatAiViewHolder).bind(currentItem, isFirstOfType)
-            }
+        when (holder) {
+            is ChatMyViewHolder -> holder.bind(currentItem, isFirstOfType)
+            is ChatAiViewHolder -> holder.bind(currentItem, isFirstOfType)
         }
     }
+
 
     override fun getItemCount(): Int = chatList.size
 
     override fun getItemViewType(position: Int): Int {
-        return when (chatList[position]) {
-            is PreviousPractice.ChatItem.My -> TYPE_MY_CHAT
-            is PreviousPractice.ChatItem.Ai -> TYPE_AI_CHAT
-        }
+        return if (chatList[position].isUser) TYPE_MY_CHAT else TYPE_AI_CHAT
     }
 
     inner class ChatMyViewHolder(private val binding: ItemChatMyBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(content: PreviousPractice.ChatItem.My, isFirstOfType: Boolean) {
-            binding.tvChat.text = content.chat
-            binding.tvTime.text = content.time
+        fun bind(content: ResponseChatAiMessageDto.Message, isFirstOfType: Boolean) {
+            binding.tvChat.text = content.text
+            binding.tvTime.text = content.storedAt
             binding.ivFirst.visibility = if (isFirstOfType) View.VISIBLE else View.INVISIBLE
 
             val screenWidth = itemView.context.resources.displayMetrics.widthPixels
@@ -82,19 +80,19 @@ class AIChatAdapter(
                 targetView = binding.itemChatMy,
                 onLongPress = {binding.tvChat.text = "This is translated chat text !!"},
                 onLongPressEnd = {binding.tvChat.text = originalText},
-                onClick = {clickChat(content.chat)}
+                onClick = {clickChat(content.text)}
             )
         }
     }
 
     inner class ChatAiViewHolder(private val binding: ItemChatAiBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(content: PreviousPractice.ChatItem.Ai, isFirstOfType: Boolean) {
+        fun bind(content: ResponseChatAiMessageDto.Message, isFirstOfType: Boolean) {
             with(binding) {
-                ivProfile.load(content.profile)
-                tvName.text = content.name
-                tvChat.text = content.chat
-                tvTime.text = content.time
+                ivProfile.load(R.drawable.ic_basic_profile)
+                tvName.text = "AI"
+                tvChat.text = content.text
+                tvTime.text = formatToTimeOnly(content.storedAt)
 
                 val screenWidth = itemView.context.resources.displayMetrics.widthPixels
                 binding.tvChat.maxWidth = (screenWidth * 0.6).toInt()
@@ -112,7 +110,7 @@ class AIChatAdapter(
                     targetView = binding.itemChatAi,
                     onLongPress = {binding.tvChat.text = "This is translated chat text !!"},
                     onLongPressEnd = {binding.tvChat.text = originalText},
-                    onClick = {clickChat(content.chat)}
+                    onClick = {clickChat(content.text)}
                 )
             }
         }
@@ -160,15 +158,35 @@ class AIChatAdapter(
         }
     }
 
-    fun getList(list: List<PreviousPractice.ChatItem>) {
+   /* fun getList(list: List<PreviousPractice.ChatItem>) {
         chatList.clear()
         chatList.addAll(list)
         notifyDataSetChanged()
-    }
+    }*/
 
-    fun addList(item: PreviousPractice.ChatItem) {
-        chatList.add(item)
+    fun addUserMessage(item: String, time:String,) {
+        val userChat=ResponseChatAiMessageDto.Message(0, item, true, time)
+        chatList.add(userChat)
         notifyItemInserted(chatList.size-1)
     }
 
+    fun startAiMessage(message:ResponseChatStartDto){
+        val aiChat = ResponseChatAiMessageDto.Message(message.chatRoomId, message.message, false, message.createdAt)
+        chatList.add(aiChat)
+        notifyItemInserted(chatList.size-1)
+    }
+
+    fun addAiMessage(message: ResponseChatAiMessageDto.Message){
+       chatList.add(message)
+        notifyItemInserted(chatList.size-1)
+    }
+
+    private fun formatToTimeOnly(isoString: String): String {
+        return try {
+            val localDateTime = LocalDateTime.parse(isoString)
+            localDateTime.format(DateTimeFormatter.ofPattern("HH:mm"))
+        } catch (e: Exception) {
+            "-"
+        }
+    }
 }

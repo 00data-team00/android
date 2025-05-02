@@ -1,5 +1,6 @@
 package com.data.app.data.service
 
+import com.data.app.data.request_dto.RequestChatAiMessageDto
 import com.data.app.data.request_dto.RequestLoginDto
 import com.data.app.data.request_dto.RequestRegisterDto
 import com.data.app.data.request_dto.RequestSendMailDto
@@ -8,6 +9,8 @@ import com.data.app.data.response_dto.ResponseAIPreviousChatMessagesDto
 import com.data.app.data.response_dto.ResponseAIPreviousRecordsDto
 import com.data.app.data.response_dto.ResponseAITopicsDto
 import com.data.app.data.response_dto.ResponseAllProgramDto
+import com.data.app.data.response_dto.ResponseChatAiMessageDto
+import com.data.app.data.response_dto.ResponseChatStartDto
 import com.data.app.data.response_dto.ResponseDeadlineDto
 import com.data.app.data.response_dto.ResponseLoginDto
 import com.data.app.data.response_dto.ResponseRegisterDto
@@ -45,6 +48,18 @@ interface BaseService {
     suspend fun getAIChatTopics(
         //@Header("Authorization") token:String,
     ):ResponseAITopicsDto
+
+    @POST("api/chat/me/start")
+    suspend fun startChat(
+        @Header("Authorization") token:String,
+        @Query("topicId") topicId:Int
+    ):ResponseChatStartDto
+
+    @POST("api/chat/me/receive")
+    suspend fun getAiChat(
+        @Header("Authorization") token:String,
+        @Body requestAiChatDto: RequestChatAiMessageDto,
+    ):ResponseChatAiMessageDto
 
     @GET("api/me/chat/chatrooms")
     suspend fun getAIPreviousList(

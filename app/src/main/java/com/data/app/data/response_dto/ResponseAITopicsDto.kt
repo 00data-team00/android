@@ -16,6 +16,8 @@ data class ResponseAITopicsDto(
 ){
     @Serializable
     data class TopicDto(
+        @SerialName("id")
+        val id:Int,
         @SerialName("category")
         val category: String,
 

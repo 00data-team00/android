@@ -10,7 +10,7 @@ import com.data.app.databinding.ItemAiPracticeBinding
 import timber.log.Timber
 
 class AIPracticeAdapter(
-    private val clickPractice:()->Unit
+    private val clickPractice:(Int)->Unit
 ) : RecyclerView.Adapter<AIPracticeAdapter.AIPracticeViewHolder>() {
 
     private val aiPracticeList = mutableListOf<ResponseAITopicsDto.TopicDto>()
@@ -42,7 +42,7 @@ class AIPracticeAdapter(
                 tvSubTitle.text = item.description
 
                 ivBackground.setOnClickListener{
-                    clickPractice()
+                    clickPractice(item.id)
                 }
             }
         }
