@@ -84,7 +84,6 @@ class LoginActivity : AppCompatActivity() {
                         if (token != null)
                             startMain(token)
                     }
-
                     is LoginState.Loading -> {}
                     is LoginState.Error -> {
                         val message = loginState.message
@@ -107,6 +106,7 @@ class LoginActivity : AppCompatActivity() {
                             }
                         }
                     }
+                    else->{}
                 }
             }
         }
