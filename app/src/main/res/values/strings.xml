@@ -60,6 +60,13 @@
     <string name="game_quiz_fail_next">다시 도전</string>
     <string name="game_quiz_skip">정답 보고 건너뛰기</string>
 
+    <string name="game_quiz_again">다시하기</string>
+    <string name="game_quiz_stop">그만하기</string>
+    <string name="game_quiz_finalsucess">도전성공</string>
+    <string name="game_quiz_finalfail">도전실패</string>
+    <string name="game_quiz_commentsuccess">멋진 OO님!\n다음 퀴즈도 풀어볼까요?</string>
+    <string name="game_quiz_commentafail">멈추지 말고\n다시 해봐요!!</string>
+
     <!--explore-->
     <string name="explore_title">마감 기한이 코앞으로 다가왔어요!</string>
     <string name="explore_enroll">신청하기</string>
