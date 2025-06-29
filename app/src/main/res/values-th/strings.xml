@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">app</string>
+
+    <!--login & signup-->
+    <string name="login_landing">Speak Korean.\nPlay the Game.\nMaster It.</string>
+    <string name="login_ruready">Ready to level up\nyour Korean?</string>
+    <string name="login_tocontinue">Sign up with Social of fill the form to continue.</string>
+    <string name="signup_letsstart">Let\'s Get Started!</string>
+    <string name="signup_alreadyuse">*This email is already in use</string>
+    <string name="signup_pwcheck">At least 8 characters, 1 uppercase letter, 1 number, 1 symbol</string>
+    <string name="signup_privacy">By Signing up, you agree to the Terms of Service and Privacy Policy</string>
+    <string name="signup_writevalid">*Write valid email address (email@domain.com)</string>
+    <string name="signup_codenotvalid">Code is not correct!</string>
+    <string name="login_email_error">Your email address has not been registered.</string>
+    <string name="login_password_error">Passwords do not match.</string>
+
+    <!--home-->
+    <string name="home_title">ประวัติการเรียนรู้ของคุณ %s</string>
+    <string name="home_subtitle_eng">%s\'s Learning Journey</string>
+    <string name="home_not_give_up">포기하지 않는 %s님!</string>
+    <string name="home_continue_study">연속으로 %d일차 공부했어요! 오늘도 이어서 해볼까요?</string>
+    <string name="home_quiz_1">แบบทดสอบที่ฉันทำ</string>
+    <string name="home_quiz_2">แบบทดสอบที่ทำวันนี้</string>
+    <string name="home_conversation">จำนวนครั้งที่ฝึกสนทนา</string>
+
+    <string name="home_go_to_study">ไปเรียนกันเถอะ</string>
+    <string name="home_go_to_study_eng">Today\'s Learning Games</string>
+    <string name="home_study_title">ฝึกภาษาเกาหลี\nกับผู้ช่วย AI</string>
+    <string name="home_go_to_example">เริ่มฝึก</string>
+
+    <!--ai practice-->
+    <string name="ai_practice_title">แบบฝึกหัดภาษาเกาหลีด้วย AI</string>
+    <string name="ai_practice_title_eng">Today\'s Learning Objectives</string>
+    <string name="ai_practice_show_previous_practice">ดูการฝึกก่อนหน้า</string>
+    <string name="ai_practice_daily">จำเป็น/ชีวิตประจำวัน</string>
+    <string name="ai_practice_culture">วัฒนธรรม/สันทนาการ</string>
+    <string name="ai_practice_job">การสมัครงาน/งาน</string>
+
+    <string name="practice_record_title">บันทึกการฝึกของฉัน</string>
+    <string name="practice_record_title_eng">My Practice Records</string>
+
+    <!--ai chat-->
+    <string name="ai_chat_essential">จำเป็น</string>
+    <string name="ai_chat_listening">Listening .. ..</string>
+
+    <!--game tab-->
+    <string name="game_tab_title">แบบทดสอบภาษาเกาหลี</string>
+    <string name="game_tab_subtitle">วันนี้ก็มาตั้งใจเรียนกันเถอะ!</string>
+    <string name="game_tab_week_mon">월</string>
+    <string name="game_tab_week_tue">화</string>
+    <string name="game_tab_week_wed">수</string>
+    <string name="game_tab_week_thu">목</string>
+    <string name="game_tab_week_fri">금</string>
+    <string name="game_tab_week_sat">토</string>
+    <string name="game_tab_week_sun">일</string>
+
+    <!-- game -->
+    <string name="game_quiz_complete">ยืนยัน</string>
+    <string name="game_quiz_success">ถูกต้อง!</string>
+    <string name="game_quiz_fail">ผิด!</string>
+    <string name="game_quiz_success_next">ถัดไป</string>
+    <string name="game_quiz_fail_next">ลองอีกครั้ง</string>
+    <string name="game_quiz_skip">ดูคำตอบและข้าม</string>
+
+    <string name="game_quiz_again">เริ่มใหม่</string>
+    <string name="game_quiz_stop">หยุด</string>
+    <string name="game_quiz_finalsucess">สำเร็จในการท้าทาย</string>
+    <string name="game_quiz_finalfail">ท้าทายล้มเหลว</string>
+    <string name="game_quiz_commentsuccess">เยี่ยมมาก %s!\nไปทำแบบทดสอบถัดไปกันเถอะ!</string>
+    <string name="game_quiz_commentafail">อย่าหยุดนะ\nลองอีกครั้ง!</string>
+
+    <!-- explore -->
+    <string name="explore_title">กำหนดส่งใกล้เข้ามาแล้ว!</string>
+    <string name="explore_enroll">สมัคร</string>
+    <string name="explore_all_title">โปรแกรมทั้งหมด</string>
+    <string name="explore_price_free">ฟรี</string>
+    <string name="explore_price_paid">มีค่าใช้จ่าย</string>
+
+    <!-- community -->
+    <string name="community_all">ทั้งหมด</string>
+    <string name="community_following">กำลังติดตาม</string>
+    <string name="community_follow">ติดตาม</string>
+    <string name="community_user_country">ประเทศของผู้ใช้</string>
+    <string name="community_id">\@%s</string>
+    <string name="community_time"> · %dชม.</string>
+    <string name="post_write">เขียนโพสต์</string>
+    <string name="post_write_complete">เสร็จสิ้น</string>
+    <string name="post_write_hint">กรอกเนื้อหา...</string>
+    <string name="post_detail_image_count">%d / %d</string>
+
+    <!-- profile -->
+    <string name="other_profile_post">โพสต์</string>
+    <string name="other_profile_follower">ผู้ติดตาม</string>
+    <string name="other_profile_following">กำลังติดตาม</string>
+    <string name="other_profile_share">แชร์โปรไฟล์</string>
+    <string name="my_profile_edit">แก้ไขโปรไฟล์</string>
+
+    <string name="follow_list_following">กำลังติดตาม</string>
+    <string name="follow_list_follower">ผู้ติดตาม</string>
+
+    <!-- mock -->
+    <string name="practice_record_item_title">บทสนทนาเกี่ยวกับธนาคาร</string>
+    <string name="practice_record_item_summation">พูดคุยเกี่ยวกับการฝากเงินและเหตุผลในการไปธนาคาร</string>
+    <string name="practice_record_item_date">2025.04.08</string>
+    <string name="practice_record_item_type">ชีวิตประจำวัน</string>
+
+    <!-- chat -->
+    <string name="chat_me_item_content1">Hi team 🖐️</string>
+    <string name="chat_me_item_content2">ใครว่างกินข้าวเที่ยงวันนี้บ้าง?</string>
+    <string name="chat_ai_item_name">Jav</string>
+    <string name="chat_ai_item_content1">ไปด้วย! มีที่ไหนแนะนำไหม?</string>
+    <string name="chat_ai_item_content2">บอกด้วยนะ</string>
+    <string name="chat_item_date">11:31 น.</string>
+
+    <!-- community mock -->
+    <string name="community_content_mock"></string>
+
+    <!-- profile mock -->
+    <string name="other_profile_country_mock">ญี่ปุ่น</string>
+
+</resources>

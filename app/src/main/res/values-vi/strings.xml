@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">app</string>
+
+    <!--login & signup-->
+    <string name="login_landing">Speak Korean.\nPlay the Game.\nMaster It.</string>
+    <string name="login_ruready">Ready to level up\nyour Korean?</string>
+    <string name="login_tocontinue">Sign up with Social of fill the form to continue.</string>
+    <string name="signup_letsstart">Let\'s Get Started!</string>
+    <string name="signup_alreadyuse">*This email is already in use</string>
+    <string name="signup_pwcheck">At least 8 characters, 1 uppercase letter, 1 number, 1 symbol</string>
+    <string name="signup_privacy">By Signing up, you agree to the Terms of Service and Privacy Policy</string>
+    <string name="signup_writevalid">*Write valid email address (email@domain.com)</string>
+    <string name="signup_codenotvalid">Code is not correct!</string>
+    <string name="login_email_error">Your email address has not been registered.</string>
+    <string name="login_password_error">Passwords do not match.</string>
+
+    ＜!--home-->
+    <string name="home_title">Hồ sơ học tập của %s</string>
+    <string name="home_subtitle_eng">%s\'s Learning Journey</string>
+    <string name="home_not_give_up">포기하지 않는 %s님!</string>
+    <string name="home_continue_study">연속으로 %d일차 공부했어요! 오늘도 이어서 해볼까요?</string>
+    <string name="home_quiz_1">Bài kiểm tra tôi đã làm</string>
+    <string name="home_quiz_2">Bài kiểm tra đã làm hôm nay</string>
+    <string name="home_conversation">Số lần luyện hội thoại</string>
+
+    <string name="home_go_to_study">Bắt đầu học</string>
+    <string name="home_go_to_study_eng">Today\'s Learning Games</string>
+    <string name="home_study_title">Luyện tập tiếng Hàn\nvới trợ lý AI</string>
+    <string name="home_go_to_example">Bắt đầu luyện tập</string>
+
+
+    <!--ai practice-->
+    <string name="ai_practice_title">uyện tập tiếng Hàn với AI</string>
+    <string name="ai_practice_title_eng">Today\'s Learning Objectives</string>
+    <string name="ai_practice_show_previous_practice">Xem lại bài luyện trước</string>
+    <string name="ai_practice_daily">Cần thiết/Hằng ngày</string>
+    <string name="ai_practice_culture">Văn hoá/Giải trí</string>
+    <string name="ai_practice_job">Việc làm/Công việc</string>
+
+    <string name="practice_record_title">Lịch sử luyện tập của tôi</string>
+    <string name="practice_record_title_eng">My Practice Records</string>
+
+    <!--ai chat-->
+    <string name="ai_chat_essential">Cần thiết</string>
+    <string name="ai_chat_listening">Listening .. ..</string>
+
+    <!--game tab-->
+    <string name="game_tab_title">Câu đố tiếng Hàn</string>
+    <string name="game_tab_subtitle">Hôm nay cũng cùng học chăm chỉ nhé?</string>
+    <string name="game_tab_week_mon">월</string>
+    <string name="game_tab_week_tue">화</string>
+    <string name="game_tab_week_wed">수</string>
+    <string name="game_tab_week_thu">목</string>
+    <string name="game_tab_week_fri">금</string>
+    <string name="game_tab_week_sat">토</string>
+    <string name="game_tab_week_sun">일</string>
+
+    <!-- game -->
+    <string name="game_quiz_complete">Xác nhận</string>
+    <string name="game_quiz_success">Chính xác!</string>
+    <string name="game_quiz_fail">Sai rồi!</string>
+    <string name="game_quiz_success_next">Tiếp theo</string>
+    <string name="game_quiz_fail_next">Thử lại</string>
+    <string name="game_quiz_skip">Xem đáp án và bỏ qua</string>
+
+    <string name="game_quiz_again">Làm lại</string>
+    <string name="game_quiz_stop">Dừng lại</string>
+    <string name="game_quiz_finalsucess">Thử thách thành công</string>
+    <string name="game_quiz_finalfail">Thử thách thất bại</string>
+    <string name="game_quiz_commentsuccess">Tuyệt vời %s!\nCùng làm câu hỏi tiếp theo nhé!</string>
+    <string name="game_quiz_commentafail">Đừng bỏ cuộc\nThử lại nào!</string>
+
+    <!-- explore -->
+    <string name="explore_title">Hạn chót sắp đến rồi!</string>
+    <string name="explore_enroll">Đăng ký</string>
+    <string name="explore_all_title">Tất cả chương trình</string>
+    <string name="explore_price_free">Miễn phí</string>
+    <string name="explore_price_paid">Trả phí</string>
+
+    <!-- community -->
+    <string name="community_all">Tất cả</string>
+    <string name="community_following">Đang theo dõi</string>
+    <string name="community_follow">Theo dõi</string>
+    <string name="community_user_country">Quốc gia người dùng</string>
+    <string name="community_id">\@%s</string>
+    <string name="community_time"> · %d giờ trước</string>
+    <string name="post_write">Viết bài</string>
+    <string name="post_write_complete">Hoàn tất</string>
+    <string name="post_write_hint">Nhập nội dung...</string>
+    <string name="post_detail_image_count">%d / %d</string>
+
+    <!-- profile -->
+    <string name="other_profile_post">Bài viết</string>
+    <string name="other_profile_follower">Người theo dõi</string>
+    <string name="other_profile_following">Đang theo dõi</string>
+    <string name="other_profile_share">Chia sẻ hồ sơ</string>
+    <string name="my_profile_edit">Chỉnh sửa hồ sơ</string>
+
+    <string name="follow_list_following">Đang theo dõi</string>
+    <string name="follow_list_follower">Người theo dõi</string>
+
+    <!-- mock -->
+    <string name="practice_record_item_title">Hội thoại về ngân hàng</string>
+    <string name="practice_record_item_summation">Thảo luận về cách gửi tiền và lý do đến ngân hàng</string>
+    <string name="practice_record_item_date">2025.04.08</string>
+    <string name="practice_record_item_type">Hằng ngày</string>
+
+    <!-- chat -->
+    <string name="chat_me_item_content1">Hi team 🖐️</string>
+    <string name="chat_me_item_content2">Ai rảnh đi ăn trưa hôm nay không?</string>
+    <string name="chat_ai_item_name">Jav</string>
+    <string name="chat_ai_item_content1">Tôi đồng ý! Có gợi ý gì không?</string>
+    <string name="chat_ai_item_content2">Cho tôi biết nhé</string>
+    <string name="chat_item_date">11:31 SA</string>
+
+    <!-- community mock -->
+    <string name="community_content_mock"></string>
+
+    <!-- profile mock -->
+    <string name="other_profile_country_mock">Nhật Bản</string>
+
+</resources>
