@@ -101,6 +101,8 @@ class GameQuizFragment : Fragment() {
         val question = gameQuizViewModel.quiz[currentIndex]
         isAnswerSelected = false // 새 문제 표시 시 선택 상태 초기화
         currentAnswerIsCorrect = null
+
+        gameActivity?.setBackground()
         binding.btnComplete.isSelected = false
         binding.btnComplete.setTextColor(requireActivity().getColor(R.color.black))
 
@@ -174,10 +176,10 @@ class GameQuizFragment : Fragment() {
                         if (success) {
                             updateProgressBar()
                             moveToNextQuestion()
-                        } /*else {
+                        } else {
                             // 문제 다시 풀게 하기
-
-                        }*/
+                            gameActivity?.setBackground()
+                        }
                     }
                 })
                 if (fragment != null) {

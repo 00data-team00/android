@@ -75,9 +75,9 @@ class GameQuizActivity : AppCompatActivity() {
 
     private fun setLife() {
         currentLives = 3
-        lifeAdapter = GameQuizLifeAdapter()
+        lifeAdapter = GameQuizLifeAdapter(binding.rvLife)
         binding.rvLife.adapter = lifeAdapter
-        lifeAdapter.updateLifeCount(currentLives)
+        //lifeAdapter.(currentLives)
     }
 
     private fun setQuestion() {
@@ -93,13 +93,18 @@ class GameQuizActivity : AppCompatActivity() {
         binding.fcvQuestion.visibility = View.VISIBLE
     }
 
+    fun setBackground(){
+        binding.clGameQuiz.setBackgroundColor(getColor(R.color.game_word_bg_green))
+    }
+
     // life가 없으면 true, 남아있으면 false
     fun onQuestionAnswered(isCorrect: Boolean) {
         if (isGameFinished) return // 이미 게임이 종료되었다면 아무것도 하지 않음
 
         if (!isCorrect) {
             currentLives--
-            lifeAdapter.updateLifeCount(currentLives)
+            lifeAdapter.removeOneLife()
+            //lifeAdapter.updateLifeCount(currentLives)
             Timber.d("Incorrect answer. Lives remaining: $currentLives")
             if (currentLives <= 0) {
                 Timber.d("All lives lost. Game Over - Failure.")
@@ -133,8 +138,6 @@ class GameQuizActivity : AppCompatActivity() {
     fun updateProgress(percent:Int) {
         if(binding.progressQuiz.progress==percent) return
 
-        binding.progressQuiz.progressTintList =
-            ColorStateList.valueOf(ContextCompat.getColor(this, R.color.community_follow_green))
         ObjectAnimator.ofInt(binding.progressQuiz, "progress", percent).setDuration(300).start()
         Timber.d("Progress updated to $percent%")
     }
@@ -295,7 +298,8 @@ class GameQuizActivity : AppCompatActivity() {
 
             binding.rvWeeks.adapter=null
             binding.progressQuiz.progress=0
-            binding.progressQuiz.progressDrawable?.clearColorFilter()
+            binding.progressQuiz.progressTintList =
+                ColorStateList.valueOf(ContextCompat.getColor(this, R.color.community_follow_green))
         }
     }
 
