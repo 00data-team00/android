@@ -1,5 +1,6 @@
 package com.data.app.presentation.main.home
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -36,12 +37,12 @@ class LanguageBottomSheetDialogFragment(
 
         //한국어, 영어, 중국어, 일본어, 베트남어, 태국어
         val languageList = listOf(
-            Language("ko", R.drawable.ic_korea),
-            Language("en-US", R.drawable.ic_america),
-            Language("zh", R.drawable.ic_china),
-            Language("ja", R.drawable.ic_japan),
-            Language("vi", R.drawable.ic_vietnam),
-            Language("th", R.drawable.ic_thailand)
+            Language("ko", "Korean", R.drawable.ic_korea),
+            Language("en", "English",R.drawable.ic_america),
+            Language("zh", "Chinese",R.drawable.ic_china),
+            Language("ja", "Japanese",R.drawable.ic_japan),
+            Language("vi", "Vietnamese",R.drawable.ic_vietnam),
+            Language("th", "Thai",R.drawable.ic_thailand)
         )
         adapter.getList(languageList)
     }

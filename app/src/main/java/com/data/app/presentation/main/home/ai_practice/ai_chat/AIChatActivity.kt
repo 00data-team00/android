@@ -33,12 +33,13 @@ import com.data.app.R
 import com.data.app.data.PreviousPractice
 import com.data.app.extension.AiChatState
 import com.data.app.extension.StartChatState
+import com.data.app.presentation.main.BaseActivity
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
 import java.util.Date
 
 @AndroidEntryPoint
-class AIChatActivity:AppCompatActivity() {
+class AIChatActivity: BaseActivity() {
     private lateinit var binding:ActivityAiChatBinding
 
     private val aiChatViewModel:AIChatViewModel by viewModels()
