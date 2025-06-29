@@ -32,6 +32,7 @@
     <color name="game_complete_gray">#CDCDCD</color>
 
     <color name="game_half_transparent_black">#80000000</color> <!-- 50% 투명 블랙 -->
+    <color name="game_fail_pink">#FFDCDC</color>
 
     <!--explore-->
     <color name="explore_enroll_dark_green">#5C7418</color>

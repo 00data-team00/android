@@ -59,11 +59,16 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_weeks"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_marginTop="15dp"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:paddingTop="0dp"
+            android:paddingBottom="5dp"
             android:background="@color/white"
+            android:clipToPadding="false"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -107,7 +112,7 @@
             app:layout_constraintTop_toBottomOf="@id/iv_game_final"/>
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_quiz_next"
+            android:id="@+id/btn_quiz_again"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginBottom="10dp"
@@ -115,17 +120,17 @@
             android:text="@string/game_quiz_again"
             android:textColor="@color/black"
             android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@id/btn_quiz_again"
+            app:layout_constraintBottom_toTopOf="@id/btn_quiz_stop"
             app:layout_constraintDimensionRatio="1:0.15"
             app:layout_constraintWidth_percent="0.8"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"/>
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_quiz_again"
+            android:id="@+id/btn_quiz_stop"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginBottom="20dp"
+            android:layout_marginBottom="30dp"
             android:background="@drawable/btn_game_stop"
             android:text="@string/game_quiz_stop"
             android:textColor="@color/black"
