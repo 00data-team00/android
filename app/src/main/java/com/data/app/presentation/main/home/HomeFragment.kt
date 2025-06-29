@@ -1,14 +1,19 @@
 package com.data.app.presentation.main.home
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Paint
 import android.graphics.RectF
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import coil3.Canvas
@@ -24,7 +29,11 @@ import com.data.app.presentation.main.MainViewModel
 import com.data.app.presentation.main.OnTabReselectedListener
 import com.data.app.presentation.main.home.ai_practice.AIPracticeActivity
 import com.data.app.presentation.main.home.game.GameTabActivity
+import com.data.app.util.security.updateLocale
 import timber.log.Timber
+import androidx.core.content.edit
+import androidx.navigation.NavOptions
+import androidx.navigation.fragment.findNavController
 
 class HomeFragment:Fragment(), OnTabReselectedListener {
     private var _binding:FragmentHomeBinding?=null
@@ -82,13 +91,28 @@ class HomeFragment:Fragment(), OnTabReselectedListener {
 
     private fun inputMockData(){
         with(binding){
-            tvTitleKor.text=getString(R.string.home_title_kor, "구구")
-            tvTitleEng.text=getString(R.string.home_title_eng, "GooGoo")
+            tvTitleKor.text=getString(R.string.home_title, "구구")
+            tvSubtitleEng.text=getString(R.string.home_subtitle_eng, "GooGoo")
             tvNotGiveUp.text=getString(R.string.home_not_give_up, "구구")
             tvContinueStudy.text=getString(R.string.home_continue_study, 13)
-            ivLanguage.load(R.drawable.ic_korea) {
+
+            val prefs = requireContext().getSharedPreferences("settings", Context.MODE_PRIVATE)
+            val lang = prefs.getString("lang", "ko")
+
+            // 🔽 언어 코드에 따라 국기 이미지 설정
+            val flagRes = when (lang) {
+                "ko" -> R.drawable.ic_korea
+                "en-US", "en" -> R.drawable.ic_america
+                "zh" -> R.drawable.ic_china
+                "ja" -> R.drawable.ic_japan
+                "vi" -> R.drawable.ic_vietnam
+                "th" -> R.drawable.ic_thailand
+                else -> R.drawable.ic_korea // fallback
+            }
+
+            ivLanguage.load(flagRes) {
                 transformations(
-                    BorderTransformation(borderWidth = 3f, borderColor = resources.getColor(R.color.ic_language_stoke))
+                    BorderTransformation(3f, ContextCompat.getColor(requireContext(), R.color.ic_language_stoke))
                 )
             }
 
@@ -97,7 +121,21 @@ class HomeFragment:Fragment(), OnTabReselectedListener {
     }
 
     private fun showLanguage(){
+        val prefs = requireContext().getSharedPreferences("settings", Context.MODE_PRIVATE)
+        when (prefs.getString("lang", "ko")) {
+            "ko" -> binding.ivLanguage.setImageResource(R.drawable.ic_korea)
+            "en-US", "en" -> binding.ivLanguage.setImageResource(R.drawable.ic_america)
+            "zh" -> binding.ivLanguage.setImageResource(R.drawable.ic_china)
+            "ja" -> binding.ivLanguage.setImageResource(R.drawable.ic_japan)
+            "vi" -> binding.ivLanguage.setImageResource(R.drawable.ic_vietnam)
+            "th" -> binding.ivLanguage.setImageResource(R.drawable.ic_thailand)
+        }
+
+        Log.d("LanguageDebug", "현재 언어: ${prefs.getString("lang", "ko")}")
+
         val adapter = LanguageAdapter { selectedLanguage ->
+            applyLanguageChange(selectedLanguage.code)
+            Timber.d("selected language: ${selectedLanguage.code}")
             binding.ivLanguage.load(selectedLanguage.iconRes) {
                 transformations(
                     BorderTransformation(borderWidth = 3f, borderColor = resources.getColor(R.color.ic_language_stoke))
@@ -109,9 +147,12 @@ class HomeFragment:Fragment(), OnTabReselectedListener {
 
         adapter.getList(
             listOf(
-                Language("Korean", R.drawable.ic_korea),
-                Language("English", R.drawable.ic_america),
-                Language("Chinese", R.drawable.ic_china)
+                Language("ko", "Korean", R.drawable.ic_korea),
+                Language("en", "English",R.drawable.ic_america),
+                Language("zh", "Chinese",R.drawable.ic_china),
+                Language("ja", "Japanese",R.drawable.ic_japan),
+                Language("vi", "Vietnamese",R.drawable.ic_vietnam),
+                Language("th", "Thai",R.drawable.ic_thailand)
             )
         )
 
@@ -122,6 +163,13 @@ class HomeFragment:Fragment(), OnTabReselectedListener {
                 binding.cvLanguageList.slideDown()
             }
         }
+    }
+
+    private fun applyLanguageChange(languageCode: String) {
+        //val newContext = requireContext().updateLocale(languageCode)
+        val prefs = requireContext().getSharedPreferences("settings", Context.MODE_PRIVATE)
+        prefs.edit { putString("lang", languageCode) }
+        requireActivity().recreate()
     }
 
     private fun clickPractice(token: String) {

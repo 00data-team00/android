@@ -55,7 +55,11 @@
     <string name="game_tab_week_sat">토</string>
     <string name="game_tab_week_sun">일</string>
 
+    <string name="game_quiz_num">Question %d</string>
     <string name="game_quiz_complete">Confirm</string>
+    <string name="game_quiz_correct">That\'s correct!</string>
+    <string name="game_quiz_skip_actually">Actually, the correct answer is...</string>
+    <string name="game_quiz_incorrect">That\'s unfortunate</string>
     <string name="game_quiz_success">Correct!</string>
     <string name="game_quiz_fail">Incorrect!</string>
     <string name="game_quiz_success_next">Next</string>
@@ -76,6 +80,7 @@
     <string name="explore_price_paid">Paid</string>
 
     <!-- community -->
+    <string name="community_search">Please enter a search term</string>
     <string name="community_all">All</string>
     <string name="community_following">Following</string>
     <string name="community_follow">Follow</string>

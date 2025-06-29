@@ -9,6 +9,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.data.app.R
 import com.data.app.databinding.ActivityAiPracticeBinding
+import com.data.app.presentation.main.BaseActivity
 import com.data.app.presentation.main.home.ai_practice.ai_chat.AIChatActivity
 import com.data.app.presentation.main.home.ai_practice.previous_practice.PreviousPracticeActivity
 import com.google.android.material.tabs.TabLayout
@@ -16,7 +17,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 
 @AndroidEntryPoint
-class AIPracticeActivity : AppCompatActivity() {
+class AIPracticeActivity : BaseActivity() {
     private lateinit var binding: ActivityAiPracticeBinding
 
     private lateinit var aiAdapter: AIPracticeAdapter

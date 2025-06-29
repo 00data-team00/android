@@ -56,7 +56,11 @@
     <string name="game_tab_week_sat">토</string>
     <string name="game_tab_week_sun">일</string>
 
+    <string name="game_quiz_num">問題 %d</string>
     <string name="game_quiz_complete">確認</string>
+    <string name="game_quiz_correct">正解です！</string>
+    <string name="game_quiz_skip_actually">実は正解は...</string>
+    <string name="game_quiz_incorrect">残念です</string>
     <string name="game_quiz_success">正解です！</string>
     <string name="game_quiz_fail">不正解です！</string>
     <string name="game_quiz_success_next">次へ</string>
@@ -78,6 +82,7 @@
     <string name="explore_price_paid">有料</string>
 
     <!-- community -->
+    <string name="community_search">検索語句を入力してください</string>
     <string name="community_all">すべて</string>
     <string name="community_following">フォロー中</string>
     <string name="community_follow">フォロー</string>

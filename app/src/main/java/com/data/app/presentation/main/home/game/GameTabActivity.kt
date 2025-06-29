@@ -8,9 +8,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.data.app.R
 import com.data.app.databinding.ActivityGameTabBinding
+import com.data.app.presentation.main.BaseActivity
 import com.data.app.presentation.main.home.game.quiz.GameQuizActivity
 
-class GameTabActivity:AppCompatActivity() {
+class GameTabActivity: BaseActivity() {
     private lateinit var binding:ActivityGameTabBinding
 
     private val gameTabViewModel:GameTabViewModel by viewModels()

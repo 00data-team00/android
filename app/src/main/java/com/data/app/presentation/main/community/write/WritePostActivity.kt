@@ -19,9 +19,10 @@ import coil3.request.transformations
 import coil3.transform.RoundedCornersTransformation
 import com.data.app.R
 import com.data.app.databinding.ActivityWritePostBinding
+import com.data.app.presentation.main.BaseActivity
 import timber.log.Timber
 
-class WritePostActivity : AppCompatActivity() {
+class WritePostActivity : BaseActivity() {
     private lateinit var binding: ActivityWritePostBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {

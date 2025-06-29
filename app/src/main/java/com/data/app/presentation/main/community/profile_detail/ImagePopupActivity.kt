@@ -13,8 +13,9 @@ import androidx.viewpager2.widget.ViewPager2
 import coil3.load
 import com.data.app.R
 import com.data.app.databinding.ActivityImagePopupBinding
+import com.data.app.presentation.main.BaseActivity
 
-class ImagePopupActivity() : AppCompatActivity() {
+class ImagePopupActivity() : BaseActivity() {
     private lateinit var binding: ActivityImagePopupBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {

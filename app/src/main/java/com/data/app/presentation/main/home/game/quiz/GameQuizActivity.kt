@@ -24,12 +24,13 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.data.app.data.Week
+import com.data.app.presentation.main.BaseActivity
 import com.data.app.presentation.main.home.game.GameTabWeekAdapter
 import eightbitlab.com.blurview.BlurView
 import eightbitlab.com.blurview.RenderScriptBlur
 import timber.log.Timber
 
-class GameQuizActivity : AppCompatActivity() {
+class GameQuizActivity : BaseActivity() {
     private lateinit var binding: ActivityGameQuizBinding
     private lateinit var lifeAdapter: GameQuizLifeAdapter
     private var currentLives = 3 // 초기 생명

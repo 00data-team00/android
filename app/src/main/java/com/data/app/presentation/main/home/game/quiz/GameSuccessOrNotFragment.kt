@@ -124,7 +124,7 @@ class GameSuccessOrNotFragment:Fragment() {
                ivGameFailHeartRight.visibility=View.GONE
                btnSkip.visibility=View.GONE
 
-               tvTitle.text = (if(again) "사실 정답은..." else "정답입니다!")
+               tvTitle.text = (if(again) getString(R.string.game_quiz_skip_actually) else getString(R.string.game_quiz_correct))
                ivEmogi.setImageResource(R.drawable.ic_correct)
                btnNext.isSelected=true
                btnNext.text=getString(R.string.game_quiz_success_next)
@@ -133,7 +133,7 @@ class GameSuccessOrNotFragment:Fragment() {
                tvAnswerDescription.text = "후배를 둔 것처럼 신뢰를 이용하여 타인을 속이는 방법입니다."
                tvAnswerReason.text = "신원 미상의 나쁜 사람에게 전화를 받고 당황하는 그림이기 때문에 보이스피싱이 가장 적절해요!"
            }else{
-               tvTitle.text = "아쉽습니다!"
+               tvTitle.text = getString(R.string.game_quiz_incorrect)
                ivEmogi.setImageResource(R.drawable.ic_wrong)
                btnNext.isSelected=false
                btnNext.text=getString(R.string.game_quiz_fail_next)

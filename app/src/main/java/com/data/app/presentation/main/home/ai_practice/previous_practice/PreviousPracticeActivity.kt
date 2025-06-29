@@ -7,19 +7,20 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.addCallback
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.data.app.R
 import com.data.app.databinding.ActivityPreviousPracticeBinding
 import com.data.app.extension.AIPreviousChatMessageState
 import com.data.app.extension.AIPreviousPracticeState
+import com.data.app.presentation.main.BaseActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.Locale
+import kotlin.getValue
 
 @AndroidEntryPoint
-class PreviousPracticeActivity:AppCompatActivity() {
+class PreviousPracticeActivity: BaseActivity() {
     private lateinit var binding: ActivityPreviousPracticeBinding
 
     private val previousPracticeViewModel: PreviousPracticeViewModel by viewModels()

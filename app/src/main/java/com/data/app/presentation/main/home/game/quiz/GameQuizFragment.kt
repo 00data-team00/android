@@ -107,7 +107,7 @@ class GameQuizFragment : Fragment() {
         with(binding) {
             when (question) {
                 is Quiz.Word -> {
-                    tvNum.text = question.num
+                    tvNum.text = getString(R.string.game_quiz_num, currentIndex + 1)
                     tvQuestion.text = question.question
                     ivQuestion.visibility = View.VISIBLE
                     btnListening.visibility = View.GONE
@@ -119,7 +119,7 @@ class GameQuizFragment : Fragment() {
                 }
 
                 is Quiz.Listening -> {
-                    tvNum.text = question.num
+                    tvNum.text =  getString(R.string.game_quiz_num, currentIndex + 1)
                     tvQuestion.text = question.question
                     ivQuestion.visibility = View.GONE
                     btnListening.visibility = View.VISIBLE
