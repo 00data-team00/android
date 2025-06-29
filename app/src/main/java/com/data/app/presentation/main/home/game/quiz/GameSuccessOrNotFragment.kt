@@ -28,7 +28,6 @@ class GameSuccessOrNotFragment:Fragment() {
     private var _binding: FragmentGameSuccessOrNotBinding? = null
     private val binding: FragmentGameSuccessOrNotBinding
         get() = requireNotNull(_binding) { "home fragment is null" }
-
     private var isCorrectAnswer: Boolean = false
     private var listener: OnNextClickListener? = null
 
@@ -56,7 +55,30 @@ class GameSuccessOrNotFragment:Fragment() {
 
     private fun setting(){
         showAnimation()
+        correctAns()
+    }
 
+    private fun showAnimation(){
+        binding.clQuizSuccessOrNot.alpha = 0f
+        binding.clQuizSuccessOrNot.animate()
+            ?.alpha(1f)
+            ?.setDuration(400)
+            ?.start()
+
+        binding.clQuizSuccessOrNot.translationY = 300f
+        binding.clQuizSuccessOrNot.animate()
+            .translationY(0f)
+            .setDuration(500)
+            .start()
+
+        binding.ivEmogi.translationY = 300f
+        binding.ivEmogi.animate()
+            .translationY(0f)
+            .setDuration(500)
+            .start()
+    }
+
+    private fun correctAns(){
         with(binding){
             if (isCorrectAnswer) {
                 isCorrect(isCorrectAnswer, false)
@@ -89,27 +111,6 @@ class GameSuccessOrNotFragment:Fragment() {
                 }
             }
         }
-    }
-
-
-    private fun showAnimation(){
-        binding.clQuizSuccessOrNot.alpha = 0f
-        binding.clQuizSuccessOrNot.animate()
-            ?.alpha(1f)
-            ?.setDuration(400)
-            ?.start()
-
-        binding.clQuizSuccessOrNot.translationY = 300f
-        binding.clQuizSuccessOrNot.animate()
-            .translationY(0f)
-            .setDuration(500)
-            .start()
-
-        binding.ivEmogi.translationY = 300f
-        binding.ivEmogi.animate()
-            .translationY(0f)
-            .setDuration(500)
-            .start()
     }
 
     private fun isCorrect(visible:Boolean, again:Boolean){

@@ -27,7 +27,11 @@ class GameQuizFragment : Fragment() {
 
     private var currentIndex = 0  // 현재 문제 번호
     private var isAnswerSelected = false
+    private var currentAnswerIsCorrect: Boolean? = null
 
+
+    private val gameActivity: GameQuizActivity?
+        get() = activity as? GameQuizActivity
     private var textToSpeech: TextToSpeech? = null
     var isTTSReady = false // TTS 준비 상태 플래그
 
@@ -49,36 +53,8 @@ class GameQuizFragment : Fragment() {
 
     private fun setting() {
         resetTTS()
-
         showQuestion()
-
-        binding.btnComplete.setOnClickListener {
-            Timber.d("isanswerselected: $isAnswerSelected")
-            if (isAnswerSelected) {  // 선택했을 때만 넘어가게
-                val fragment = isCorrectAnswer?.let { it ->
-                    GameSuccessOrNotFragment.newInstance(
-                        it
-                    )
-                }
-                fragment?.setOnNextClickListener(object : GameSuccessOrNotFragment.OnNextClickListener {
-                    override fun onNextClicked(success: Boolean) {
-                        if (success) {
-                            moveToNextQuestion()
-                        } else {
-                            // 문제 다시 풀게 하기
-                        }
-                    }
-                })
-                if (fragment != null) {
-                    requireActivity().supportFragmentManager.beginTransaction()
-                        .add(R.id.fcv_result, fragment) // 또는 .replace()
-                        .commit()
-                }
-                (requireActivity() as GameQuizActivity).barToFront()
-            } else {
-                Toast.makeText(requireContext(), "답변을 선택해주세요.", Toast.LENGTH_SHORT).show()
-            }
-        }
+        clickCompleteBtn()
     }
 
     private fun resetTTS() {
@@ -115,15 +91,18 @@ class GameQuizFragment : Fragment() {
     }
 
     private fun showQuestion() {
-        if (currentIndex >= gameQuizViewModel.quiz.size) {
+        if (currentIndex == gameQuizViewModel.quiz.size) {
             // 문제 다 풀었을 때 처리
             Timber.d("모든 문제를 다 풀었습니다.")
+            gameActivity?.onAllQuestionsCompleted()
             return
         }
 
-        updateProgressBar()
-
         val question = gameQuizViewModel.quiz[currentIndex]
+        isAnswerSelected = false // 새 문제 표시 시 선택 상태 초기화
+        currentAnswerIsCorrect = null
+        binding.btnComplete.isSelected = false
+        binding.btnComplete.setTextColor(requireActivity().getColor(R.color.black))
 
         with(binding) {
             when (question) {
@@ -161,10 +140,61 @@ class GameQuizFragment : Fragment() {
         }
     }
 
-    private fun updateProgressBar() {
-        (activity as? GameQuizActivity)?.updateProgress(currentIndex, gameQuizViewModel.quiz.size)
+    private fun clickCompleteBtn(){
+        binding.btnComplete.setOnClickListener {
+            Timber.d("isanswerselected: $isAnswerSelected")
+            if (isAnswerSelected) {  // 선택했을 때만 넘어가게
+                // 선택한 답이 맞았는지 틀렸는지 activity로 전달
+                currentAnswerIsCorrect?.let { isCorrect ->
+                    gameActivity?.onQuestionAnswered(isCorrect)
+                    if(isCorrect) updateProgressBar()
+                }
+
+                if (gameActivity?.isGameFinished == true) {
+                    // 생명이 다 떨어져서 Activity에서 이미 finalResult()를 호출한 경우,
+                    gameActivity!!.finalResult(false)
+                    Timber.d("Game is already finished by Activity. No need to show GameSuccessOrNotFragment.")
+                    /*try {
+                        // 이 프래그먼트가 Activity의 supportFragmentManager에 직접 추가되었다면
+                        requireActivity().supportFragmentManager.beginTransaction()
+                            .remove(this@GameQuizFragment)
+                            .commitAllowingStateLoss() // 또는 commitNowAllowingStateLoss() 고려 (하지만 매우 주의)
+                        Timber.i("GameQuizFragment explicitly requested self-removal because game was already finished by Activity.")
+                    } catch (e: IllegalStateException) {
+                        Timber.e(e, "Error during self-removal of GameQuizFragment")
+                        // 만약 에러 발생 시, 안전하게 리스너만 종료
+                    }*/
+                    return@setOnClickListener
+                }
+                val fragment = isCorrectAnswer?.let { it ->
+                    GameSuccessOrNotFragment.newInstance(it)
+                }
+                fragment?.setOnNextClickListener(object : GameSuccessOrNotFragment.OnNextClickListener {
+                    override fun onNextClicked(success: Boolean) {
+                        if (success) {
+                            updateProgressBar()
+                            moveToNextQuestion()
+                        } /*else {
+                            // 문제 다시 풀게 하기
+
+                        }*/
+                    }
+                })
+                if (fragment != null) {
+                    requireActivity().supportFragmentManager.beginTransaction()
+                        .add(R.id.fcv_result, fragment) // 또는 .replace()
+                        .commit()
+                }
+                (requireActivity() as GameQuizActivity).barToFront()
+            } else {
+                Toast.makeText(requireContext(), "답변을 선택해주세요.", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
+    private fun updateProgressBar() {
+        (activity as? GameQuizActivity)?.updateProgress((currentIndex+1)*100/gameQuizViewModel.quiz.size)
+    }
 
     private fun showAnswer(answer: List<Quiz.Word.Answer>) {
         val answerAdapter = GameQuizAnswerAdapter(
@@ -175,6 +205,7 @@ class GameQuizFragment : Fragment() {
                     isCorrectAnswer=isCorrect
                 }
                 isAnswerSelected = true
+                currentAnswerIsCorrect = isCorrect
             }
         )
         binding.rvAnswer.adapter = answerAdapter
@@ -185,7 +216,6 @@ class GameQuizFragment : Fragment() {
         with(binding) {
             val constraintSet = ConstraintSet()
             constraintSet.clone(clQuestion)  // root는 clQuestion으로 설정해야 맞음
-
             constraintSet.connect(
                 rvAnswer.id, ConstraintSet.TOP,
                 anchorView.id, ConstraintSet.BOTTOM,
@@ -195,8 +225,6 @@ class GameQuizFragment : Fragment() {
             constraintSet.applyTo(clQuestion)
         }
     }
-
-
 
     private fun speakMessage(text: String) {
         Log.d("gameQuizFragment", "startinitialmessage, ttsready: $isTTSReady")
@@ -225,6 +253,10 @@ class GameQuizFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        textToSpeech?.stop()
+        textToSpeech?.shutdown()
+        textToSpeech = null
+        isTTSReady = false
         _binding = null
     }
 }

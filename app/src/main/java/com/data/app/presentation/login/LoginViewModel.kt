@@ -57,8 +57,6 @@ class LoginViewModel @Inject constructor(
                     Timber.d("Login successful. Token saved: ${response.accessToken}")
                     _loginState.value = LoginState.Success(response)
                 /*} else {
-                    // API 응답은 성공(2xx)이지만, isSuccess가 false이거나 accessToken이 없는 경우
-                    // 실제 API 응답 구조에 따라 에러 메시지 처리 필요
                     val errorMessage = response.msg ?: "로그인 실패: 서버 응답 오류"
                     Timber.w("Login API call was successful but response indicates failure: $errorMessage")
                     _loginState.value = LoginState.Error(errorMessage)

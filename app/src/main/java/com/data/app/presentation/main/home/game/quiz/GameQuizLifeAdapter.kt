@@ -10,6 +10,11 @@ import com.data.app.databinding.ItemLifeBinding
 class GameQuizLifeAdapter:RecyclerView.Adapter<GameQuizLifeAdapter.GameQuizLifeViewHolder>() {
     private var lifeCount = 3
 
+    fun updateLifeCount(lifeCount: Int) {
+        this.lifeCount = lifeCount
+        notifyDataSetChanged() // 간단하게 전체 새로고침 (애니메이션 등은 추후 개선 가능)
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GameQuizLifeViewHolder {
         val binding = ItemLifeBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return GameQuizLifeViewHolder(binding)
