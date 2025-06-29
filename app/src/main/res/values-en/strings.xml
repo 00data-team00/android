@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">app</string>
+
+    <!--login & signup-->
+    <string name="login_landing">Speak Korean.\nPlay the Game.\nMaster It.</string>
+    <string name="login_ruready">Ready to level up\nyour Korean?</string>
+    <string name="login_tocontinue">Sign up with Social of fill the form to continue.</string>
+    <string name="signup_letsstart">Let\'s Get Started!</string>
+    <string name="signup_alreadyuse">*This email is already in use</string>
+    <string name="signup_pwcheck">At least 8 characters, 1 uppercase letter, 1 number, 1 symbol</string>
+    <string name="signup_privacy">By Signing up, you agree to the Terms of Service and Privacy Policy</string>
+    <string name="signup_writevalid">*Write valid email address (email@domain.com)</string>
+    <string name="signup_codenotvalid">Code is not correct!</string>
+    <string name="login_email_error">Your email address has not been registered.</string>
+    <string name="login_password_error">Passwords do not match.</string>
+
+    <!--home-->
+    <string name="home_title">%s\'s Learning Record</string>
+    <string name="home_subtitle_eng">%s\'s Learning Journey</string>
+    <string name="home_not_give_up">포기하지 않는 %s님!</string>
+    <string name="home_continue_study">연속으로 %d일차 공부했어요! 오늘도 이어서 해볼까요?</string>
+    <string name="home_quiz_1">Quizzes I\'ve Solved</string>
+    <string name="home_quiz_2">Today\'s Solved Quizzes</string>
+    <string name="home_conversation">Conversation Practice Count</string>
+
+    <string name="home_go_to_study">Go to Study</string>
+    <string name="home_go_to_study_eng">Today\'s Learning Games</string>
+    <string name="home_study_title">Practice Korean\nwith AI Tutor</string>
+    <string name="home_go_to_example">Start Practice</string>
+
+    <!--ai practice-->
+    <string name="ai_practice_title">AI Korean Practice</string>
+    <string name="ai_practice_title_eng">Today\'s Learning Objectives</string>
+    <string name="ai_practice_show_previous_practice">이전 연습 보기</string>
+    <string name="ai_practice_daily">필수/일상</string>
+    <string name="ai_practice_culture">문화/여가</string>
+    <string name="ai_practice_job">취업/업무</string>
+
+    <string name="practice_record_title">My Practice Records</string>
+    <string name="practice_record_title_eng">My Practice Records</string>
+
+    <!--ai chat-->
+    <string name="ai_chat_essential">Essential</string>
+    <string name="ai_chat_listening">Listening .. ..</string>
+
+    <!--game tab-->
+    <string name="game_tab_title">Korean Quiz</string>
+    <string name="game_tab_subtitle">Shall we study hard again today?</string>
+    <string name="game_tab_week_mon">월</string>
+    <string name="game_tab_week_tue">화</string>
+    <string name="game_tab_week_wed">수</string>
+    <string name="game_tab_week_thu">목</string>
+    <string name="game_tab_week_fri">금</string>
+    <string name="game_tab_week_sat">토</string>
+    <string name="game_tab_week_sun">일</string>
+
+    <string name="game_quiz_complete">Confirm</string>
+    <string name="game_quiz_success">Correct!</string>
+    <string name="game_quiz_fail">Incorrect!</string>
+    <string name="game_quiz_success_next">Next</string>
+    <string name="game_quiz_fail_next">Try Again</string>
+    <string name="game_quiz_skip">View Answer and Skip</string>
+    <string name="game_quiz_again">Retry</string>
+    <string name="game_quiz_stop">Stop</string>
+    <string name="game_quiz_finalsucess">Challenge Success</string>
+    <string name="game_quiz_finalfail">Challenge Failed</string>
+    <string name="game_quiz_commentsuccess">Awesome %s!\nReady for the next quiz?</string>
+    <string name="game_quiz_commentafail">Don\'t give up!\nTry again!</string>
+
+    <!--explore-->
+    <string name="explore_title">The deadline is just around the corner!</string>
+    <string name="explore_enroll">Apply</string>
+    <string name="explore_all_title">All Programs</string>
+    <string name="explore_price_free">Free</string>
+    <string name="explore_price_paid">Paid</string>
+
+    <!-- community -->
+    <string name="community_all">All</string>
+    <string name="community_following">Following</string>
+    <string name="community_follow">Follow</string>
+    <string name="community_user_country">User Country</string>
+    <string name="community_id">\@%s</string>
+    <string name="community_time"> · %dh ago</string>
+    <string name="post_write">Post</string>
+    <string name="post_write_complete">Done</string>
+    <string name="post_write_hint">Write something...</string>
+    <string name="post_detail_image_count">%d / %d</string>
+
+    <!-- profile -->
+    <string name="other_profile_post">Posts</string>
+    <string name="other_profile_follower">Followers</string>
+    <string name="other_profile_following">Following</string>
+    <string name="other_profile_share">Share Profile</string>
+    <string name="my_profile_edit">Edit Profile</string>
+    <string name="follow_list_following">Following</string>
+    <string name="follow_list_follower">Followers</string>
+
+    <!-- mock -->
+    <string name="practice_record_item_title">Conversation about Banking</string>
+    <string name="practice_record_item_summation">Talked about deposit options and purpose of visit</string>
+    <string name="practice_record_item_date">2025.04.08</string>
+    <string name="practice_record_item_type">Daily Life</string>
+
+    <!-- chat -->
+    <string name="chat_me_item_content1">Hi team 🖐️</string>
+    <string name="chat_me_item_content2">Anyone on for lunch today?</string>
+    <string name="chat_ai_item_name">Jav</string>
+    <string name="chat_ai_item_content1">I\'m down! Any ideas?</string>
+    <string name="chat_ai_item_content2">Let me know</string>
+    <string name="chat_item_date">11:31 AM</string>
+
+    <!-- community mock -->
+    <string name="community_content_mock"></string>
+
+    <!-- profile mock -->
+    <string name="other_profile_country_mock">Japan</string>
+
+</resources>

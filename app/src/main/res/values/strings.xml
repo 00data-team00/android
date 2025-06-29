@@ -15,36 +15,37 @@
     <string name="login_password_error">Passwords do not match.</string>
 
     <!--home-->
-    <string name="home_title_kor">%s님의 학습기록</string>
-    <string name="home_title_eng">%s\'s Learning Journey</string>
+    <string name="home_title">%s님의 학습기록</string>
+    <string name="home_subtitle_eng">%s\'s Learning Journey</string>
     <string name="home_not_give_up">포기하지 않는 %s님!</string>
     <string name="home_continue_study">연속으로 %d일차 공부했어요! 오늘도 이어서 해볼까요?</string>
     <string name="home_quiz_1">내가 푼 퀴즈</string>
     <string name="home_quiz_2">오늘의 푼 퀴즈</string>
     <string name="home_conversation">회화 연습 횟수</string>
-    <string name="home_go_to_study_kor">공부하러가기</string>
+
+    <string name="home_go_to_study">공부하러가기</string>
     <string name="home_go_to_study_eng">Today\'s Learning Games</string>
     <string name="home_study_title">AI 튜터와\n한국어 실전 연습</string>
     <string name="home_go_to_example">연습하러가기</string>
 
     <!--ai practice-->
-    <string name="ai_practice_title_kor">AI 한국어 실전연습</string>
+    <string name="ai_practice_title">AI 한국어 실전연습</string>
     <string name="ai_practice_title_eng">Today\'s Learning Objectives</string>
     <string name="ai_practice_show_previous_practice">이전 연습 보기</string>
     <string name="ai_practice_daily">필수/일상</string>
     <string name="ai_practice_culture">문화/여가</string>
     <string name="ai_practice_job">취업/업무</string>
 
-    <string name="practice_record_title_kor">나의 연습 기록</string>
+    <string name="practice_record_title">나의 연습 기록</string>
     <string name="practice_record_title_eng">My Practice Records</string>
 
-    <!--ai chhat-->
+    <!--ai chat-->
     <string name="ai_chat_essential">필수</string>
     <string name="ai_chat_listening">Listening .. ..</string>
 
     <!--game tab-->
-    <string name="game_tab_title_kor">한국어 퀴즈</string>
-    <string name="game_tab_subtitle_kor">오늘도 열심히 공부해볼까요?</string>
+    <string name="game_tab_title">한국어 퀴즈</string>
+    <string name="game_tab_subtitle">오늘도 열심히 공부해볼까요?</string>
     <string name="game_tab_week_mon">월</string>
     <string name="game_tab_week_tue">화</string>
     <string name="game_tab_week_wed">수</string>

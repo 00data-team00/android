@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.ui.layout.Layout
 import com.data.app.R
 import com.data.app.data.Language
 import com.data.app.databinding.FragmentLanguageBottomSheetBinding
@@ -33,10 +34,14 @@ class LanguageBottomSheetDialogFragment(
         }
         binding.rvLanguages.adapter = adapter
 
+        //한국어, 영어, 중국어, 일본어, 베트남어, 태국어
         val languageList = listOf(
-            Language("Korean", R.drawable.ic_korea),
-            Language("English", R.drawable.ic_america),
-            Language("Chinese", R.drawable.ic_china)
+            Language("ko", R.drawable.ic_korea),
+            Language("en-US", R.drawable.ic_america),
+            Language("zh", R.drawable.ic_china),
+            Language("ja", R.drawable.ic_japan),
+            Language("vi", R.drawable.ic_vietnam),
+            Language("th", R.drawable.ic_thailand)
         )
         adapter.getList(languageList)
     }

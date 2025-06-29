@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">app</string>
+
+    <!--login & signup-->
+    <string name="login_landing">Speak Korean.\nPlay the Game.\nMaster It.</string>
+    <string name="login_ruready">Ready to level up\nyour Korean?</string>
+    <string name="login_tocontinue">Sign up with Social of fill the form to continue.</string>
+    <string name="signup_letsstart">Let\'s Get Started!</string>
+    <string name="signup_alreadyuse">*This email is already in use</string>
+    <string name="signup_pwcheck">At least 8 characters, 1 uppercase letter, 1 number, 1 symbol</string>
+    <string name="signup_privacy">By Signing up, you agree to the Terms of Service and Privacy Policy</string>
+    <string name="signup_writevalid">*Write valid email address (email@domain.com)</string>
+    <string name="signup_codenotvalid">Code is not correct!</string>
+    <string name="login_email_error">Your email address has not been registered.</string>
+    <string name="login_password_error">Passwords do not match.</string>
+
+    <!--home-->
+    <string name="home_title">%s的学习记录</string> <!-- 중국어 간체 -->
+    <string name="home_subtitle_eng">%s\'s Learning Journey</string>
+    <string name="home_not_give_up">포기하지 않는 %s님!</string>
+    <string name="home_continue_study">연속으로 %d일차 공부했어요! 오늘도 이어서 해볼까요?</string>
+    <string name="home_quiz_1">我做过的测验</string>
+    <string name="home_quiz_2">今天完成的测验</string>
+    <string name="home_conversation">会话练习次数</string>
+
+    <string name="home_go_to_study">去学习</string>
+    <string name="home_go_to_study_eng">Today\'s Learning Games</string>
+    <string name="home_study_title">与AI辅导一起\n进行韩语实战练习</string>
+    <string name="home_go_to_example">开始练习</string>
+
+
+    <!--ai practice-->
+    <string name="ai_practice_title">AI韩语实战练习</string>
+    <string name="ai_practice_title_eng">Today\'s Learning Objectives</string>
+    <string name="ai_practice_show_previous_practice">查看之前的练习</string>
+    <string name="ai_practice_daily">必备/日常</string>
+    <string name="ai_practice_culture">文化/休闲</string>
+    <string name="ai_practice_job">求职/工作</string>
+
+    <string name="practice_record_title">我的练习记录</string>
+    <string name="practice_record_title_eng">My Practice Records</string>
+
+    <!--ai chat-->
+    <string name="ai_chat_essential">必备</string>
+    <string name="ai_chat_listening">Listening .. ..</string>
+
+    <!--game tab-->
+    <string name="game_tab_title">韩语测验</string>
+    <string name="game_tab_subtitle">今天也努力学习吧？</string>
+    <string name="game_tab_week_mon">월</string>
+    <string name="game_tab_week_tue">화</string>
+    <string name="game_tab_week_wed">수</string>
+    <string name="game_tab_week_thu">목</string>
+    <string name="game_tab_week_fri">금</string>
+    <string name="game_tab_week_sat">토</string>
+    <string name="game_tab_week_sun">일</string>
+
+    <!-- game -->
+    <string name="game_quiz_complete">确认</string>
+    <string name="game_quiz_success">答对了！</string>
+    <string name="game_quiz_fail">答错了！</string>
+    <string name="game_quiz_success_next">下一题</string>
+    <string name="game_quiz_fail_next">再试一次</string>
+    <string name="game_quiz_skip">查看答案并跳过</string>
+
+    <string name="game_quiz_again">再来一次</string>
+    <string name="game_quiz_stop">停止</string>
+    <string name="game_quiz_finalsucess">挑战成功</string>
+    <string name="game_quiz_finalfail">挑战失败</string>
+    <string name="game_quiz_commentsuccess">太棒了，%s！\n我们来做下一题吧！</string>
+    <string name="game_quiz_commentafail">别放弃，\n再试一次！</string>
+
+    <!-- explore -->
+    <string name="explore_title">截止日期快到了！</string>
+    <string name="explore_enroll">报名</string>
+    <string name="explore_all_title">所有项目</string>
+    <string name="explore_price_free">免费</string>
+    <string name="explore_price_paid">付费</string>
+
+    <!-- community -->
+    <string name="community_all">全部</string>
+    <string name="community_following">已关注</string>
+    <string name="community_follow">关注</string>
+    <string name="community_user_country">用户国家</string>
+    <string name="community_id">\@%s</string>
+    <string name="community_time"> · %d小时前</string>
+    <string name="post_write">发布</string>
+    <string name="post_write_complete">完成</string>
+    <string name="post_write_hint">请输入内容...</string>
+    <string name="post_detail_image_count">%d / %d</string>
+
+    <!-- profile -->
+    <string name="other_profile_post">帖子</string>
+    <string name="other_profile_follower">粉丝</string>
+    <string name="other_profile_following">关注中</string>
+    <string name="other_profile_share">分享个人资料</string>
+    <string name="my_profile_edit">编辑个人资料</string>
+
+    <string name="follow_list_following">关注中</string>
+    <string name="follow_list_follower">粉丝</string>
+
+    <!-- mock -->
+    <string name="practice_record_item_title">有关银行业务的对话</string>
+    <string name="practice_record_item_summation">讨论了存款方式和去银行的目的</string>
+    <string name="practice_record_item_date">2025.04.08</string>
+    <string name="practice_record_item_type">日常</string>
+
+    <!-- chat -->
+    <string name="chat_me_item_content1">Hi team 🖐️</string>
+    <string name="chat_me_item_content2">今天中午有人一起吃饭吗？</string>
+    <string name="chat_ai_item_name">Jav</string>
+    <string name="chat_ai_item_content1">我可以！有什么想法吗？</string>
+    <string name="chat_ai_item_content2">告诉我哦</string>
+    <string name="chat_item_date">上午11:31</string>
+
+    <!-- community mock -->
+    <string name="community_content_mock"></string>
+
+    <!-- profile mock -->
+    <string name="other_profile_country_mock">日本</string>
+
+</resources>
