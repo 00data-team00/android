@@ -95,6 +95,13 @@ class MainActivity : BaseActivity() {
     }
 
     override fun onBackPressed() {
+        val quitFragment = supportFragmentManager.findFragmentById(R.id.fcv_quit)
+        if (quitFragment != null) {
+            supportFragmentManager.popBackStack()
+            findViewById<FragmentContainerView>(R.id.fcv_quit).visibility = View.GONE
+            return
+        }
+
         val navHostFragment = supportFragmentManager.findFragmentById(navHostMap[currentTabId]!!.id) as NavHostFragment
         val navController = navHostFragment.navController
 

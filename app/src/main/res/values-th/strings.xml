@@ -103,6 +103,22 @@
     <string name="follow_list_following">กำลังติดตาม</string>
     <string name="follow_list_follower">ผู้ติดตาม</string>
 
+    <string name="my_quit_ask">คุณต้องการ\nยกเลิกบริการใช่หรือไม่?</string>
+    <string name="my_quit_comment">กรุณาบอกเหตุผลในการยกเลิกของคุณ</string>
+    <string name="my_quit_reason1">ไม่ค่อยได้ใช้งาน</string>
+    <string name="my_quit_reason2">ราคาสูงเกินไป</string>
+    <string name="my_quit_reason3">แอปมีข้อผิดพลาดบ่อย</string>
+    <string name="my_quit_reason4">จะใช้แอปที่คล้ายกันแทน</string>
+    <string name="my_quit_reason5">ระบุเหตุผลเอง</string>
+    <string name="my_quit_here">กรุณากรอกเหตุผลของคุณที่นี่</string>
+    <string name="my_quit_done">เสร็จสิ้น</string>
+
+    <string name="my_quit_askagain">คุณแน่ใจหรือไม่ว่าต้องการยกเลิก?</string>
+    <string name="my_quit_commentagain">หากกดปุ่มยกเลิก บัญชีของคุณจะถูกลบ\nและไม่สามารถกู้คืนได้</string>
+    <string name="my_quit_decide">ยกเลิกบัญชี</string>
+    <string name="my_quit_cancel">ยกเลิก</string>
+
+
     <!-- mock -->
     <string name="practice_record_item_title">บทสนทนาเกี่ยวกับธนาคาร</string>
     <string name="practice_record_item_summation">พูดคุยเกี่ยวกับการฝากเงินและเหตุผลในการไปธนาคาร</string>

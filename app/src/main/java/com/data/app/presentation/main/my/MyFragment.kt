@@ -5,7 +5,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupWindow
+import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentContainerView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -15,6 +19,7 @@ import coil3.transform.CircleCropTransformation
 import com.data.app.R
 import com.data.app.databinding.FragmentMyBinding
 import com.data.app.extension.MyState
+import com.data.app.presentation.login.LoginActivity
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -44,6 +49,7 @@ class MyFragment:Fragment() {
         showPosts()
         makeList()
         clickFollow()
+        clickQuit()
     }
 
     private fun showPosts(){
@@ -90,6 +96,50 @@ class MyFragment:Fragment() {
 
     private fun makeList() {
        myViewModel.getPosts()
+    }
+
+    private fun clickQuit(){
+        binding.btnMenu.setOnClickListener {
+            val dropdownInflater = LayoutInflater.from(context)
+            val popupView = dropdownInflater.inflate(R.layout.dropdown_menu, null)
+
+            val popupWindow = PopupWindow(
+                popupView,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                true
+            )
+
+            popupWindow.showAsDropDown(binding.btnMenu, -175, 10)
+
+            popupView.findViewById<TextView>(R.id.tv_logout).setOnClickListener{
+                // 로그아웃시 필요한 기능 (사용자 DB정보 없애기 등)
+
+                // 화면 전환 (로그인 화면으로)
+                val intent = Intent(requireContext(), LoginActivity::class.java)
+                startActivity(intent)
+
+                Toast.makeText(context, "로그아웃 되었습니다.", Toast.LENGTH_SHORT).show()
+                popupWindow.dismiss()
+            }
+
+            popupView.findViewById<TextView>(R.id.tv_quit).setOnClickListener{
+                // Overlay 컨테이너를 보이게 설정
+                val overlayContainer = requireActivity().findViewById<FragmentContainerView>(R.id.fcv_quit)
+                overlayContainer.visibility = View.VISIBLE
+
+                // FragmentB 생성
+                val fragmentB = QuitFragment()
+
+                // MainActivity의 supportFragmentManager를 사용하여 fcv_overlay에 replace
+                requireActivity().supportFragmentManager.beginTransaction()
+                    .replace(R.id.fcv_quit, fragmentB)
+                    .addToBackStack(null) // 필요 시 뒤로가기 지원
+                    .commit()
+
+                popupWindow.dismiss()
+            }
+        }
     }
 
     private fun clickFollow(){
