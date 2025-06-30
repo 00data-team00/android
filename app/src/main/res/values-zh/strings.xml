@@ -104,6 +104,22 @@
     <string name="follow_list_following">关注中</string>
     <string name="follow_list_follower">粉丝</string>
 
+    <string name="my_quit_ask">您确定要\n注销服务吗？</string>
+    <string name="my_quit_comment">请告诉我们您注销的原因。</string>
+    <string name="my_quit_reason1">很少使用</string>
+    <string name="my_quit_reason2">价格太高</string>
+    <string name="my_quit_reason3">应用程序错误太多</string>
+    <string name="my_quit_reason4">计划使用类似应用</string>
+    <string name="my_quit_reason5">其他（请填写）</string>
+    <string name="my_quit_here">请输入您的原因。</string>
+    <string name="my_quit_done">完成选择</string>
+
+    <string name="my_quit_askagain">您确定要注销吗？</string>
+    <string name="my_quit_commentagain">点击注销按钮后，您的账号将被删除，\n且无法恢复。</string>
+    <string name="my_quit_decide">注销</string>
+    <string name="my_quit_cancel">取消</string>
+
+
     <!-- mock -->
     <string name="practice_record_item_title">有关银行业务的对话</string>
     <string name="practice_record_item_summation">讨论了存款方式和去银行的目的</string>

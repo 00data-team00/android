@@ -101,6 +101,21 @@
     <string name="follow_list_following">Following</string>
     <string name="follow_list_follower">Followers</string>
 
+    <string name="my_quit_ask">Are you sure you want to\nleave the service?</string>
+    <string name="my_quit_comment">Please let us know why you are leaving.</string>
+    <string name="my_quit_reason1">I don\'t use it often</string>
+    <string name="my_quit_reason2">It\'s too expensive</string>
+    <string name="my_quit_reason3">There are too many app errors</string>
+    <string name="my_quit_reason4">I plan to use a similar app</string>
+    <string name="my_quit_reason5">Other (please specify)</string>
+    <string name="my_quit_here">Please enter your reason here.</string>
+    <string name="my_quit_done">Done</string>
+
+    <string name="my_quit_askagain">Are you sure you want to leave?</string>
+    <string name="my_quit_commentagain">If you tap the withdraw button, your account\nwill be deleted and cannot be recovered.</string>
+    <string name="my_quit_decide">Withdraw</string>
+    <string name="my_quit_cancel">Cancel</string>
+
     <!-- mock -->
     <string name="practice_record_item_title">Conversation about Banking</string>
     <string name="practice_record_item_summation">Talked about deposit options and purpose of visit</string>

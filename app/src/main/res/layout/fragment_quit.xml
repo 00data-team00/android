@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/game_half_transparent_black"
+    android:clickable="true"
+    android:focusable="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_quit"
+        android:layout_width="270dp"
+        android:layout_height="wrap_content"
+        android:padding="25dp"
+        android:paddingStart="30dp"
+        android:paddingEnd="30dp"
+        android:background="@drawable/btn_game_stop_fail"
+        android:visibility="visible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <TextView
+            android:id="@+id/tv_quitask"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/my_quit_ask"
+            android:padding = "10dp"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <TextView
+            android:id="@+id/tv_quitcomment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/my_quit_comment"
+            android:textColor="@color/black"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_quitask"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_reason1"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:text="@string/my_quit_reason1"
+            android:textColor="#BBBBBB"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/btn_quit"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_quitcomment"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_reason2"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:text="@string/my_quit_reason2"
+            android:textColor="#BBBBBB"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/btn_quit"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btn_reason1"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_reason3"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:text="@string/my_quit_reason3"
+            android:textColor="#BBBBBB"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/btn_quit"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btn_reason2"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_reason4"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:text="@string/my_quit_reason4"
+            android:textColor="#BBBBBB"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/btn_quit"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btn_reason3"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_reason5"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:text="@string/my_quit_reason5"
+            android:textColor="#BBBBBB"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/btn_quit"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btn_reason4"/>
+
+        <EditText
+            android:id="@+id/et_reason"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:hint="@string/my_quit_here"
+            android:textColorHint="#333333"
+            android:textSize="11sp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/btn_quit_select"
+            android:padding="10dp"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btn_reason5"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_quit"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:text="@string/my_quit_done"
+            android:layout_marginTop="20dp"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/btn_quit_done"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/et_reason"/>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_quitagain"
+        android:layout_width="270dp"
+        android:layout_height="wrap_content"
+        android:padding="25dp"
+        android:paddingStart="30dp"
+        android:paddingEnd="30dp"
+        android:background="@drawable/btn_game_stop_fail"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <TextView
+            android:id="@+id/tv_quitask_again"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/my_quit_askagain"
+            android:padding = "10dp"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <TextView
+            android:id="@+id/tv_quitcomment_again"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/my_quit_commentagain"
+            android:textColor="@color/black"
+            android:gravity="center"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_quitask_again"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_decide"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:text="@string/my_quit_decide"
+            android:textColor="#FFFFFF"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/btn_quit_done"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_quitcomment_again"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_cancel"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:text="@string/my_quit_cancel"
+            android:textColor="#BBBBBB"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/btn_quit_cancel"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btn_decide"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

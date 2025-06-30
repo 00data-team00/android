@@ -104,6 +104,22 @@
     <string name="follow_list_following">Đang theo dõi</string>
     <string name="follow_list_follower">Người theo dõi</string>
 
+    <string name="my_quit_ask">Bạn có muốn\nhủy dịch vụ không?</string>
+    <string name="my_quit_comment">Vui lòng cho chúng tôi biết lý do bạn muốn hủy.</string>
+    <string name="my_quit_reason1">Ít sử dụng</string>
+    <string name="my_quit_reason2">Giá quá cao</string>
+    <string name="my_quit_reason3">Ứng dụng có nhiều lỗi</string>
+    <string name="my_quit_reason4">Dự định sử dụng ứng dụng tương tự</string>
+    <string name="my_quit_reason5">Nhập lý do khác</string>
+    <string name="my_quit_here">Vui lòng nhập lý do của bạn tại đây.</string>
+    <string name="my_quit_done">Hoàn tất</string>
+
+    <string name="my_quit_askagain">Bạn có chắc chắn muốn hủy không?</string>
+    <string name="my_quit_commentagain">Khi nhấn nút hủy, tài khoản của bạn sẽ\nbị xóa và không thể khôi phục.</string>
+    <string name="my_quit_decide">Hủy tài khoản</string>
+    <string name="my_quit_cancel">Hủy</string>
+
+
     <!-- mock -->
     <string name="practice_record_item_title">Hội thoại về ngân hàng</string>
     <string name="practice_record_item_summation">Thảo luận về cách gửi tiền và lý do đến ngân hàng</string>

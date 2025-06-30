@@ -104,6 +104,22 @@
     <string name="follow_list_following">フォロー中</string>
     <string name="follow_list_follower">フォロワー</string>
 
+    <string name="my_quit_ask">サービスの退会を\nご希望ですか？</string>
+    <string name="my_quit_comment">退会理由を教えてください。</string>
+    <string name="my_quit_reason1">あまり利用しないため</string>
+    <string name="my_quit_reason2">料金が高いため</string>
+    <string name="my_quit_reason3">アプリの不具合が多いため</string>
+    <string name="my_quit_reason4">類似アプリを利用予定のため</string>
+    <string name="my_quit_reason5">その他（直接入力）</string>
+    <string name="my_quit_here">理由を入力してください。</string>
+    <string name="my_quit_done">選択完了</string>
+
+    <string name="my_quit_askagain">本当に退会しますか？</string>
+    <string name="my_quit_commentagain">退会ボタンを選択すると、アカウントは\n削除され復元できません。</string>
+    <string name="my_quit_decide">退会する</string>
+    <string name="my_quit_cancel">キャンセル</string>
+
+
     <!-- mock -->
     <string name="practice_record_item_title">銀行業務に関する会話</string>
     <string name="practice_record_item_summation">預金方法や銀行訪問の目的について話しました</string>

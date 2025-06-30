@@ -102,6 +102,20 @@
     <string name="follow_list_following">팔로잉</string>
     <string name="follow_list_follower">팔로워</string>
 
+    <string name="my_quit_ask">서비스 이름을\n탈퇴하시나요?</string>
+    <string name="my_quit_comment">탈퇴하시는 이유를 알려주세요</string>
+    <string name="my_quit_reason1">자주 사용하지 않아서</string>
+    <string name="my_quit_reason2">가격이 비싸서</string>
+    <string name="my_quit_reason3">앱 오류가 많아서</string>
+    <string name="my_quit_reason4">유사 어플 사용 예정</string>
+    <string name="my_quit_reason5">직접입력</string>
+    <string name="my_quit_here">사유를 입력해주세요.</string>
+    <string name="my_quit_done">선택완료</string>
+
+    <string name="my_quit_askagain">정말 탈퇴하시겠어요?</string>
+    <string name="my_quit_commentagain">탈퇴 버튼 선택시, 계정은\n삭제되며 복구되지 않습니다.</string>
+    <string name="my_quit_decide">탈퇴</string>
+    <string name="my_quit_cancel">취소</string>
 
     <!--mock-->
     <string name="practice_record_item_title">은행 업무에 대한 대화</string>
