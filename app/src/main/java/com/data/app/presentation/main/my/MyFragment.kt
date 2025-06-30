@@ -1,5 +1,6 @@
 package com.data.app.presentation.main.my
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.PopupWindow
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentContainerView
 import androidx.fragment.app.viewModels
@@ -115,12 +117,31 @@ class MyFragment:Fragment() {
             popupView.findViewById<TextView>(R.id.tv_logout).setOnClickListener{
                 // 로그아웃시 필요한 기능 (사용자 DB정보 없애기 등)
 
-                // 화면 전환 (로그인 화면으로)
-                val intent = Intent(requireContext(), LoginActivity::class.java)
-                startActivity(intent)
 
-                Toast.makeText(context, "로그아웃 되었습니다.", Toast.LENGTH_SHORT).show()
-                popupWindow.dismiss()
+                // dialog 로 한번 더 물어보기
+                val builder = AlertDialog.Builder(requireContext())
+                builder.setTitle("로그아웃 확인")
+                builder.setMessage("정말 로그아웃 하시겠습니까?")
+                builder.setPositiveButton("예") { dialog, _ ->
+                    dialog.dismiss()
+                    popupWindow.dismiss()
+
+                    // 화면 전환 (로그인 화면으로)
+                    val intent = Intent(requireContext(), LoginActivity::class.java)
+                    startActivity(intent)
+
+                    Toast.makeText(context, "로그아웃 되었습니다.", Toast.LENGTH_SHORT).show()
+                }
+                builder.setNegativeButton("아니오") { dialog, _ ->
+                    dialog.dismiss()
+                    popupWindow.dismiss()
+                }
+
+                val dialog = builder.create()
+                dialog.show()
+
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(requireContext(), android.R.color.black))
+                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(ContextCompat.getColor(requireContext(), android.R.color.black))
             }
 
             popupView.findViewById<TextView>(R.id.tv_quit).setOnClickListener{
