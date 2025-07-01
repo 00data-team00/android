@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContentProviderCompat.requireContext
 import com.data.app.R
 import com.data.app.databinding.ActivityAiPracticeBinding
 import com.data.app.presentation.main.BaseActivity
@@ -45,7 +46,7 @@ class AIPracticeActivity : BaseActivity() {
     }
 
     private fun showList(token: String?) {
-        aiAdapter = AIPracticeAdapter(clickPractice = { id->
+        aiAdapter = AIPracticeAdapter(this, clickPractice = { id->
             val intent = Intent(this, AIChatActivity::class.java)
             intent.putExtra("accessToken", token)
             intent.putExtra("topicId", id)
@@ -79,9 +80,18 @@ class AIPracticeActivity : BaseActivity() {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 currentTab = tab?.position ?: 0
                 when (tab?.position) {
-                    0 -> aiAdapter.getList(aiPracticeViewModel.essentialTopics.value ?: emptyList())
-                    1 -> aiAdapter.getList(aiPracticeViewModel.cultureTopics.value ?: emptyList())
-                    2 -> aiAdapter.getList(aiPracticeViewModel.businessTopics.value ?: emptyList())
+                    0 -> {
+                        aiAdapter.changeCategory("essential")
+                        aiAdapter.getList(aiPracticeViewModel.essentialTopics.value ?: emptyList())
+                    }
+                    1 -> {
+                        aiAdapter.changeCategory("culture")
+                        aiAdapter.getList(aiPracticeViewModel.cultureTopics.value ?: emptyList())
+                    }
+                    2 -> {
+                        aiAdapter.changeCategory("work")
+                        aiAdapter.getList(aiPracticeViewModel.businessTopics.value ?: emptyList())
+                    }
                 }
             }
 

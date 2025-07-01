@@ -83,4 +83,7 @@ interface BaseService {
 
     @GET("api/edu-info/closing-soon")
     suspend fun getDeadLinePrograms():ResponseDeadlineDto
+
+    // post
+
 }

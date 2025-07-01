@@ -5,9 +5,12 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import coil3.load
+import coil3.request.transformations
+import coil3.transform.RoundedCornersTransformation
 import com.data.app.R
 import com.data.app.data.response_dto.ResponseChatAiMessageDto
 import com.data.app.data.response_dto.ResponseChatStartDto
@@ -31,7 +34,10 @@ class AIChatAdapter(
         private const val TYPE_AI_CHAT = 1
     }
 
+
     private val chatList = mutableListOf<ResponseChatAiMessageDto.Message>()
+
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -68,6 +74,8 @@ class AIChatAdapter(
     inner class ChatMyViewHolder(private val binding: ItemChatMyBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(content: ResponseChatAiMessageDto.Message, isFirstOfType: Boolean) {
+
+
             binding.tvChat.text = content.text
             binding.tvTime.text = content.storedAt
             binding.ivFirst.visibility = if (isFirstOfType) View.VISIBLE else View.INVISIBLE

@@ -65,6 +65,7 @@ class AIChatActivity: BaseActivity() {
     private fun setting() {
         val token=intent.getStringExtra("accessToken")
         val topicId=intent.getIntExtra("topicId", -1)
+        Timber.d("topicId: $topicId, accessToken: $token")
 
         aiChatViewModel.accessToken.observe(this){
             speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this)

@@ -15,6 +15,12 @@
     <color name="home_count_quiz">#A3D80D</color>
 
     <color name="ai_practice_btn_dark_green">#5C7418</color>
+    <color name="ai_practice_essential_green">#C7E957</color>
+    <color name="ai_practice_essential_light_green"> #E6F4D8</color>
+    <color name="ai_practice_employment_blue">#3A73F8</color>
+    <color name="ai_practice_employment_sky">#D7E6FF</color>
+    <color name="ai_practice_culture_orange">#F28D3E</color>
+    <color name="ai_practice_culture_light_orange">#FAD9C0</color>
 
     <color name="practice_record_item_gray">#999999</color>
     <color name="practice_record_item_dark_green">#5C7418</color>
