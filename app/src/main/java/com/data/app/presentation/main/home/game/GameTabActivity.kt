@@ -46,7 +46,10 @@ class GameTabActivity: BaseActivity() {
         binding.rvLevels.layoutManager = layoutManager
         val levelAdapter=GameTabLevelAdapter(
             clickLevel = {
+                val accessToken = intent.getStringExtra("accessToken")
                 val intent=Intent(this, GameQuizActivity::class.java)
+                intent.putExtra("level", it)
+                intent.putExtra("accessToken", accessToken)
                 startActivity(intent)
                 this.overridePendingTransition(R.anim.slide_in_right, R.anim.stay)
             }

@@ -60,11 +60,12 @@ class HomeFragment:Fragment(), OnTabReselectedListener {
     private fun setting(){
         mainViewModel.accessToken.observe(viewLifecycleOwner){token->
             clickPractice(token)
+            clickGame(token)
         }
         showImage()
         //clickPractice(token)
         inputMockData()
-        clickGame()
+
     }
 
     private fun showImage(){
@@ -182,9 +183,10 @@ class HomeFragment:Fragment(), OnTabReselectedListener {
         }
     }
 
-    private fun clickGame(){
+    private fun clickGame(token:String){
         binding.ivQuiz.setOnClickListener{
             val intent= Intent(requireActivity(), GameTabActivity::class.java)
+            intent.putExtra("accessToken", token)
             startActivity(intent)
             requireActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.stay)
         }

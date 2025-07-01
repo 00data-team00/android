@@ -115,6 +115,9 @@ dependencies {
 
     //blurview
     implementation("com.github.Dimezis:BlurView:version-2.0.6")
+
+    // lottifile
+    implementation("com.airbnb.android:lottie:6.6.7")
 }
 
 kapt {

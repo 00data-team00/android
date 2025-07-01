@@ -9,7 +9,9 @@ import com.data.app.data.response_dto.ResponseChatStartDto
 import com.data.app.data.response_dto.ResponseDeadlineDto
 import com.data.app.data.response_dto.ResponseFollowersDto
 import com.data.app.data.response_dto.ResponseLoginDto
+import com.data.app.data.response_dto.ResponseQuizDto
 import com.data.app.data.response_dto.ResponseRegisterDto
+import retrofit2.Response
 
 interface BaseRepository {
     // sign up
@@ -57,6 +59,18 @@ interface BaseRepository {
         token:String,
         chatRoomId:Int,
     ):Result<ResponseAIPreviousChatMessagesDto>
+
+    // quiz
+    suspend fun getQuiz(
+        token:String,
+        level:Int,
+        userLang: String
+    ):Result<ResponseQuizDto>
+
+    suspend fun quizComplete(
+        token:String,
+        level:Int,
+    ): Result<Response<Unit>>
 
     // explore
     suspend fun getAllPrograms(

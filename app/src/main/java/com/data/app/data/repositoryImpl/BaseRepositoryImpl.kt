@@ -3,6 +3,7 @@ package com.data.app.data.repositoryImpl
 import com.data.app.data.datasource.BaseDataSource
 import com.data.app.data.request_dto.RequestChatAiMessageDto
 import com.data.app.data.request_dto.RequestLoginDto
+import com.data.app.data.request_dto.RequestQuizDto
 import com.data.app.data.request_dto.RequestRegisterDto
 import com.data.app.data.request_dto.RequestSendMailDto
 import com.data.app.data.request_dto.RequestVerifyMailDto
@@ -15,8 +16,10 @@ import com.data.app.data.response_dto.ResponseChatStartDto
 import com.data.app.data.response_dto.ResponseDeadlineDto
 import com.data.app.data.response_dto.ResponseFollowersDto
 import com.data.app.data.response_dto.ResponseLoginDto
+import com.data.app.data.response_dto.ResponseQuizDto
 import com.data.app.data.response_dto.ResponseRegisterDto
 import com.data.app.domain.repository.BaseRepository
+import retrofit2.Response
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -110,6 +113,27 @@ class BaseRepositoryImpl @Inject constructor(
             baseDataSource.getAIPreviousChatMessages(token, chatRoomId)
         }.onFailure {
             Timber.e("base repository get ai previous chat message fail: $it")
+        }
+    }
+
+    // quiz
+    override suspend fun getQuiz(
+        token: String,
+        level: Int,
+        userLang: String
+    ): Result<ResponseQuizDto> {
+        return runCatching {
+            baseDataSource.getQuiz(token, RequestQuizDto(level, userLang))
+        }.onFailure {
+            Timber.e("base repository get quiz fail: $it")
+        }
+    }
+
+    override suspend fun quizComplete(token: String, level: Int): Result<Response<Unit>> {
+        return runCatching {
+            baseDataSource.quizComplete(token, level)
+        }.onFailure {
+            Timber.e("base repository quiz complete fail: $it")
         }
     }
 
