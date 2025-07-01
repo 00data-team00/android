@@ -19,12 +19,16 @@ import coil3.load
 import coil3.request.transformations
 import coil3.transform.CircleCropTransformation
 import com.data.app.R
+import com.data.app.data.shared_preferences.AppPreferences
 import com.data.app.databinding.FragmentMyBinding
 import com.data.app.extension.MyState
 import com.data.app.presentation.login.LoginActivity
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MyFragment:Fragment() {
     private var _binding: FragmentMyBinding? = null
     private val binding: FragmentMyBinding
@@ -32,6 +36,11 @@ class MyFragment:Fragment() {
 
     private val myViewModel: MyViewModel by viewModels()
     private lateinit var myAdapter: _root_ide_package_.com.data.app.presentation.main.my.MyAdapter
+
+
+    @Inject
+    lateinit var appPreferences: AppPreferences
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -126,8 +135,14 @@ class MyFragment:Fragment() {
                     dialog.dismiss()
                     popupWindow.dismiss()
 
+                    // 로그인 정보 삭제
+                    appPreferences.clearAccessToken() // AppPreferences에 정의된 토큰 삭제 메서드 호출
+                    Timber.d("Access token cleared.")
+
                     // 화면 전환 (로그인 화면으로)
-                    val intent = Intent(requireContext(), LoginActivity::class.java)
+                    val intent = Intent(requireContext(), LoginActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    }
                     startActivity(intent)
 
                     Toast.makeText(context, "로그아웃 되었습니다.", Toast.LENGTH_SHORT).show()
