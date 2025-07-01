@@ -14,7 +14,7 @@ import com.data.app.databinding.ItemCommentWriteBinding
 
 class PostDetailAdapter(
     val addComment:(Int)->Unit,
-    val clickProfileOrId:(Int, String)->Unit,
+    val clickProfileOrId:(String, String)->Unit,
 ):RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private lateinit var user:Post
     private val commentsList = mutableListOf<Post.Comments>()
@@ -71,7 +71,7 @@ class PostDetailAdapter(
             clickWrite(data.id, data.profile)
         }
 
-        private fun clickWrite(user:String, profile:Int){
+        private fun clickWrite(user:String, profile:String){
             binding.btnWrite.setOnClickListener {
                 val text = binding.etCommentWrite.text.toString()
                 if (text.isNotBlank()) {

@@ -10,13 +10,22 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.data.app.R
+import com.data.app.data.Follow
+import com.data.app.data.response_dto.ResponseFollowersDto
 import com.data.app.databinding.FragmentFollowBinding
 import com.data.app.databinding.FragmentOtherProfileBinding
+import com.data.app.extension.FollowerState
+import com.data.app.extension.StartChatState
+import com.data.app.presentation.main.MainViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
+@AndroidEntryPoint
 class FollowFragment : Fragment() {
     private var _binding: FragmentFollowBinding? = null
     private val binding: FragmentFollowBinding
@@ -24,6 +33,7 @@ class FollowFragment : Fragment() {
 
     private val followFragmentArgs: FollowFragmentArgs by navArgs()
     private val followViewModel: FollowViewModel by viewModels()
+    private val mainViewModel : MainViewModel by viewModels()
     private lateinit var followAdapter: FollowAdapter
 
     override fun onCreateView(
@@ -41,44 +51,57 @@ class FollowFragment : Fragment() {
     }
 
     private fun setting() {
+        val token=mainViewModel.accessToken.value
+        if (token != null) {
+            followViewModel.saveToken(token)
+        }
+
+        followViewModel.getFollowers()
+
         val title = followFragmentArgs.title
         binding.tvTitle.text = (if(title=="follower") getString(R.string.follow_list_follower) else getString(R.string.follow_list_following))
 
-        followAdapter = FollowAdapter(clickProfile = { profile, name ->
-            val action =
-                FollowFragmentDirections.actionFollowFragmentToOtherProfileFragment(profile, name)
-            findNavController().navigate(action)
-        })
-        binding.rvFollowList.adapter = followAdapter
-        binding.rvFollowList.itemAnimator = null
-        followAdapter.submitList(
-            if (title == "follower") {
-                followViewModel.followerList
+        lifecycleScope.launch {
+            followViewModel.followerState.collect{state->
+                when(state){
+                    is FollowerState.Success->{
+                        followAdapter = FollowAdapter(clickProfile = { profile, name ->
+                            val action =
+                                FollowFragmentDirections.actionFollowFragmentToOtherProfileFragment(profile, name)
+                            findNavController().navigate(action)
+                        })
+                        binding.rvFollowList.adapter = followAdapter
+                        binding.rvFollowList.itemAnimator = null
+                        followAdapter.submitList(
+                            if (title == "follower") {
+                                state.response.messages
+                            }
+                            else state.response.messages
+                        )
+                        searchList(title, state.response.messages)
+                    }
+                    is FollowerState.Loading->{}
+                    is FollowerState.Error->{
+                        Timber.e("setChats start chat state is error!!")
+                    }
+                }
             }
-            else followViewModel.followingList
-        )
+        }
 
-        searchList(title)
         clickBackButton()
     }
 
-    private fun searchList(title:String){
+    private fun searchList(title:String, followlist:List<ResponseFollowersDto.Follower>){
         binding.etSearch.doOnTextChanged{ text, _, _, _ ->
             val keyword = text.toString().trim()
 
             Timber.d("keyword: $keyword")
 
-            val originList = if (title == "follower") {
-                followViewModel.followerList
-            } else {
-                followViewModel.followingList
-            }
-
             if (keyword.isEmpty()) {
-                followAdapter.submitList(originList)
+                followAdapter.submitList(followlist)
             } else {
-                val filteredList = originList.filter {
-                    it.name.contains(keyword, ignoreCase = true) || it.id.contains(keyword, ignoreCase = true)
+                val filteredList = followlist.filter {
+                    it.name.contains(keyword, ignoreCase = true)
                 }
                 followAdapter.submitList(filteredList)
             }

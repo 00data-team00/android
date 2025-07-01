@@ -48,7 +48,6 @@ class SignupActivity : AppCompatActivity() {
         register()
 
         clickBackButton()
-        clickQuitButton()
 
         val et_email = binding.etSignupEmail
         val tv_valid = binding.tvWritevalid
@@ -238,26 +237,6 @@ class SignupActivity : AppCompatActivity() {
 
         private fun clickBackButton() {
             binding.btnSignupBack.setOnClickListener {
-                binding.etSignupEmail.setText("")
-                binding.tvWritevalid.visibility = View.GONE
-                binding.tvAlreadyuse.visibility = View.GONE
-                binding.btnSend.visibility = View.GONE
-                binding.etVerifycode.visibility = View.GONE
-                binding.tvCodenotvalid.visibility = View.GONE
-                binding.btnVerify.visibility = View.GONE
-                binding.tvTimer.visibility = View.GONE
-                binding.btnVerified.visibility = View.GONE
-                binding.etSignupName.visibility = View.GONE
-                binding.etNationality.visibility = View.GONE
-                binding.etSignupPassword.visibility = View.GONE
-                binding.tvPwcondition.visibility = View.GONE
-                binding.btnPrivacy.visibility = View.GONE
-                binding.btnSignup.visibility = View.GONE
-            }
-        }
-
-        private fun clickQuitButton() {
-            binding.btnSignupExit.setOnClickListener {
                 val intent = Intent(this, LoginActivity::class.java)
                 startActivity(intent)
             }

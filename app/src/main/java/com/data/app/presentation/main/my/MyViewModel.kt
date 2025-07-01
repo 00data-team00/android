@@ -4,12 +4,13 @@ import androidx.lifecycle.ViewModel
 import com.data.app.R
 import com.data.app.data.Post
 import com.data.app.extension.MyState
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class MyViewModel:ViewModel() {
-    private val profile = R.drawable.ic_my
+    private val profile = "https://avatars.githubusercontent.com/u/71327548?v=4"
     private val id="구구"
 
     private val _myState = MutableStateFlow<MyState>(MyState.Loading)
@@ -26,8 +27,8 @@ class MyViewModel:ViewModel() {
                 images = listOf(R.drawable.ic_image2, R.drawable.ic_image3),
                 like = 101,
                 comments = listOf(
-                    Post.Comments(R.drawable.ic_profile4, "Liam", "와 생일 축하해요!!", 5),
-                    Post.Comments(R.drawable.ic_profile3, "Emma", "케이크 진짜 맛있어보여요", 3)
+                    Post.Comments("https://avatars.githubusercontent.com/u/71327548?v=4", "Liam", "와 생일 축하해요!!", 5),
+                    Post.Comments("https://avatars.githubusercontent.com/u/71327548?v=4", "Emma", "케이크 진짜 맛있어보여요", 3)
                 )
             ),
             Post(
@@ -39,7 +40,7 @@ class MyViewModel:ViewModel() {
                 images = listOf(R.drawable.ic_image, R.drawable.ic_image4),
                 like = 78,
                 comments = listOf(
-                    Post.Comments(R.drawable.ic_profile, "Ben", "저도 같이 뒹굴고 싶네요 ㅎㅎ", 2)
+                    Post.Comments("https://avatars.githubusercontent.com/u/71327548?v=4", "Ben", "저도 같이 뒹굴고 싶네요 ㅎㅎ", 2)
                 )
             ),
             Post(
@@ -51,8 +52,8 @@ class MyViewModel:ViewModel() {
                 images = listOf(R.drawable.ic_image3),
                 like = 96,
                 comments = listOf(
-                    Post.Comments(R.drawable.ic_profile2, "Sasha", "그래도 너무 귀여워요!", 4),
-                    Post.Comments(R.drawable.ic_profile4, "Noah", "저희 집도 삐져요ㅠㅠ", 3)
+                    Post.Comments("https://avatars.githubusercontent.com/u/71327548?v=4", "Sasha", "그래도 너무 귀여워요!", 4),
+                    Post.Comments("https://avatars.githubusercontent.com/u/71327548?v=4", "Noah", "저희 집도 삐져요ㅠㅠ", 3)
                 )
             ),
             Post(
@@ -64,8 +65,8 @@ class MyViewModel:ViewModel() {
                 images = listOf(R.drawable.ic_image, R.drawable.ic_image2, R.drawable.ic_image4),
                 like = 132,
                 comments = listOf(
-                    Post.Comments(R.drawable.ic_profile, "Jisoo", "우리 애는 무서워서 안 올라가요ㅠ", 2),
-                    Post.Comments(R.drawable.ic_profile3, "Nina", "캣타워 정보 공유 가능할까요?", 1)
+                    Post.Comments("https://avatars.githubusercontent.com/u/71327548?v=4", "Jisoo", "우리 애는 무서워서 안 올라가요ㅠ", 2),
+                    Post.Comments("https://avatars.githubusercontent.com/u/71327548?v=4", "Nina", "캣타워 정보 공유 가능할까요?", 1)
                 )
             )
         )

@@ -1,6 +1,5 @@
 package com.data.app.presentation.main.community.other
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -18,8 +17,6 @@ import coil3.transform.CircleCropTransformation
 import com.data.app.R
 import com.data.app.databinding.FragmentOtherProfileBinding
 import com.data.app.extension.OtherState
-import com.data.app.presentation.main.my.FollowFragment
-import com.data.app.presentation.main.my.MyFragmentDirections
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -49,15 +46,15 @@ class OtherProfileFragment : Fragment() {
     private fun setting() {
         val profile = otherProfileFragmentArgs.otherProfile
         val name = otherProfileFragmentArgs.otherName
-        showProfile(profile, name)
+        showProfile(profile.toString(), name)
         showPosts()
-        makeList(profile, name)
+        makeList(profile.toString(), name)
         clickFollowButton()
         clickFollow()
         clickBackButton()
     }
 
-    private fun showProfile(profile: Int, name: String) {
+    private fun showProfile(profile: String, name: String) {
         with(binding) {
             ivProfile.load(profile) {
                 transformations(CircleCropTransformation())
@@ -99,7 +96,7 @@ class OtherProfileFragment : Fragment() {
         }
     }
 
-    private fun makeList(profile: Int, name: String) {
+    private fun makeList(profile: String, name: String) {
         otherProfileViewModel.getOtherProfile(profile, name)
     }
 

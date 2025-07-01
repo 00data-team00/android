@@ -121,7 +121,7 @@ class PostDetailFragment : Fragment() {
         communityDetailAdapter.getList(post.comments)
     }
 
-    private fun clickProfileOrId(profile:Int, name:String){
+    private fun clickProfileOrId(profile:String, name:String){
         val action=PostDetailFragmentDirections.actionPostDetailFragmentToOtherProfileFragment(profile, name)
         findNavController().navigate(action)
     }

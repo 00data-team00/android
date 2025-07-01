@@ -1,9 +1,49 @@
 package com.data.app.presentation.main.my
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.data.app.data.Follow
+import com.data.app.data.response_dto.ResponseFollowersDto
+import com.data.app.domain.repository.BaseRepository
+import com.data.app.extension.FollowerState
+import com.data.app.extension.StartChatState
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import timber.log.Timber
+import javax.inject.Inject
 
-class FollowViewModel:ViewModel() {
+@HiltViewModel
+class FollowViewModel @Inject constructor(
+    private val baseRepository: BaseRepository
+):ViewModel() {
+    private var accessToken: String? = null
+
+    private val _followerState = MutableStateFlow<FollowerState>(FollowerState.Loading)
+    val followerState: StateFlow<FollowerState> = _followerState.asStateFlow()
+
+    fun saveToken(token: String) {
+        accessToken = token
+    }
+
+    fun getFollowers() {
+        viewModelScope.launch {
+            accessToken?.let{
+                baseRepository.getFollowerList(accessToken!!).onSuccess { response ->
+                    _followerState.value = FollowerState.Success(response)
+                    Timber.d("Get followers success!")
+                }.onFailure {
+                    _followerState.value = FollowerState.Error("Get followers failed!")
+                }
+            }
+        }
+    }
+
+
     val followerList = listOf(
         Follow(name = "Emily Johnson", id = "emily_j", isFollow = true),
         Follow(name = "Liam Smith", id = "liam_smith23", isFollow = true),

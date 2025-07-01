@@ -16,7 +16,7 @@ import com.data.app.data.Post
 import com.data.app.databinding.ItemPostBinding
 import timber.log.Timber
 
-class PostsAdapter(val clickPost: (Post) -> Unit, val clickOtherUser:(Int, String)->Unit) :
+class PostsAdapter(val clickPost: (Post) -> Unit, val clickOtherUser:(String, String)->Unit) :
     RecyclerView.Adapter<PostsAdapter.FeedsViewHolder>() {
 
     private val postsList = mutableListOf<Post>()
