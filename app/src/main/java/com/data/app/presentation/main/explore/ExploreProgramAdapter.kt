@@ -15,7 +15,7 @@ import java.util.Calendar
 import java.util.Locale
 
 class ExploreProgramAdapter(
-    val clickProgram:()->Unit,
+    val clickProgram:(String)->Unit,
 ):RecyclerView.Adapter<ExploreProgramAdapter.ExploreProgramViewHolder>() {
     private val programList = mutableListOf<ResponseAllProgramDto.ProgramDto>()
 
@@ -50,7 +50,7 @@ class ExploreProgramAdapter(
             binding.tvDate.text=data.appEndDate
 
             binding.itemProgram.setOnClickListener{
-                clickProgram()
+                clickProgram(data.appLink)
             }
 
             val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())

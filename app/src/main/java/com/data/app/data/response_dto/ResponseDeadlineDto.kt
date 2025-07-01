@@ -23,6 +23,10 @@ data class ResponseDeadlineDto(
         val tuitEtc: String,
 
         @SerialName("appEndDate")
-        val appEndDate: String
+        val appEndDate: String,
+        @SerialName("isFree")
+        val isFree:Boolean,
+        @SerialName("appLink")
+        val appLink:String,
     )
 }
