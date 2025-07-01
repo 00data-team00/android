@@ -57,6 +57,7 @@ class LandingActivity:AppCompatActivity() {
                     Timber.d("LandingActivity: LoginState changed to $state")
                     when (state) {
                         is LoginState.Success -> {
+                            Timber.d("token: ${state.response.accessToken}")
                             val elapsedTime = System.currentTimeMillis() - startTime
                             val remainingTime = minSplashTimeMillis - elapsedTime
                             if (remainingTime > 0) {

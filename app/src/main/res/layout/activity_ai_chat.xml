@@ -174,7 +174,7 @@
             </FrameLayout>
         </androidx.cardview.widget.CardView>
 
-        <Button
+        <!--<Button
             android:id="@+id/btn_temp"
             android:layout_width="wrap_content"
             android:layout_height="30dp"
@@ -183,7 +183,7 @@
             android:layout_margin="5dp"
             android:backgroundTint="@color/bg_green"
             app:layout_constraintStart_toStartOf="@id/rv_chat"
-            app:layout_constraintTop_toTopOf="@id/rv_chat"/>
+            app:layout_constraintTop_toTopOf="@id/rv_chat"/>-->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>
