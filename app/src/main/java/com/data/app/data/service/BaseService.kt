@@ -12,6 +12,7 @@ import com.data.app.data.response_dto.ResponseAllProgramDto
 import com.data.app.data.response_dto.ResponseChatAiMessageDto
 import com.data.app.data.response_dto.ResponseChatStartDto
 import com.data.app.data.response_dto.ResponseDeadlineDto
+import com.data.app.data.response_dto.ResponseFollowersDto
 import com.data.app.data.response_dto.ResponseLoginDto
 import com.data.app.data.response_dto.ResponseRegisterDto
 import retrofit2.http.Body
@@ -84,6 +85,9 @@ interface BaseService {
     @GET("api/edu-info/closing-soon")
     suspend fun getDeadLinePrograms():ResponseDeadlineDto
 
-    // post
-
+    // followers
+    @GET("api/me/followers")
+    suspend fun getFollowerList(
+        @Header("Authorization") token:String
+    ):ResponseFollowersDto
 }

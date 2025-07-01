@@ -13,6 +13,7 @@ import com.data.app.data.response_dto.ResponseAllProgramDto
 import com.data.app.data.response_dto.ResponseChatAiMessageDto
 import com.data.app.data.response_dto.ResponseChatStartDto
 import com.data.app.data.response_dto.ResponseDeadlineDto
+import com.data.app.data.response_dto.ResponseFollowersDto
 import com.data.app.data.response_dto.ResponseLoginDto
 import com.data.app.data.response_dto.ResponseRegisterDto
 import com.data.app.data.service.BaseService
@@ -51,4 +52,10 @@ class BaseDataSourceImpl @Inject constructor(
     ): ResponseAllProgramDto = baseService.getAllPrograms(isFree, sort, page, size)
 
     override suspend fun getDeadLinePrograms(): ResponseDeadlineDto = baseService.getDeadLinePrograms()
+
+    // followers
+    override suspend fun getFollowerList(token: String): ResponseFollowersDto = baseService.getFollowerList(token)
+    // following
+
+
 }

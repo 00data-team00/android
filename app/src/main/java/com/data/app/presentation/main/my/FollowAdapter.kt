@@ -9,12 +9,12 @@ import coil3.load
 import coil3.request.transformations
 import coil3.transform.CircleCropTransformation
 import com.data.app.R
-import com.data.app.data.Follow
+import com.data.app.data.response_dto.ResponseFollowersDto
 import com.data.app.databinding.ItemFollowBinding
 
 class FollowAdapter(
-    val clickProfile: (Int, String) -> Unit,
-) : ListAdapter<Follow, FollowAdapter.FollowViewHolder>(FollowDiffCallback()) {
+    val clickProfile: (String, String) -> Unit,
+) : ListAdapter<ResponseFollowersDto.Follower, FollowAdapter.FollowViewHolder>(FollowDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FollowViewHolder {
         val binding = ItemFollowBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -27,20 +27,20 @@ class FollowAdapter(
 
     inner class FollowViewHolder(private val binding: ItemFollowBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(data: Follow) {
+        fun bind(data: ResponseFollowersDto.Follower) {
             with(binding) {
                 tvName.text = data.name
-                tvId.text = root.context.getString(R.string.community_id, data.id)
-                btnFollow.isSelected = data.isFollow
+                tvId.text = data.userId.toString()
+                btnFollow.isSelected = data.isFollowing
 
-                ivProfile.load(R.drawable.ic_profile) {
+                ivProfile.load(data.profileImage) {
                     transformations(CircleCropTransformation())
                 }
             }
 
             buttonFollowColor()
             clickFollow()
-            clickother(R.drawable.ic_profile, data.name)
+            clickother(data.profileImage, data.name)
         }
 
         private fun buttonFollowColor() {
@@ -69,7 +69,7 @@ class FollowAdapter(
             }
         }
 
-        private fun clickother(profile:Int, name:String) {
+        private fun clickother(profile: String, name:String) {
             with(binding){
                 listOf(
                     ivProfile,

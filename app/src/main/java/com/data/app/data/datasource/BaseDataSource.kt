@@ -12,6 +12,7 @@ import com.data.app.data.response_dto.ResponseAllProgramDto
 import com.data.app.data.response_dto.ResponseChatAiMessageDto
 import com.data.app.data.response_dto.ResponseChatStartDto
 import com.data.app.data.response_dto.ResponseDeadlineDto
+import com.data.app.data.response_dto.ResponseFollowersDto
 import com.data.app.data.response_dto.ResponseLoginDto
 import com.data.app.data.response_dto.ResponseRegisterDto
 
@@ -67,4 +68,13 @@ interface BaseDataSource {
     ):ResponseAllProgramDto
 
     suspend fun getDeadLinePrograms():ResponseDeadlineDto
+
+    // followers
+    suspend fun getFollowerList(
+        token: String
+    ):ResponseFollowersDto
+
+    // followings
+
+
 }

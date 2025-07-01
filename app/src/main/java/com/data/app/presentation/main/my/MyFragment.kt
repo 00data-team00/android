@@ -92,7 +92,7 @@ class MyFragment:Fragment() {
         binding.tvId.text="kkuming"
     }
 
-    private fun showProfile(profile: Int, name: String) {
+    private fun showProfile(profile: String, name: String) {
         with(binding){
             ivProfile.load(profile){
                 transformations(CircleCropTransformation())

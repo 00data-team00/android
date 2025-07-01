@@ -57,7 +57,7 @@
         android:label="other_profile">
         <argument
             android:name="other_profile"
-            app:argType="integer"/>
+            app:argType="string"/>
         <argument
             android:name="other_name"
             app:argType="string"/>

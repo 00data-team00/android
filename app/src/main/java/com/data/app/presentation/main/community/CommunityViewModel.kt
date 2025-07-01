@@ -7,7 +7,7 @@ import com.data.app.data.Post
 class CommunityViewModel:ViewModel() {
     val allFeeds = listOf(
         Post(
-            profile = R.drawable.ic_profile,
+            profile = "https://avatars.githubusercontent.com/u/71327548?v=4",
             id = "Luna",
             time = 2,
             isFollowing = false,
@@ -19,12 +19,12 @@ class CommunityViewModel:ViewModel() {
             ),
             like = 120,
             comments = listOf(
-                Post.Comments(R.drawable.ic_profile2, "Emma", "와 남산 고양이 너무 귀여워요!", 8),
-                Post.Comments(R.drawable.ic_profile3, "Noah", "부럽다.. 다음엔 같이가요!", 5)
+                Post.Comments("https://avatars.githubusercontent.com/u/71327548?v=4", "Emma", "와 남산 고양이 너무 귀여워요!", 8),
+                Post.Comments("https://avatars.githubusercontent.com/u/71327548?v=4", "Noah", "부럽다.. 다음엔 같이가요!", 5)
             )
         ),
         Post(
-            profile = R.drawable.ic_profile3,
+            profile = "https://avatars.githubusercontent.com/u/71327548?v=4",
             id = "Leo",
             time = 5,
             isFollowing = false,
@@ -32,11 +32,11 @@ class CommunityViewModel:ViewModel() {
             images = null,
             like = 70,
             comments = listOf(
-                Post.Comments(R.drawable.ic_profile, "Mina", "을지로 근처에 있어요!", 10)
+                Post.Comments("https://avatars.githubusercontent.com/u/71327548?v=4", "Mina", "을지로 근처에 있어요!", 10)
             )
         ),
         Post(
-            profile = R.drawable.ic_profile4,
+            profile = "https://avatars.githubusercontent.com/u/71327548?v=4",
             id = "Isla",
             time = 8,
             isFollowing = false,
@@ -48,16 +48,16 @@ class CommunityViewModel:ViewModel() {
             ),
             like = 98,
             comments = listOf(
-                Post.Comments(R.drawable.ic_profile2, "Tom", "참치 ㅋㅋㅋ 귀엽다", 6),
-                Post.Comments(R.drawable.ic_profile3, "Liam", "우리 집은 연어예요 ㅋㅋ", 4),
-                Post.Comments(R.drawable.ic_profile, "Yuki", "고양이 이름 고민 중인데 참고해야겠다", 3)
+                Post.Comments("https://avatars.githubusercontent.com/u/71327548?v=4", "Tom", "참치 ㅋㅋㅋ 귀엽다", 6),
+                Post.Comments("https://avatars.githubusercontent.com/u/71327548?v=4", "Liam", "우리 집은 연어예요 ㅋㅋ", 4),
+                Post.Comments("https://avatars.githubusercontent.com/u/71327548?v=4", "Yuki", "고양이 이름 고민 중인데 참고해야겠다", 3)
             )
         )
     )
 
     val followFeeds = listOf(
         Post(
-            profile = R.drawable.ic_profile2,
+            profile = "https://avatars.githubusercontent.com/u/71327548?v=4",
             id = "Milo",
             time = 1,
             isFollowing = true,
@@ -65,12 +65,12 @@ class CommunityViewModel:ViewModel() {
             images = null,
             like = 134,
             comments = listOf(
-                Post.Comments(R.drawable.ic_profile, "Sophie", "미용한 뒤 애들이 다 그래요 ㅋㅋ", 7),
-                Post.Comments(R.drawable.ic_profile3, "Jack", "사진 공유해줘요!!", 6)
+                Post.Comments("https://avatars.githubusercontent.com/u/71327548?v=4", "Sophie", "미용한 뒤 애들이 다 그래요 ㅋㅋ", 7),
+                Post.Comments("https://avatars.githubusercontent.com/u/71327548?v=4", "Jack", "사진 공유해줘요!!", 6)
             )
         ),
         Post(
-            profile = R.drawable.ic_profile,
+            profile = "https://avatars.githubusercontent.com/u/71327548?v=4",
             id = "Sasha",
             time = 4,
             isFollowing = true,
@@ -82,11 +82,11 @@ class CommunityViewModel:ViewModel() {
             ),
             like = 150,
             comments = listOf(
-                Post.Comments(R.drawable.ic_profile4, "Leo", "건강하다니 다행이에요! ❤️", 10)
+                Post.Comments("https://avatars.githubusercontent.com/u/71327548?v=4", "Leo", "건강하다니 다행이에요! ❤️", 10)
             )
         ),
         Post(
-            profile = R.drawable.ic_profile3,
+            profile = "https://avatars.githubusercontent.com/u/71327548?v=4",
             id = "Yuna",
             time = 6,
             isFollowing = true,
@@ -97,16 +97,16 @@ class CommunityViewModel:ViewModel() {
             ),
             like = 210,
             comments = listOf(
-                Post.Comments(R.drawable.ic_profile2, "Ben", "와 대박! 우리 애는 탈출 시도함 ㅠ", 13),
-                Post.Comments(R.drawable.ic_profile, "Olivia", "용감한 고양이네요!", 8),
-                Post.Comments(R.drawable.ic_profile4, "Nina", "귀엽다앙앙", 4)
+                Post.Comments("https://avatars.githubusercontent.com/u/71327548?v=4", "Ben", "와 대박! 우리 애는 탈출 시도함 ㅠ", 13),
+                Post.Comments("https://avatars.githubusercontent.com/u/71327548?v=4", "Olivia", "용감한 고양이네요!", 8),
+                Post.Comments("https://avatars.githubusercontent.com/u/71327548?v=4", "Nina", "귀엽다앙앙", 4)
             )
         )
     )
 
     val countryFeeds = listOf(
         Post(
-            profile = R.drawable.ic_profile,
+            profile = "https://avatars.githubusercontent.com/u/71327548?v=4",
             id = "Jin",
             time = 3,
             isFollowing = false,
@@ -118,12 +118,12 @@ class CommunityViewModel:ViewModel() {
             ),
             like = 85,
             comments = listOf(
-                Post.Comments(R.drawable.ic_profile2, "Suji", "맞아요. 정 많으신 분들 많더라구요", 11),
-                Post.Comments(R.drawable.ic_profile3, "Min", "고양이들 천국이네요", 6)
+                Post.Comments("https://avatars.githubusercontent.com/u/71327548?v=4", "Suji", "맞아요. 정 많으신 분들 많더라구요", 11),
+                Post.Comments("https://avatars.githubusercontent.com/u/71327548?v=4", "Min", "고양이들 천국이네요", 6)
             )
         ),
         Post(
-            profile = R.drawable.ic_profile2,
+            profile = "https://avatars.githubusercontent.com/u/71327548?v=4",
             id = "Soo",
             time = 7,
             isFollowing = false,
@@ -133,13 +133,13 @@ class CommunityViewModel:ViewModel() {
             ),
             like = 100,
             comments = listOf(
-                Post.Comments(R.drawable.ic_profile, "Hoon", "츄르 맛별로 다 좋아요 ㅋㅋ", 5),
-                Post.Comments(R.drawable.ic_profile4, "Yena", "참치맛 강추!", 3),
-                Post.Comments(R.drawable.ic_profile3, "Ray", "베베몬도 괜찮았어요!", 4)
+                Post.Comments("https://avatars.githubusercontent.com/u/71327548?v=4", "Hoon", "츄르 맛별로 다 좋아요 ㅋㅋ", 5),
+                Post.Comments("https://avatars.githubusercontent.com/u/71327548?v=4", "Yena", "참치맛 강추!", 3),
+                Post.Comments("https://avatars.githubusercontent.com/u/71327548?v=4", "Ray", "베베몬도 괜찮았어요!", 4)
             )
         ),
         Post(
-            profile = R.drawable.ic_profile4,
+            profile = "https://avatars.githubusercontent.com/u/71327548?v=4",
             id = "Daniel",
             time = 6,
             isFollowing = false,
@@ -151,8 +151,8 @@ class CommunityViewModel:ViewModel() {
             ),
             like = 172,
             comments = listOf(
-                Post.Comments(R.drawable.ic_profile3, "Jisoo", "지자체 보호소 추천드려요!", 9),
-                Post.Comments(R.drawable.ic_profile, "Hyun", "절차는 생각보다 간단했어요!", 7)
+                Post.Comments("https://avatars.githubusercontent.com/u/71327548?v=4", "Jisoo", "지자체 보호소 추천드려요!", 9),
+                Post.Comments("https://avatars.githubusercontent.com/u/71327548?v=4", "Hyun", "절차는 생각보다 간단했어요!", 7)
             )
         )
     )
