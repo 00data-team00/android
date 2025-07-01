@@ -2,6 +2,7 @@ package com.data.app.data.datasource
 
 import com.data.app.data.request_dto.RequestChatAiMessageDto
 import com.data.app.data.request_dto.RequestLoginDto
+import com.data.app.data.request_dto.RequestQuizDto
 import com.data.app.data.request_dto.RequestRegisterDto
 import com.data.app.data.request_dto.RequestSendMailDto
 import com.data.app.data.request_dto.RequestVerifyMailDto
@@ -14,7 +15,9 @@ import com.data.app.data.response_dto.ResponseChatStartDto
 import com.data.app.data.response_dto.ResponseDeadlineDto
 import com.data.app.data.response_dto.ResponseFollowersDto
 import com.data.app.data.response_dto.ResponseLoginDto
+import com.data.app.data.response_dto.ResponseQuizDto
 import com.data.app.data.response_dto.ResponseRegisterDto
+import retrofit2.Response
 
 interface BaseDataSource {
     // sign up
@@ -58,6 +61,17 @@ interface BaseDataSource {
         token:String,
         chatRoomId:Int
     ):ResponseAIPreviousChatMessagesDto
+
+    // quiz
+    suspend fun getQuiz(
+        token:String,
+        requestQuizDto: RequestQuizDto
+    ): ResponseQuizDto
+
+    suspend fun quizComplete(
+        toke:String,
+        level:Int,
+    ): Response<Unit>
 
     // explore
     suspend fun getAllPrograms(

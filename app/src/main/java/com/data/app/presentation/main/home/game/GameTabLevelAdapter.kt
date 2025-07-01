@@ -9,7 +9,7 @@ import com.data.app.databinding.ItemGameLevelBinding
 import timber.log.Timber
 
 class GameTabLevelAdapter(
-    val clickLevel: () -> Unit,
+    val clickLevel: (Int) -> Unit,
 ) : RecyclerView.Adapter<GameTabLevelAdapter.GameTabLevelViewHolder>() {
     private val levels = mutableListOf<GameLevel>()
     private var recyclerViewWidth = 0
@@ -46,7 +46,7 @@ class GameTabLevelAdapter(
             binding.itemLevel.setOnClickListener {
                 Timber.d("goquiz click level")
                 if (level.isComplete) {
-                    clickLevel()
+                    clickLevel(position+1)
                 }
             }
 
@@ -87,15 +87,15 @@ class GameTabLevelAdapter(
             binding.root.layoutParams = params
         }
 
-        private fun goQuiz(complete: Boolean) {
+        /*private fun goQuiz(complete: Boolean) {
             binding.itemLevel.setOnClickListener {
                 Timber.d("goquiz click level")
                 if (complete) {
-                    clickLevel()
+                    clickLevel(position+1)
                 }
             }
 
-        }
+        }*/
 
         private fun dpToPx(dp: Int): Int {
             return (dp * binding.root.context.resources.displayMetrics.density).toInt()

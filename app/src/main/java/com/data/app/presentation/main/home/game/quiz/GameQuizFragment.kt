@@ -10,20 +10,27 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import coil3.load
+import androidx.lifecycle.lifecycleScope
+import coil.load
+import com.data.app.BuildConfig
 import com.data.app.R
 import com.data.app.data.Quiz
+import com.data.app.data.response_dto.ResponseQuizDto
 import com.data.app.databinding.FragmentGameQuizBinding
+import com.data.app.extension.QuizState
+import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import java.util.Locale
 
+@AndroidEntryPoint
 class GameQuizFragment : Fragment() {
     private var _binding: FragmentGameQuizBinding? = null
     private val binding: FragmentGameQuizBinding
         get() = requireNotNull(_binding) { "home fragment is null" }
 
-    private val gameQuizViewModel: GameQuizViewModel by viewModels()
+    private val gameQuizViewModel: GameQuizViewModel by activityViewModels()
 
     private var currentIndex = 0  // 현재 문제 번호
     private var isAnswerSelected = false
@@ -91,21 +98,47 @@ class GameQuizFragment : Fragment() {
     }
 
     private fun showQuestion() {
-        if (currentIndex == gameQuizViewModel.quiz.size) {
+        val quiz = gameQuizViewModel.quiz.value!!
+        if (currentIndex == quiz.size) {
             // 문제 다 풀었을 때 처리
             Timber.d("모든 문제를 다 풀었습니다.")
             gameActivity?.onAllQuestionsCompleted()
             return
         }
 
-        val question = gameQuizViewModel.quiz[currentIndex]
+        val question = quiz[currentIndex]
         isAnswerSelected = false // 새 문제 표시 시 선택 상태 초기화
         currentAnswerIsCorrect = null
         binding.btnComplete.isSelected = false
         binding.btnComplete.setTextColor(requireActivity().getColor(R.color.black))
 
+        // category에 따라 보여줌
         with(binding) {
-            when (question) {
+            if(question.category=="그림/단어 매칭"){
+                tvNum.text = getString(R.string.game_quiz_num, currentIndex + 1)
+                tvQuestion.text = getString(R.string.game_quiz_picture)
+                ivQuestion.visibility = View.VISIBLE
+                btnListening.visibility = View.GONE
+                ivQuestion.load("${BuildConfig.BASE_URL}${question.image}")
+
+                showAnswer(question)
+
+                rvLocation(anchorView = ivQuestion)  // Word 문제면 ivQuestion 기준으로 rv 붙이기
+            }else{
+                tvNum.text =  getString(R.string.game_quiz_num, currentIndex + 1)
+                tvQuestion.text = getString(R.string.game_quiz_picture)
+                ivQuestion.visibility = View.GONE
+                btnListening.visibility = View.VISIBLE
+
+                showAnswer(question)
+
+                rvLocation(anchorView = btnListening)  // Listening 문제면 btnListening 기준으로 rv 붙이기
+
+                btnListening.setOnClickListener {
+                    speakMessage(question.voice!!)
+                }
+            }
+            /*when (currentIndex) {
                 is Quiz.Word -> {
                     tvNum.text = getString(R.string.game_quiz_num, currentIndex + 1)
                     tvQuestion.text = question.question
@@ -136,7 +169,7 @@ class GameQuizFragment : Fragment() {
                 else -> {
                     Timber.e("question type is error")
                 }
-            }
+            }*/
         }
     }
 
@@ -193,23 +226,23 @@ class GameQuizFragment : Fragment() {
     }
 
     private fun updateProgressBar() {
-        (activity as? GameQuizActivity)?.updateProgress((currentIndex+1)*100/gameQuizViewModel.quiz.size)
+        (activity as? GameQuizActivity)?.updateProgress((currentIndex+1)*100/gameQuizViewModel.quiz.value!!.size)
     }
 
-    private fun showAnswer(answer: List<Quiz.Word.Answer>) {
+    private fun showAnswer(quiz:ResponseQuizDto.QuizDto) {
         val answerAdapter = GameQuizAnswerAdapter(
-            clickAnswer = { isCorrect ->
+            clickAnswer = { answerIndex ->
                 with(binding.btnComplete) {
                     isSelected = true
                     setTextColor(requireActivity().getColor(R.color.white))
-                    isCorrectAnswer=isCorrect
+                    isCorrectAnswer = (quiz.answer == answerIndex)
                 }
                 isAnswerSelected = true
-                currentAnswerIsCorrect = isCorrect
+                currentAnswerIsCorrect = (quiz.answer == answerIndex)
             }
         )
         binding.rvAnswer.adapter = answerAdapter
-        answerAdapter.getList(answer)
+        answerAdapter.getList(quiz.choices)
     }
 
     private fun rvLocation(anchorView: View) {

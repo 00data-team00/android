@@ -57,6 +57,8 @@
     <string name="game_tab_week_sun">일</string>
 
     <string name="game_quiz_num">問題 %d</string>
+    <string name="game_quiz_picture">그림에 맞는 단어를 선택해주세요!</string>
+    <string name="game_quiz_voice">음성을 듣고 해당하는 단어의 \n뜻을 선택해주세요.</string>
     <string name="game_quiz_complete">確認</string>
     <string name="game_quiz_correct">正解です！</string>
     <string name="game_quiz_skip_actually">実は正解は...</string>

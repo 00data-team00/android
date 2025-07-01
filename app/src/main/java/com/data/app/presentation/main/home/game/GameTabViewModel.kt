@@ -17,7 +17,7 @@ class GameTabViewModel:ViewModel() {
 
     val levels= listOf(
         GameLevel("LV.1", true),
-        GameLevel("LV.2", true),
+        GameLevel("LV.2", false),
         GameLevel("LV.3", false),
         GameLevel("LV.4", false),
         GameLevel("LV.5", false),

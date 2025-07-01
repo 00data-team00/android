@@ -3,6 +3,7 @@ package com.data.app.data.datasourceImpl
 import com.data.app.data.datasource.BaseDataSource
 import com.data.app.data.request_dto.RequestChatAiMessageDto
 import com.data.app.data.request_dto.RequestLoginDto
+import com.data.app.data.request_dto.RequestQuizDto
 import com.data.app.data.request_dto.RequestRegisterDto
 import com.data.app.data.request_dto.RequestSendMailDto
 import com.data.app.data.request_dto.RequestVerifyMailDto
@@ -15,8 +16,10 @@ import com.data.app.data.response_dto.ResponseChatStartDto
 import com.data.app.data.response_dto.ResponseDeadlineDto
 import com.data.app.data.response_dto.ResponseFollowersDto
 import com.data.app.data.response_dto.ResponseLoginDto
+import com.data.app.data.response_dto.ResponseQuizDto
 import com.data.app.data.response_dto.ResponseRegisterDto
 import com.data.app.data.service.BaseService
+import retrofit2.Response
 import javax.inject.Inject
 
 class BaseDataSourceImpl @Inject constructor(
@@ -42,6 +45,10 @@ class BaseDataSourceImpl @Inject constructor(
         token: String,
         chatRoomId: Int
     ): ResponseAIPreviousChatMessagesDto = baseService.getAIPreviousChatMessages(token, chatRoomId)
+
+    // quiz
+    override suspend fun getQuiz(token: String, requestQuizDto: RequestQuizDto): ResponseQuizDto = baseService.getQuiz(token, requestQuizDto)
+    override suspend fun quizComplete(toke: String, level: Int): Response<Unit> = baseService.quizComplete(toke, level)
 
     // explore
     override suspend fun getAllPrograms(

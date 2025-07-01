@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/cl_game_quiz"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/game_word_bg_green">
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_back"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="50dp"
         android:layout_marginStart="30dp"
+        android:layout_marginTop="50dp"
         android:background="@drawable/ic_back_black_24"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintStart_toStartOf="parent"
@@ -26,54 +26,54 @@
         android:layout_marginEnd="30dp"
         android:orientation="horizontal"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintTop_toTopOf="@id/btn_back"
         app:layout_constraintBottom_toBottomOf="@id/btn_back"
         app:layout_constraintEnd_toEndOf="parent"
-        tools:listitem="@layout/item_life"/>
+        app:layout_constraintTop_toTopOf="@id/btn_back"
+        tools:listitem="@layout/item_life" />
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fcv_question"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="60dp"
         android:layout_marginStart="30dp"
+        android:layout_marginTop="60dp"
         android:layout_marginEnd="30dp"
         app:layout_constraintDimensionRatio="1:1.5"
-        app:layout_constraintTop_toBottomOf="@id/btn_back"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@id/btn_back" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cl_game_success"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="40dp"
         android:layout_marginStart="30dp"
+        android:layout_marginTop="40dp"
         android:layout_marginEnd="30dp"
         android:layout_marginBottom="40dp"
         android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/btn_back"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_back">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_weeks"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:layout_marginTop="15dp"
-            android:paddingStart="10dp"
-            android:paddingEnd="10dp"
-            android:paddingTop="0dp"
-            android:paddingBottom="5dp"
             android:background="@color/white"
             android:clipToPadding="false"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:orientation="horizontal"
+            android:paddingStart="10dp"
+            android:paddingTop="0dp"
+            android:paddingEnd="10dp"
+            android:paddingBottom="5dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/item_game_week"/>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:listitem="@layout/item_game_week" />
 
         <TextView
             android:id="@+id/tv_game_successfail"
@@ -81,35 +81,35 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
             android:text="@string/game_quiz_finalsucess"
+            android:textColor="@color/black"
             android:textSize="26sp"
             android:textStyle="bold"
-            android:textColor="@color/black"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/rv_weeks"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/rv_weeks" />
 
         <ImageView
             android:id="@+id/iv_game_final"
             android:layout_width="170dp"
             android:layout_height="170dp"
             android:layout_marginTop="30dp"
-            app:srcCompat="@drawable/ic_correct"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_game_successfail"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_game_successfail"
+            app:srcCompat="@drawable/ic_correct" />
 
         <TextView
             android:id="@+id/tv_game_comment"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:text="@string/game_quiz_commentsuccess"
             android:gravity="center"
-            android:textSize="15sp"
+            android:text="@string/game_quiz_commentsuccess"
             android:textColor="@color/black"
-            app:layout_constraintStart_toStartOf="parent"
+            android:textSize="15sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/iv_game_final"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/iv_game_final" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_quiz_again"
@@ -122,9 +122,9 @@
             android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@id/btn_quiz_stop"
             app:layout_constraintDimensionRatio="1:0.15"
-            app:layout_constraintWidth_percent="0.8"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintWidth_percent="0.8" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_quiz_stop"
@@ -137,9 +137,9 @@
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="1:0.15"
-            app:layout_constraintWidth_percent="0.8"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintWidth_percent="0.8" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -148,22 +148,43 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@id/progress_quiz"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ProgressBar
         android:id="@+id/progress_quiz"
+        style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="8dp"
-        android:progress="0"
-        android:max="100"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:progressDrawable="@drawable/progress_bg"
+        android:layout_marginBottom="0dp"
         android:elevation="10dp"
+        android:max="100"
+        android:progress="0"
+        android:progressDrawable="@drawable/progress_bg"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/iv_loading_bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/game_80_transparent_black"
+        android:elevation="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/la_loading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:elevation="15dp"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="0dp"/>
-
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:lottie_autoPlay="true"
+        app:lottie_fileName="loading.json"
+        app:lottie_loop="true" />
 </androidx.constraintlayout.widget.ConstraintLayout>

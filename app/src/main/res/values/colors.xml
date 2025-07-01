@@ -16,7 +16,7 @@
 
     <color name="ai_practice_btn_dark_green">#5C7418</color>
     <color name="ai_practice_essential_green">#C7E957</color>
-    <color name="ai_practice_essential_light_green"> #E6F4D8</color>
+    <color name="ai_practice_essential_light_green">#E6F4D8</color>
     <color name="ai_practice_employment_blue">#3A73F8</color>
     <color name="ai_practice_employment_sky">#D7E6FF</color>
     <color name="ai_practice_culture_orange">#F28D3E</color>
@@ -38,6 +38,7 @@
     <color name="game_complete_gray">#CDCDCD</color>
 
     <color name="game_half_transparent_black">#80000000</color> <!-- 50% 투명 블랙 -->
+    <color name="game_80_transparent_black">#80000000</color>
     <color name="game_fail_pink">#FFDCDC</color>
 
     <!--explore-->
