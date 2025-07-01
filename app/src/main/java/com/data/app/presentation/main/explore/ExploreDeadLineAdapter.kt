@@ -10,7 +10,9 @@ import com.data.app.data.response_dto.ResponseDeadlineDto
 import com.data.app.databinding.ItemDeadlineBinding
 import timber.log.Timber
 
-class ExploreDeadLineAdapter:RecyclerView.Adapter<ExploreDeadLineAdapter.ExploreDeadLineViewHolder>() {
+class ExploreDeadLineAdapter(
+    private val onClick:(String)->Unit
+):RecyclerView.Adapter<ExploreDeadLineAdapter.ExploreDeadLineViewHolder>() {
     private val deadlineList = mutableListOf<ResponseDeadlineDto.EduProgram>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ExploreDeadLineViewHolder {
@@ -52,6 +54,10 @@ class ExploreDeadLineAdapter:RecyclerView.Adapter<ExploreDeadLineAdapter.Explore
                 tvPrice.text="무료"
                 tvTitle.text=data.titleNm
                 tvAddress.text=data.appQual
+
+                btnEnroll.setOnClickListener {
+                    onClick(data.appLink)
+                }
             }
         }
     }

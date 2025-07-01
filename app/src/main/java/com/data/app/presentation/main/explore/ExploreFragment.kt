@@ -1,5 +1,7 @@
 package com.data.app.presentation.main.explore
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -49,18 +51,22 @@ class ExploreFragment : Fragment(), OnTabReselectedListener {
     }
 
     private fun getDeadLineList() {
-        val deadlineAdapter = ExploreDeadLineAdapter()
+        val deadlineAdapter = ExploreDeadLineAdapter(onClick = { appLink ->
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(appLink))
+            startActivity(intent)
+        })
         binding.rvDeadline.adapter = deadlineAdapter
 
         lifecycleScope.launch {
-            exploreViewModel.deadLineProgramState.collect{deadLineProgramState ->
-                when(deadLineProgramState){
-                    is DeadLineProgramState.Success->{
+            exploreViewModel.deadLineProgramState.collect { deadLineProgramState ->
+                when (deadLineProgramState) {
+                    is DeadLineProgramState.Success -> {
                         Timber.d("deadlineprogram: ${deadLineProgramState.response.eduPrograms}")
                         deadlineAdapter.getList(deadLineProgramState.response.eduPrograms)
                     }
-                    is DeadLineProgramState.Loading->{}
-                    is DeadLineProgramState.Error->{
+
+                    is DeadLineProgramState.Loading -> {}
+                    is DeadLineProgramState.Error -> {
                         Timber.e("get deadline list error")
                     }
                 }
@@ -71,9 +77,9 @@ class ExploreFragment : Fragment(), OnTabReselectedListener {
     }
 
     private fun getProgramList() {
-        val programAdapter = ExploreProgramAdapter(clickProgram = {
-            val action = ExploreFragmentDirections.actionExploreFragmentToProgramFragment()
-            findNavController().navigate(action)
+        val programAdapter = ExploreProgramAdapter(clickProgram = { appLink ->
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(appLink))
+            startActivity(intent) // 웹 링크를 엽니다
         })
         binding.rvAllProgram.adapter = programAdapter
 
