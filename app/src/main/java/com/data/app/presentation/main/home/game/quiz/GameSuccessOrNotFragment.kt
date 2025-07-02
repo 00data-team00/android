@@ -20,7 +20,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import com.data.app.R
-import com.data.app.data.response_dto.ResponseQuizDto
+import com.data.app.data.response_dto.home.quiz.ResponseQuizDto
 import com.data.app.databinding.FragmentGameSuccessOrNotBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import timber.log.Timber

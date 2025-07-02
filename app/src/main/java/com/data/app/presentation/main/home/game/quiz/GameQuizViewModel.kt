@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.data.app.data.response_dto.ResponseQuizDto
+import com.data.app.data.response_dto.home.quiz.ResponseQuizDto
 import com.data.app.domain.repository.BaseRepository
 import com.data.app.extension.home.quiz.QuizCompleteState
 import com.data.app.extension.home.quiz.QuizState

@@ -1,25 +1,24 @@
 package com.data.app.presentation.main.community
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ConstraintSet
 import androidx.recyclerview.widget.RecyclerView
 import coil3.load
 import coil3.request.transformations
 import coil3.transform.CircleCropTransformation
 import coil3.transform.RoundedCornersTransformation
 import com.data.app.R
-import com.data.app.data.Post
+import com.data.app.data.response_dto.community.ResponseTimeLineDto
 import com.data.app.databinding.ItemPostBinding
+import com.data.app.util.TimeAgoFormatter
 import timber.log.Timber
 
-class PostsAdapter(val clickPost: (Post) -> Unit, val clickOtherUser:(String, String)->Unit) :
+class PostsAdapter(val clickPost: (ResponseTimeLineDto.Posts) -> Unit, val clickOtherUser:(String, String)->Unit) :
     RecyclerView.Adapter<PostsAdapter.FeedsViewHolder>() {
 
-    private val postsList = mutableListOf<Post>()
+    private val postsList = mutableListOf<ResponseTimeLineDto.Posts>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FeedsViewHolder {
         val binding = ItemPostBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -32,7 +31,7 @@ class PostsAdapter(val clickPost: (Post) -> Unit, val clickOtherUser:(String, St
         holder.bind(postsList[position])
     }
 
-    fun getList(list: List<Post>) {
+    fun getList(list: List<ResponseTimeLineDto.Posts>) {
         postsList.clear()
         postsList.addAll(list)
         notifyDataSetChanged()
@@ -40,17 +39,17 @@ class PostsAdapter(val clickPost: (Post) -> Unit, val clickOtherUser:(String, St
 
     inner class FeedsViewHolder(private val binding: ItemPostBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(data: Post) {
+        fun bind(data: ResponseTimeLineDto.Posts) {
             with(binding) {
-                ivProfile.load(data.profile) {
+                ivProfile.load(data.authorProfile.profileImage) {
                     transformations(CircleCropTransformation())
                 }
 
                 val lp = binding.ivImage.layoutParams as ConstraintLayout.LayoutParams
 
-                if (!data.images.isNullOrEmpty()) {
+                if (!data.post.imageUrl.isNullOrEmpty()) {
                     binding.ivImage.visibility = View.VISIBLE
-                    binding.ivImage.load(data.images[0]) {
+                    binding.ivImage.load(data.post.imageUrl) {
                         transformations(RoundedCornersTransformation(30f))
                     }
                     lp.dimensionRatio = "2:1"
@@ -62,15 +61,18 @@ class PostsAdapter(val clickPost: (Post) -> Unit, val clickOtherUser:(String, St
 
                 binding.ivImage.layoutParams = lp
 
-                tvId.text = root.context.getString(R.string.community_id, data.id)
-                tvTime.text = root.context.getString(R.string.community_time, data.time)
+                tvId.text = root.context.getString(R.string.community_id, data.post.authorName)
 
-                btnFollow.isSelected = data.isFollowing
-                if (data.isFollowing) btnFollow.text =
+                val timeAgo = TimeAgoFormatter.formatTimeAgo(data.post.createdAt)
+                Timber.d("createdAt: ${data.post.createdAt}, formatted: $timeAgo")
+                tvTime.text = root.context.getString(R.string.community_time, timeAgo)
+
+                btnFollow.isSelected = data.authorProfile.isFollowing
+                if (data.authorProfile.isFollowing) btnFollow.text =
                     root.context.getString(R.string.community_follow)
-                tvContent.text = data.content
-                tvLikeCount.text = data.like.toString()
-                tvCommentCount.text = data.comments.size.toString()
+                tvContent.text = data.post.content
+                tvLikeCount.text = data.post.likeCount.toString()
+                tvCommentCount.text = data.post.commentCount.toString()
 
                 clickFollow()
                 clickLike()
@@ -105,15 +107,15 @@ class PostsAdapter(val clickPost: (Post) -> Unit, val clickOtherUser:(String, St
             }
         }
 
-        private fun clickProfileOrId(data: Post){
+        private fun clickProfileOrId(data: ResponseTimeLineDto.Posts){
             listOf(binding.ivProfile, binding.tvId).forEach {
                 it.setOnClickListener {
-                    clickOtherUser(data.profile, data.id)
+                    clickOtherUser(data.authorProfile.profileImage, data.post.authorName)
                 }
             }
         }
 
-        private fun showDetail(data: Post){
+        private fun showDetail(data: ResponseTimeLineDto.Posts){
             listOf(binding.tvContent, binding.ivImage).forEach {
                 it.setOnClickListener { clickPost(data) }
             }

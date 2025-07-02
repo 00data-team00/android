@@ -1,20 +1,21 @@
 package com.data.app.domain.repository
 
-import com.data.app.data.response_dto.ResponseAIPreviousChatMessagesDto
-import com.data.app.data.response_dto.ResponseAIPreviousRecordsDto
-import com.data.app.data.response_dto.ResponseAITopicsDto
-import com.data.app.data.response_dto.ResponseAllProgramDto
-import com.data.app.data.response_dto.ResponseChatAiMessageDto
-import com.data.app.data.response_dto.ResponseChatStartDto
-import com.data.app.data.response_dto.ResponseDeadlineDto
-import com.data.app.data.response_dto.ResponseFollowersDto
-import com.data.app.data.response_dto.ResponseLoginDto
-import com.data.app.data.response_dto.ResponseEditProfileDto
-import com.data.app.data.response_dto.ResponseMyPostDto
-import com.data.app.data.response_dto.ResponseProfileDto
-import com.data.app.data.response_dto.ResponseQuizDto
-import com.data.app.data.response_dto.ResponseRegisterDto
-import com.data.app.data.response_dto.ResponseUserGameInfoDto
+import com.data.app.data.response_dto.home.ai.ResponseAIPreviousChatMessagesDto
+import com.data.app.data.response_dto.home.ai.ResponseAIPreviousRecordsDto
+import com.data.app.data.response_dto.home.ai.ResponseAITopicsDto
+import com.data.app.data.response_dto.explore.ResponseAllProgramDto
+import com.data.app.data.response_dto.home.ai.ResponseChatAiMessageDto
+import com.data.app.data.response_dto.home.ai.ResponseChatStartDto
+import com.data.app.data.response_dto.explore.ResponseDeadlineDto
+import com.data.app.data.response_dto.community.ResponseFollowersDto
+import com.data.app.data.response_dto.login.ResponseLoginDto
+import com.data.app.data.response_dto.community.ResponseEditProfileDto
+import com.data.app.data.response_dto.community.ResponseTimeLineDto
+import com.data.app.data.response_dto.my.ResponseMyPostDto
+import com.data.app.data.response_dto.my.ResponseProfileDto
+import com.data.app.data.response_dto.home.quiz.ResponseQuizDto
+import com.data.app.data.response_dto.login.ResponseRegisterDto
+import com.data.app.data.response_dto.home.ResponseUserGameInfoDto
 import okhttp3.MultipartBody
 import retrofit2.Response
 
@@ -43,6 +44,18 @@ interface BaseRepository {
     ):Result<ResponseLoginDto>
 
     // community
+    suspend fun getAllTimeLine(
+        token:String,
+    ):Result<ResponseTimeLineDto>
+
+    suspend fun getNationTimeLine(
+        token:String,
+    ):Result<ResponseTimeLineDto>
+
+    suspend fun getFollowingTimeLine(
+        token:String,
+    ):Result<ResponseTimeLineDto>
+
     suspend fun getUserProfile(
         token:String,
         userId:Int,

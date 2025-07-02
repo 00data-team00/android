@@ -9,7 +9,7 @@ import coil3.load
 import coil3.request.transformations
 import coil3.transform.CircleCropTransformation
 import com.data.app.R
-import com.data.app.data.response_dto.ResponseFollowersDto
+import com.data.app.data.response_dto.community.ResponseFollowersDto
 import com.data.app.databinding.ItemFollowBinding
 
 class FollowAdapter(

@@ -1,6 +1,6 @@
 package com.data.app.extension.login
 
-import com.data.app.data.response_dto.ResponseRegisterDto
+import com.data.app.data.response_dto.login.ResponseRegisterDto
 
 sealed class VerifyMailState {
     data object Loading:VerifyMailState()

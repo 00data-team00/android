@@ -1,7 +1,6 @@
 package com.data.app.extension.community
 
-import com.data.app.data.Post
-import com.data.app.data.response_dto.ResponseMyPostDto
+import com.data.app.data.response_dto.my.ResponseMyPostDto
 
 sealed class WritePostState {
     data object Loading:WritePostState()

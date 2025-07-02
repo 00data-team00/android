@@ -6,13 +6,11 @@ import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
-import coil3.request.transformations
 import coil.transform.CircleCropTransformation
 import coil.transform.RoundedCornersTransformation
 import com.data.app.BuildConfig
 import com.data.app.R
-import com.data.app.data.Post
-import com.data.app.data.response_dto.ResponseMyPostDto
+import com.data.app.data.response_dto.my.ResponseMyPostDto
 import com.data.app.databinding.ItemPostBinding
 import com.data.app.util.TimeAgoFormatter
 import timber.log.Timber
@@ -70,6 +68,7 @@ RecyclerView.Adapter<com.data.app.presentation.main.my.MyAdapter.MyViewHolder>()
                 tvId.text = root.context.getString(R.string.community_id, data.authorName)
 
                 val timeAgo = TimeAgoFormatter.formatTimeAgo(data.createdAt)
+                Timber.d("createdAt: ${data.createdAt}, formatted: $timeAgo")
                 tvTime.text = root.context.getString(R.string.community_time, timeAgo)
 
                 tvContent.text = data.content

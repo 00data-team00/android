@@ -1,6 +1,6 @@
 package com.data.app.extension.explore
 
-import com.data.app.data.response_dto.ResponseAllProgramDto
+import com.data.app.data.response_dto.explore.ResponseAllProgramDto
 
 sealed class AllProgramsState {
     data object Loading : AllProgramsState()
