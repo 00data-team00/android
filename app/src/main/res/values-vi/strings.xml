@@ -90,7 +90,7 @@
     <string name="community_follow">Theo dõi</string>
     <string name="community_user_country">Quốc gia người dùng</string>
     <string name="community_id">\@%s</string>
-    <string name="community_time"> · %d giờ trước</string>
+    <string name="community_time"> · %s</string>
     <string name="post_write">Viết bài</string>
     <string name="post_write_complete">Hoàn tất</string>
     <string name="post_write_hint">Nhập nội dung...</string>

@@ -88,7 +88,7 @@
     <string name="community_follow">Follow</string>
     <string name="community_user_country">User Country</string>
     <string name="community_id">\@%s</string>
-    <string name="community_time"> · %dh ago</string>
+    <string name="community_time"> · %s</string>
     <string name="post_write">Post</string>
     <string name="post_write_complete">Done</string>
     <string name="post_write_hint">Write something...</string>

@@ -89,7 +89,7 @@
     <string name="community_follow">ติดตาม</string>
     <string name="community_user_country">ประเทศของผู้ใช้</string>
     <string name="community_id">\@%s</string>
-    <string name="community_time"> · %dชม.</string>
+    <string name="community_time"> · %s</string>
     <string name="post_write">เขียนโพสต์</string>
     <string name="post_write_complete">เสร็จสิ้น</string>
     <string name="post_write_hint">กรอกเนื้อหา...</string>

@@ -11,13 +11,16 @@ import coil3.transform.CircleCropTransformation
 import coil3.transform.RoundedCornersTransformation
 import com.data.app.R
 import com.data.app.data.Post
+import com.data.app.data.response_dto.ResponseMyPostDto
 import com.data.app.databinding.ItemPostBinding
+import com.data.app.util.TimeAgoFormatter
 import timber.log.Timber
 
-class MyAdapter(val clickPost:(Post)->Unit):
+class MyAdapter(val clickPost:(ResponseMyPostDto.PostDto)->Unit):
 RecyclerView.Adapter<com.data.app.presentation.main.my.MyAdapter.MyViewHolder>(){
 
-    private val postsList = mutableListOf<Post>()
+    private var userProfile:String?=null
+    private val postsList = mutableListOf<ResponseMyPostDto.PostDto>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): _root_ide_package_.com.data.app.presentation.main.my.MyAdapter.MyViewHolder {
         val binding = ItemPostBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -30,7 +33,8 @@ RecyclerView.Adapter<com.data.app.presentation.main.my.MyAdapter.MyViewHolder>()
         holder.bind(postsList[position])
     }
 
-    fun getList(list: List<Post>) {
+    fun getList(profile:String, list: List<ResponseMyPostDto.PostDto>) {
+        userProfile=profile
         postsList.clear()
         postsList.addAll(list)
         notifyDataSetChanged()
@@ -38,17 +42,17 @@ RecyclerView.Adapter<com.data.app.presentation.main.my.MyAdapter.MyViewHolder>()
 
     inner class MyViewHolder(private val binding: ItemPostBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(data: Post) {
+        fun bind(data: ResponseMyPostDto.PostDto) {
             with(binding) {
-                ivProfile.load(data.profile) {
+                ivProfile.load(userProfile) {
                     transformations(CircleCropTransformation())
                 }
 
                 val lp = ivImage.layoutParams as ConstraintLayout.LayoutParams
 
-                if (!data.images.isNullOrEmpty()) {
+                if (!data.imageUrl.isNullOrEmpty()) {
                     ivImage.visibility = View.VISIBLE
-                    ivImage.load(data.images[0]) {
+                    ivImage.load(data.imageUrl) {
                         transformations(RoundedCornersTransformation(30f))
                     }
                     lp.dimensionRatio = "2:1"
@@ -60,12 +64,14 @@ RecyclerView.Adapter<com.data.app.presentation.main.my.MyAdapter.MyViewHolder>()
 
                 ivImage.layoutParams = lp
 
-                tvId.text = root.context.getString(R.string.community_id, data.id)
-                tvTime.text = root.context.getString(R.string.community_time, data.time)
+                tvId.text = root.context.getString(R.string.community_id, data.authorName)
+
+                val timeAgo = TimeAgoFormatter.formatTimeAgo(data.createdAt)
+                tvTime.text = root.context.getString(R.string.community_time, timeAgo)
 
                 tvContent.text = data.content
-                tvLikeCount.text = data.like.toString()
-                tvCommentCount.text = data.comments.size.toString()
+                tvLikeCount.text = data.likeCount.toString()
+                tvCommentCount.text = data.commentCount.toString()
 
                 btnFollow.visibility=View.GONE
 
@@ -87,7 +93,7 @@ RecyclerView.Adapter<com.data.app.presentation.main.my.MyAdapter.MyViewHolder>()
             }
         }
 
-        private fun showDetail(data: Post){
+        private fun showDetail(data: ResponseMyPostDto.PostDto){
             listOf(binding.tvContent, binding.ivImage).forEach {
                 it.setOnClickListener { clickPost(data) }
             }

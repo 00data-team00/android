@@ -30,6 +30,8 @@ import com.data.app.R
 import com.data.app.data.shared_preferences.AppPreferences
 import com.data.app.databinding.FragmentMyBinding
 import com.data.app.extension.EditProfileState
+import com.data.app.extension.MyPostState
+import com.data.app.extension.MyProfileState
 import com.data.app.extension.MyState
 import com.data.app.presentation.login.LoginActivity
 import com.yalantis.ucrop.UCrop
@@ -90,41 +92,11 @@ class MyFragment : Fragment() {
     }
 
     private fun setting() {
-        showPosts()
+        showProfile()
+
         makeList()
         clickFollow()
         clickQuit()
-    }
-
-    private fun showPosts() {
-        lifecycleScope.launch {
-            myViewModel.myState.collect { myState ->
-                when (myState) {
-                    is MyState.Success -> {
-                        Timber.d("myState is success")
-                        showProfile()
-                        myAdapter =
-                            _root_ide_package_.com.data.app.presentation.main.my.MyAdapter(clickPost = { post ->
-                                val action =
-                                    MyFragmentDirections.actionMyFragmentToMyPostDetailFragment(post)
-                                findNavController().navigate(action)
-                            })
-                        binding.rvPosts.adapter = myAdapter
-                        myAdapter.getList(myState.response)
-                    }
-
-                    is MyState.Loading -> {
-                        Timber.d("myState is loading")
-                    }
-
-                    is MyState.Error -> {
-                        Timber.d("myState is error")
-                    }
-                }
-            }
-        }
-
-        binding.tvId.text = "kkuming"
     }
 
     private fun showProfile() {
@@ -134,7 +106,8 @@ class MyFragment : Fragment() {
                     is com.data.app.extension.MyProfileState.Success -> {
                         Timber.d("myProfileState is success")
                         with(binding) {
-                            val imageUrl = BuildConfig.BASE_URL.removeSuffix("/") + myProfileState.response.profileImage
+                            val imageUrl =
+                                BuildConfig.BASE_URL.removeSuffix("/") + myProfileState.response.profileImage
                             // val resourceId = resources.getIdentifier("ic_profile", "drawable", requireContext().packageName)
                             ivProfile.load(imageUrl) {
                                 transformations(CircleCropTransformation())
@@ -151,6 +124,8 @@ class MyFragment : Fragment() {
                                 Timber.d("편집 버튼 클릭됨!")
                                 checkGalleryPermissionAndOpenPicker()
                             }
+
+                            showPosts(imageUrl)
                         }
                     }
 
@@ -167,6 +142,60 @@ class MyFragment : Fragment() {
 
         myViewModel.getProfile(appPreferences.getAccessToken()!!)
     }
+
+    private fun showPosts(profile:String) {
+        lifecycleScope.launch {
+            myViewModel.myPostState.collect { myPostState ->
+                when (myPostState) {
+                    is MyPostState.Success -> {
+                        myAdapter =
+                            _root_ide_package_.com.data.app.presentation.main.my.MyAdapter(clickPost = { post ->
+                               /* val action =
+                                    MyFragmentDirections.actionMyFragmentToMyPostDetailFragment(post)
+                                findNavController().navigate(action)*/
+                            })
+                        binding.rvPosts.adapter = myAdapter
+                        myAdapter.getList(profile, myPostState.response.posts)
+                    }
+                    is MyPostState.Loading -> {}
+                    is MyPostState.Error -> {}
+                }
+            }
+        }
+
+        myViewModel.getMyPosts(appPreferences.getAccessToken()!!)
+
+        /* lifecycleScope.launch {
+             myViewModel.myState.collect { myState ->
+                 when (myState) {
+                     is MyState.Success -> {
+                         Timber.d("myState is success")
+                         showProfile()
+                         myAdapter =
+                             _root_ide_package_.com.data.app.presentation.main.my.MyAdapter(clickPost = { post ->
+                                 val action =
+                                     MyFragmentDirections.actionMyFragmentToMyPostDetailFragment(post)
+                                 findNavController().navigate(action)
+                             })
+                         binding.rvPosts.adapter = myAdapter
+                         myAdapter.getList(myState.response)
+                     }
+
+                     is MyState.Loading -> {
+                         Timber.d("myState is loading")
+                     }
+
+                     is MyState.Error -> {
+                         Timber.d("myState is error")
+                     }
+                 }
+             }
+         }
+
+         binding.tvId.text = "kkuming"*/
+    }
+
+
 
     private fun checkGalleryPermissionAndOpenPicker() {
         val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {

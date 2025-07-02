@@ -90,7 +90,7 @@
     <string name="community_follow">关注</string>
     <string name="community_user_country">用户国家</string>
     <string name="community_id">\@%s</string>
-    <string name="community_time"> · %d小时前</string>
+    <string name="community_time"> · %s</string>
     <string name="post_write">发布</string>
     <string name="post_write_complete">完成</string>
     <string name="post_write_hint">请输入内容...</string>

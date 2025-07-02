@@ -88,7 +88,7 @@
     <string name="community_follow">팔로우</string>
     <string name="community_user_country">사용자 국가</string>
     <string name="community_id">\@%s</string>
-    <string name="community_time"> · %dh</string>
+    <string name="community_time"> · %s</string>
     <string name="post_write">작성</string>
     <string name="post_write_complete">완료</string>
     <string name="post_write_hint">내용을 적어주세요</string>
