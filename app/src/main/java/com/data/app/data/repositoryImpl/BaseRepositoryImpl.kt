@@ -17,6 +17,7 @@ import com.data.app.data.response_dto.ResponseDeadlineDto
 import com.data.app.data.response_dto.ResponseFollowersDto
 import com.data.app.data.response_dto.ResponseLoginDto
 import com.data.app.data.response_dto.ResponseEditProfileDto
+import com.data.app.data.response_dto.ResponseProfileDto
 import com.data.app.data.response_dto.ResponseQuizDto
 import com.data.app.data.response_dto.ResponseRegisterDto
 import com.data.app.data.response_dto.ResponseUserGameInfoDto
@@ -68,6 +69,15 @@ class BaseRepositoryImpl @Inject constructor(
             baseDataSource.login(RequestLoginDto(email, pw))
         }.onFailure {
             Timber.e("base repository login fail: $it")
+        }
+    }
+
+    // community
+    override suspend fun getUserProfile(token: String, userId: Int): Result<ResponseProfileDto> {
+        return runCatching {
+            baseDataSource.getUserProfile(token, userId)
+        }.onFailure {
+            Timber.e("base repository get user profile fail!: $it")
         }
     }
 
@@ -171,6 +181,14 @@ class BaseRepositoryImpl @Inject constructor(
     }
 
     // my
+    override suspend fun getMyProfile(token: String): Result<ResponseProfileDto> {
+        return runCatching {
+            baseDataSource.getMyProfile(token)
+        }.onFailure {
+            Timber.e("base repository get profile fail: $it")
+        }
+    }
+
     override suspend fun editProfile(token: String, image: MultipartBody.Part): Result<ResponseEditProfileDto> {
         return runCatching {
             baseDataSource.editProfile(token, image)

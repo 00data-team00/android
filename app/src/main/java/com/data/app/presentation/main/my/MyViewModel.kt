@@ -6,6 +6,7 @@ import com.data.app.R
 import com.data.app.data.Post
 import com.data.app.domain.repository.BaseRepository
 import com.data.app.extension.EditProfileState
+import com.data.app.extension.MyProfileState
 import com.data.app.extension.MyState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,12 +27,33 @@ class MyViewModel @Inject constructor(
     private val profile = "https://avatars.githubusercontent.com/u/71327548?v=4"
     private val id="구구"
 
+    private val _myProfileState = MutableStateFlow<MyProfileState>(MyProfileState.Loading)
+    val myProfileState: StateFlow<MyProfileState> = _myProfileState.asStateFlow()
     private val _myState = MutableStateFlow<MyState>(MyState.Loading)
     val myState:StateFlow<MyState> = _myState.asStateFlow()
 
     private val _editProfileState = MutableStateFlow<EditProfileState>(EditProfileState.Loading)
     val editProfileState:StateFlow<EditProfileState> = _editProfileState.asStateFlow()
 
+    fun getProfile(token:String){
+        viewModelScope.launch {
+            baseRepository.getMyProfile(token).onSuccess { response->
+                _myProfileState.value=MyProfileState.Success(response)
+            }.onFailure {
+                _myProfileState.value = MyProfileState.Error(it.message.toString())
+                if (it is HttpException) {
+                    try {
+                        val errorBody: ResponseBody? = it.response()?.errorBody()
+                        val errorBodyString = errorBody?.string() ?: ""
+                        httpError(errorBodyString)
+                    } catch (e: Exception) {
+                        // JSON 파싱 실패 시 로깅
+                        Timber.e("Error parsing error body: ${e}")
+                    }
+                }
+            }
+        }
+    }
     fun editProfile(token: String, image: MultipartBody.Part){
         viewModelScope.launch {
             baseRepository.editProfile(token, image).onSuccess { response->
