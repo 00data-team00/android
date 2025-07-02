@@ -74,11 +74,11 @@ class GameQuizViewModel @Inject constructor(
         }
     }
 
-    fun completeQuiz() {
-        Timber.d("level: ${_level.value}")
+    fun completeQuiz(quizId:Int) {
+        Timber.d("quizId: ${quizId}")
         viewModelScope.launch {
             _accessToken?.let{
-                baseRepository.quizComplete(_accessToken.value!!, _level.value!!).onSuccess { response ->
+                baseRepository.quizComplete(_accessToken.value!!, quizId).onSuccess { response ->
                     _quizCompleteState.value = QuizCompleteState.Success
                 }.onFailure {
                     if (it is HttpException) {

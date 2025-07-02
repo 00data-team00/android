@@ -238,7 +238,7 @@ class GameQuizActivity : BaseActivity() {
             binding.btnQuizAgain.isSelected = true
             binding.rvWeeks.setBackgroundResource(R.drawable.bg_week_success_green)
 
-            lifecycleScope.launch {
+           /* lifecycleScope.launch {
                 gameQuizViewModel.quizCompleteState.collect { state->
                     when(state){
                         is QuizCompleteState.Success->{
@@ -254,7 +254,7 @@ class GameQuizActivity : BaseActivity() {
 
             if(!gameQuizViewModel.accessToken.value.isNullOrEmpty()){
                 gameQuizViewModel.completeQuiz()
-            }
+            }*/
         } else {
             binding.clGameQuiz.setBackgroundColor(getColor(R.color.game_fail_pink))
             binding.tvGameSuccessfail.text = getString(R.string.game_quiz_finalfail)
