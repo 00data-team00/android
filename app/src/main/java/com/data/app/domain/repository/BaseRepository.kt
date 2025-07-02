@@ -48,6 +48,12 @@ interface BaseRepository {
         userId:Int,
     ):Result<ResponseProfileDto>
 
+    suspend fun writePost(
+        token:String,
+        content:String,
+        image:MultipartBody.Part?
+    ):Result<ResponseMyPostDto.PostDto>
+
     // home
     suspend fun getUserGameInfo(
         token:String,

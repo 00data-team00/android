@@ -5,8 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.data.app.R
 import com.data.app.data.Post
 import com.data.app.domain.repository.BaseRepository
-import com.data.app.extension.OtherState
-import com.data.app.extension.UserProfileState
+import com.data.app.extension.community.OtherState
+import com.data.app.extension.my.UserProfileState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

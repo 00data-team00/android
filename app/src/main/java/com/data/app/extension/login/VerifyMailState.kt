@@ -1,4 +1,4 @@
-package com.data.app.extension
+package com.data.app.extension.login
 
 import com.data.app.data.response_dto.ResponseRegisterDto
 

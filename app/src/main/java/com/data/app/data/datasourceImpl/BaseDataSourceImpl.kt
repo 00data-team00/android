@@ -40,6 +40,11 @@ class BaseDataSourceImpl @Inject constructor(
 
     // community
     override suspend fun getUserProfile(token: String, userId: Int): ResponseProfileDto = baseService.getUserProfile(token, userId)
+    override suspend fun writePost(
+        token: String,
+        content: String,
+        image: MultipartBody.Part?
+    ): ResponseMyPostDto.PostDto = baseService.writePost(token, content, image)
 
     // home
     override suspend fun getUserGameInfo(token: String): ResponseUserGameInfoDto = baseService.getUserGameInfo(token)

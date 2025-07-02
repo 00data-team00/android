@@ -82,6 +82,18 @@ class BaseRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun writePost(
+        token: String,
+        content: String,
+        image: MultipartBody.Part?
+    ): Result<ResponseMyPostDto.PostDto> {
+        return runCatching {
+            baseDataSource.writePost(token, content, image)
+        }.onFailure {
+            Timber.e("base repository write post fail!: $it")
+        }
+    }
+
     // home
     override suspend fun getUserGameInfo(token: String): Result<ResponseUserGameInfoDto> {
         return runCatching {

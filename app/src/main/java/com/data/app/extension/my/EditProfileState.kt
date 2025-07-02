@@ -1,6 +1,5 @@
-package com.data.app.extension
+package com.data.app.extension.my
 
-import com.data.app.data.response_dto.ResponseAllProgramDto
 import com.data.app.data.response_dto.ResponseEditProfileDto
 
 sealed class EditProfileState {

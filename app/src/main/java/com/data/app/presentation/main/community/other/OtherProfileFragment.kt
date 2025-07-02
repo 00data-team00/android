@@ -12,13 +12,12 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import coil.load
-import coil3.request.transformations
 import coil.transform.CircleCropTransformation
 import com.data.app.R
 import com.data.app.data.shared_preferences.AppPreferences
 import com.data.app.databinding.FragmentOtherProfileBinding
-import com.data.app.extension.OtherState
-import com.data.app.extension.UserProfileState
+import com.data.app.extension.community.OtherState
+import com.data.app.extension.my.UserProfileState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import timber.log.Timber

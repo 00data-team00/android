@@ -5,10 +5,10 @@ import androidx.lifecycle.viewModelScope
 import com.data.app.R
 import com.data.app.data.Post
 import com.data.app.domain.repository.BaseRepository
-import com.data.app.extension.EditProfileState
-import com.data.app.extension.MyPostState
-import com.data.app.extension.MyProfileState
-import com.data.app.extension.MyState
+import com.data.app.extension.my.EditProfileState
+import com.data.app.extension.my.MyPostState
+import com.data.app.extension.my.MyProfileState
+import com.data.app.extension.my.MyState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -98,6 +98,10 @@ class MyViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun resetPostState(){
+        _myPostState.value = MyPostState.Loading
     }
 
     private fun httpError(errorBody: String) {

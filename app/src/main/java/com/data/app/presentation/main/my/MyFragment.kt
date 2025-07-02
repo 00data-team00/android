@@ -29,11 +29,11 @@ import com.data.app.BuildConfig
 import com.data.app.R
 import com.data.app.data.shared_preferences.AppPreferences
 import com.data.app.databinding.FragmentMyBinding
-import com.data.app.extension.EditProfileState
-import com.data.app.extension.MyPostState
-import com.data.app.extension.MyProfileState
-import com.data.app.extension.MyState
+import com.data.app.extension.my.EditProfileState
+import com.data.app.extension.my.MyPostState
+import com.data.app.extension.my.MyProfileState
 import com.data.app.presentation.login.LoginActivity
+import com.data.app.presentation.main.OnTabReselectedListener
 import com.yalantis.ucrop.UCrop
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -45,7 +45,7 @@ import java.io.File
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MyFragment : Fragment() {
+class MyFragment : Fragment(), OnTabReselectedListener {
     private var _binding: FragmentMyBinding? = null
     private val binding: FragmentMyBinding
         get() = requireNotNull(_binding) { "home fragment is null" }
@@ -103,7 +103,7 @@ class MyFragment : Fragment() {
         lifecycleScope.launch {
             myViewModel.myProfileState.collect { myProfileState ->
                 when (myProfileState) {
-                    is com.data.app.extension.MyProfileState.Success -> {
+                    is MyProfileState.Success -> {
                         Timber.d("myProfileState is success")
                         with(binding) {
                             val imageUrl =
@@ -129,11 +129,11 @@ class MyFragment : Fragment() {
                         }
                     }
 
-                    is com.data.app.extension.MyProfileState.Loading -> {
+                    is MyProfileState.Loading -> {
                         Timber.d("myProfileState is loading")
                     }
 
-                    is com.data.app.extension.MyProfileState.Error -> {
+                    is MyProfileState.Error -> {
                         Timber.d("myProfileState is error")
                     }
                 }
@@ -156,6 +156,7 @@ class MyFragment : Fragment() {
                             })
                         binding.rvPosts.adapter = myAdapter
                         myAdapter.getList(profile, myPostState.response.posts)
+                        myViewModel.resetPostState()
                     }
                     is MyPostState.Loading -> {}
                     is MyPostState.Error -> {}
@@ -405,6 +406,9 @@ class MyFragment : Fragment() {
         return MultipartBody.Part.createFormData("image", tempFile.name, requestFile)
     }
 
+    override fun onTabReselected() {
+        myViewModel.getMyPosts(appPreferences.getAccessToken()!!)
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()

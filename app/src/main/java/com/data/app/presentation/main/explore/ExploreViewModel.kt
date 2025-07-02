@@ -6,8 +6,8 @@ import com.data.app.R
 import com.data.app.data.DeadLine
 import com.data.app.data.Program
 import com.data.app.domain.repository.BaseRepository
-import com.data.app.extension.AllProgramsState
-import com.data.app.extension.DeadLineProgramState
+import com.data.app.extension.explore.AllProgramsState
+import com.data.app.extension.explore.DeadLineProgramState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

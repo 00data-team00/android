@@ -3,9 +3,9 @@ package com.data.app.presentation.login
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.data.app.domain.repository.BaseRepository
-import com.data.app.extension.RegisterState
-import com.data.app.extension.SendMailState
-import com.data.app.extension.VerifyMailState
+import com.data.app.extension.login.RegisterState
+import com.data.app.extension.login.SendMailState
+import com.data.app.extension.login.VerifyMailState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

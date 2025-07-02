@@ -1,6 +1,5 @@
-package com.data.app.extension
+package com.data.app.extension.home
 
-import com.data.app.data.response_dto.ResponseEditProfileDto
 import com.data.app.data.response_dto.ResponseUserGameInfoDto
 
 sealed class UserGameInfoState {

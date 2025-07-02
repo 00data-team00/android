@@ -5,10 +5,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
-import coil3.load
+import coil.load
 import coil3.request.transformations
-import coil3.transform.CircleCropTransformation
-import coil3.transform.RoundedCornersTransformation
+import coil.transform.CircleCropTransformation
+import coil.transform.RoundedCornersTransformation
+import com.data.app.BuildConfig
 import com.data.app.R
 import com.data.app.data.Post
 import com.data.app.data.response_dto.ResponseMyPostDto
@@ -52,7 +53,9 @@ RecyclerView.Adapter<com.data.app.presentation.main.my.MyAdapter.MyViewHolder>()
 
                 if (!data.imageUrl.isNullOrEmpty()) {
                     ivImage.visibility = View.VISIBLE
-                    ivImage.load(data.imageUrl) {
+                    val imageUrl =
+                        BuildConfig.BASE_URL.removeSuffix("/")+data.imageUrl
+                    ivImage.load(imageUrl) {
                         transformations(RoundedCornersTransformation(30f))
                     }
                     lp.dimensionRatio = "2:1"
