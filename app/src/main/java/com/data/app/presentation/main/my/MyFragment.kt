@@ -24,17 +24,19 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import coil.load
-import coil3.request.placeholder
-import coil3.request.transformations
 import coil.transform.CircleCropTransformation
 import com.data.app.R
 import com.data.app.data.shared_preferences.AppPreferences
 import com.data.app.databinding.FragmentMyBinding
+import com.data.app.extension.EditProfileState
 import com.data.app.extension.MyState
 import com.data.app.presentation.login.LoginActivity
 import com.yalantis.ucrop.UCrop
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
@@ -44,7 +46,6 @@ class MyFragment:Fragment() {
     private var _binding: FragmentMyBinding? = null
     private val binding: FragmentMyBinding
         get() = requireNotNull(_binding) { "home fragment is null" }
-
     private val myViewModel: MyViewModel by viewModels()
     private lateinit var myAdapter: _root_ide_package_.com.data.app.presentation.main.my.MyAdapter
     private lateinit var galleryLauncher: ActivityResultLauncher<Intent>
@@ -290,12 +291,30 @@ class MyFragment:Fragment() {
             val resultUri = UCrop.getOutput(data!!)  // 크롭된 이미지 URI 받기
             resultUri?.let {
                 Timber.d("크롭된 이미지 URI: $it")
-                // 크롭된 이미지를 ivProfile에 원형으로 로드
-                binding.ivProfile.load(it) {
-                    transformations(CircleCropTransformation()) // 원형 크롭
-                    placeholder(R.drawable.ic_profile)  // 로딩 중 이미지
-                    error(R.drawable.ic_profile)  // 오류 시 이미지
+
+                lifecycleScope.launch {
+                    myViewModel.editProfileState.collect { state->
+                        when(state){
+                            is EditProfileState.Success->{
+                                // 크롭된 이미지를 ivProfile에 원형으로 로드
+                                binding.ivProfile.load(it) {
+                                    transformations(CircleCropTransformation()) // 원형 크롭
+                                    placeholder(R.drawable.ic_profile)  // 로딩 중 이미지
+                                    error(R.drawable.ic_profile)  // 오류 시 이미지
+                                }
+                            }
+                            is EditProfileState.Loading->{}
+                            is EditProfileState.Error->{
+                                Timber.e("크롭 에러 발생: ${state.message}")
+                                binding.ivProfile.load(R.drawable.ic_profile){
+                                    transformations(CircleCropTransformation())
+                                }
+                            }
+                        }
+                    }
                 }
+
+                myViewModel.editProfile(appPreferences.getAccessToken()!!, createImagePart(it))
             }
         } else if (requestCode == UCrop.REQUEST_CROP && resultCode == UCrop.RESULT_ERROR) {
             val error = UCrop.getError(data!!)
@@ -303,6 +322,22 @@ class MyFragment:Fragment() {
             Toast.makeText(requireContext(), "이미지 크롭에 실패했습니다.", Toast.LENGTH_SHORT).show()
         }
     }
+
+    private fun createImagePart(uri: Uri): MultipartBody.Part {
+        val contentResolver = requireContext().contentResolver
+
+        val inputStream = contentResolver.openInputStream(uri)
+            ?: throw IllegalStateException("InputStream 열기 실패")
+
+        val tempFile = File.createTempFile("profile_", ".jpg", requireContext().cacheDir)
+        tempFile.outputStream().use { outputStream ->
+            inputStream.copyTo(outputStream)
+        }
+
+        val requestFile = tempFile.asRequestBody("image/*".toMediaTypeOrNull())
+        return MultipartBody.Part.createFormData("image", tempFile.name, requestFile)
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
