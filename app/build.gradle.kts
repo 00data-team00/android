@@ -121,6 +121,10 @@ dependencies {
 
     // shimmer
     implementation("com.facebook.shimmer:shimmer:0.5.0")
+
+    // imageCrop
+    implementation("com.github.yalantis:ucrop:2.2.6")
+    // implementation("com.theartofdev.edmodo:android-image-cropper:2.8.0")
 }
 
 kapt {
