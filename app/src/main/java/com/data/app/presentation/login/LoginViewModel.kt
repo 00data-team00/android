@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.data.app.data.response_dto.ResponseLoginDto
 import com.data.app.data.shared_preferences.AppPreferences
 import com.data.app.domain.repository.BaseRepository
-import com.data.app.extension.LoginState
+import com.data.app.extension.login.LoginState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

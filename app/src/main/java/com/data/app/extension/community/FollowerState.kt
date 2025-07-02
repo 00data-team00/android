@@ -1,4 +1,4 @@
-package com.data.app.extension
+package com.data.app.extension.community
 
 import com.data.app.data.response_dto.ResponseFollowersDto
 

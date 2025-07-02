@@ -1,7 +1,6 @@
-package com.data.app.extension
+package com.data.app.extension.my
 
 import com.data.app.data.response_dto.ResponseMyPostDto
-import com.data.app.data.response_dto.ResponseProfileDto
 
 sealed class MyPostState {
     object Loading : MyPostState()

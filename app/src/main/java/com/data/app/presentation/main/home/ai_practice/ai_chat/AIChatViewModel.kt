@@ -1,6 +1,5 @@
 package com.data.app.presentation.main.home.ai_practice.ai_chat
 
-import androidx.compose.runtime.MutableState
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,8 +7,8 @@ import androidx.lifecycle.viewModelScope
 import com.data.app.R
 import com.data.app.data.PreviousPractice
 import com.data.app.domain.repository.BaseRepository
-import com.data.app.extension.AiChatState
-import com.data.app.extension.StartChatState
+import com.data.app.extension.home.aichat.AiChatState
+import com.data.app.extension.home.aichat.StartChatState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

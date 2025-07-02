@@ -1,6 +1,5 @@
-package com.data.app.extension
+package com.data.app.extension.explore
 
-import com.data.app.data.response_dto.ResponseAllProgramDto
 import com.data.app.data.response_dto.ResponseDeadlineDto
 
 sealed class DeadLineProgramState {

@@ -9,7 +9,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.data.app.R
 import com.data.app.databinding.ActivityGameTabBinding
-import com.data.app.extension.UserGameInfoState
+import com.data.app.extension.home.UserGameInfoState
 import com.data.app.presentation.main.BaseActivity
 import com.data.app.presentation.main.home.game.quiz.GameQuizActivity
 import dagger.hilt.android.AndroidEntryPoint

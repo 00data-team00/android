@@ -90,6 +90,12 @@ class MainActivity : BaseActivity() {
                     currentFragment.onTabReselected()
                 }
             }
+        }else {
+            // 탭 전환 시에도 onTabReselected() 호출
+            val currentFragment = navHostFragment.childFragmentManager.fragments.firstOrNull()
+            if (currentFragment is OnTabReselectedListener) {
+                currentFragment.onTabReselected()
+            }
         }
 
         currentTabId = targetTabId

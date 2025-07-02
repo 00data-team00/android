@@ -1,14 +1,10 @@
 package com.data.app.presentation.main.my
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.data.app.data.Follow
-import com.data.app.data.response_dto.ResponseFollowersDto
 import com.data.app.domain.repository.BaseRepository
-import com.data.app.extension.FollowerState
-import com.data.app.extension.StartChatState
+import com.data.app.extension.community.FollowerState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

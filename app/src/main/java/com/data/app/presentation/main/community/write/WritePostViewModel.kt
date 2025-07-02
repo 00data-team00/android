@@ -1,16 +1,14 @@
-package com.data.app.presentation.main.home
+package com.data.app.presentation.main.community.write
 
-import androidx.compose.runtime.MutableState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.data.app.domain.repository.BaseRepository
-import com.data.app.extension.login.LoginState
-import com.data.app.extension.home.UserGameInfoState
+import com.data.app.extension.community.WritePostState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import okhttp3.MultipartBody
 import okhttp3.ResponseBody
 import org.json.JSONObject
 import retrofit2.HttpException
@@ -18,18 +16,18 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(
-    val baseRepository: BaseRepository
-): ViewModel() {
-    private var _userGameInfoState = MutableStateFlow<UserGameInfoState>(UserGameInfoState.Loading)
-    val userGameInfoState: StateFlow<UserGameInfoState> = _userGameInfoState.asStateFlow()
+class WritePostViewModel @Inject constructor(
+    private val baseRepository: BaseRepository
+): ViewModel(){
+    private val _writePostState = MutableStateFlow<WritePostState>(WritePostState.Loading)
+    val writePostState: StateFlow<WritePostState> = _writePostState
 
-    fun getUserGameInfo(token:String){
+    fun writePost(token:String, content:String, image: MultipartBody.Part?){
         viewModelScope.launch {
-            baseRepository.getUserGameInfo(token).onSuccess { response->
-                _userGameInfoState.value= UserGameInfoState.Success(response)
-            }.onFailure {
-                _userGameInfoState.value= UserGameInfoState.Error("user game info error!")
+            baseRepository.writePost(token, content, image).onSuccess{ response->
+                _writePostState.value = WritePostState.Success(response)
+            }.onFailure{
+                _writePostState.value = WritePostState.Error(it.message.toString())
                 if (it is HttpException) {
                     try {
                         val errorBody: ResponseBody? = it.response()?.errorBody()

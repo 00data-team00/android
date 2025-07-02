@@ -1,6 +1,4 @@
-package com.data.app.extension
-
-import com.data.app.data.response_dto.ResponseQuizDto
+package com.data.app.extension.home.quiz
 
 sealed class QuizCompleteState {
     object Loading : QuizCompleteState()

@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.data.app.data.GameLevel
 import com.data.app.data.Week
 import com.data.app.domain.repository.BaseRepository
-import com.data.app.extension.UserGameInfoState
+import com.data.app.extension.home.UserGameInfoState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

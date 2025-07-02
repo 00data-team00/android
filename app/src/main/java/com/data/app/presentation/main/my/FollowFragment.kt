@@ -5,8 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
-import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -15,12 +13,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.data.app.R
-import com.data.app.data.Follow
 import com.data.app.data.response_dto.ResponseFollowersDto
 import com.data.app.databinding.FragmentFollowBinding
-import com.data.app.databinding.FragmentOtherProfileBinding
-import com.data.app.extension.FollowerState
-import com.data.app.extension.StartChatState
+import com.data.app.extension.community.FollowerState
 import com.data.app.presentation.main.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch

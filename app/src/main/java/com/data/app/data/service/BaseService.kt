@@ -63,6 +63,14 @@ interface BaseService {
         @Path("userId") userId:Int,
     ): ResponseProfileDto
 
+    @Multipart
+    @POST("api/me/posts")
+    suspend fun writePost(
+        @Header("Authorization") token:String,
+        @Part("content") content: String,
+        @Part image: MultipartBody.Part?
+    ): ResponseMyPostDto.PostDto
+
     // home
     @GET("api/me/user-game-info")
     suspend fun getUserGameInfo(

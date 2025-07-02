@@ -22,8 +22,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.data.app.data.Week
-import com.data.app.extension.QuizCompleteState
-import com.data.app.extension.QuizState
+import com.data.app.extension.home.quiz.QuizState
 import com.data.app.presentation.main.BaseActivity
 import com.data.app.presentation.main.home.game.GameTabWeekAdapter
 import dagger.hilt.android.AndroidEntryPoint

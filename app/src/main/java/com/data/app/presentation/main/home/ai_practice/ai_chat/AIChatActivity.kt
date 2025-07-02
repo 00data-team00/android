@@ -15,7 +15,6 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.data.app.databinding.ActivityAiChatBinding
@@ -30,9 +29,8 @@ import java.util.Locale
 import androidx.core.graphics.toColorInt
 import androidx.lifecycle.lifecycleScope
 import com.data.app.R
-import com.data.app.data.PreviousPractice
-import com.data.app.extension.AiChatState
-import com.data.app.extension.StartChatState
+import com.data.app.extension.home.aichat.AiChatState
+import com.data.app.extension.home.aichat.StartChatState
 import com.data.app.presentation.main.BaseActivity
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat

@@ -49,6 +49,12 @@ interface BaseDataSource {
         userId:Int,
     ):ResponseProfileDto
 
+    suspend fun writePost(
+        token:String,
+        content:String,
+        image:MultipartBody.Part?
+    ): ResponseMyPostDto.PostDto
+
     // home
     suspend fun getUserGameInfo(
         token:String,
