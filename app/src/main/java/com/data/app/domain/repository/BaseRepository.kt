@@ -9,8 +9,10 @@ import com.data.app.data.response_dto.ResponseChatStartDto
 import com.data.app.data.response_dto.ResponseDeadlineDto
 import com.data.app.data.response_dto.ResponseFollowersDto
 import com.data.app.data.response_dto.ResponseLoginDto
+import com.data.app.data.response_dto.ResponseEditProfileDto
 import com.data.app.data.response_dto.ResponseQuizDto
 import com.data.app.data.response_dto.ResponseRegisterDto
+import okhttp3.MultipartBody
 import retrofit2.Response
 
 interface BaseRepository {
@@ -80,6 +82,12 @@ interface BaseRepository {
     ):Result<ResponseAllProgramDto>
 
     suspend fun getDeadLinePrograms():Result<ResponseDeadlineDto>
+
+    // my
+    suspend fun editProfile(
+        token:String,
+        image:MultipartBody.Part
+    ):Result<ResponseEditProfileDto>
 
     // followers
     suspend fun getFollowerList(

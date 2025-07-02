@@ -15,14 +15,18 @@ import com.data.app.data.response_dto.ResponseChatStartDto
 import com.data.app.data.response_dto.ResponseDeadlineDto
 import com.data.app.data.response_dto.ResponseFollowersDto
 import com.data.app.data.response_dto.ResponseLoginDto
+import com.data.app.data.response_dto.ResponseEditProfileDto
 import com.data.app.data.response_dto.ResponseQuizDto
 import com.data.app.data.response_dto.ResponseRegisterDto
+import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.Multipart
 import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.Part
 import retrofit2.http.Query
 
 interface BaseService {
@@ -102,6 +106,13 @@ interface BaseService {
     @GET("api/edu-info/closing-soon")
     suspend fun getDeadLinePrograms():ResponseDeadlineDto
 
+    // my
+    @Multipart
+    @POST("api/me/profile/image")
+    suspend fun editProfile(
+        @Header("Authorization") token:String,
+        @Part image: MultipartBody.Part
+    ): ResponseEditProfileDto
     // followers
     @GET("api/me/followers")
     suspend fun getFollowerList(

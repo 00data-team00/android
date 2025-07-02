@@ -53,7 +53,7 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch {
             baseRepository.login(email, pw).onSuccess { response->
                 /*if (response.success == true && response.accessToken != null) {*/
-                    appPreferences.saveAccessToken(response.accessToken) // 토큰 저장
+                    appPreferences.saveAccessToken("Bearer ${response.accessToken}") // 토큰 저장
                     Timber.d("Login successful. Token saved: ${response.accessToken}")
                     _loginState.value = LoginState.Success(response)
                 /*} else {

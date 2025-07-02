@@ -16,9 +16,11 @@ import com.data.app.data.response_dto.ResponseChatStartDto
 import com.data.app.data.response_dto.ResponseDeadlineDto
 import com.data.app.data.response_dto.ResponseFollowersDto
 import com.data.app.data.response_dto.ResponseLoginDto
+import com.data.app.data.response_dto.ResponseEditProfileDto
 import com.data.app.data.response_dto.ResponseQuizDto
 import com.data.app.data.response_dto.ResponseRegisterDto
 import com.data.app.domain.repository.BaseRepository
+import okhttp3.MultipartBody
 import retrofit2.Response
 import timber.log.Timber
 import javax.inject.Inject
@@ -155,6 +157,15 @@ class BaseRepositoryImpl @Inject constructor(
             baseDataSource.getDeadLinePrograms()
         }.onFailure {
             Timber.e("base repository get deadline programs fail: $it")
+        }
+    }
+
+    // my
+    override suspend fun editProfile(token: String, image: MultipartBody.Part): Result<ResponseEditProfileDto> {
+        return runCatching {
+            baseDataSource.editProfile(token, image)
+        }.onFailure {
+            Timber.e("base repository profile edit fail: $it")
         }
     }
 
