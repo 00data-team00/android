@@ -11,15 +11,11 @@ import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import coil.load
 import com.data.app.BuildConfig
 import com.data.app.R
-import com.data.app.data.Quiz
 import com.data.app.data.response_dto.ResponseQuizDto
 import com.data.app.databinding.FragmentGameQuizBinding
-import com.data.app.extension.QuizState
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import java.util.Locale
@@ -61,7 +57,6 @@ class GameQuizFragment : Fragment() {
     private fun setting() {
         resetTTS()
         showQuestion()
-        clickCompleteBtn()
     }
 
     private fun resetTTS() {
@@ -98,6 +93,9 @@ class GameQuizFragment : Fragment() {
     }
 
     private fun showQuestion() {
+        binding.sflIvQuestion.visibility=View.VISIBLE
+        binding.sflIvQuestion.startShimmer()
+
         val quiz = gameQuizViewModel.quiz.value!!
         if (currentIndex == quiz.size) {
             // 문제 다 풀었을 때 처리
@@ -119,14 +117,27 @@ class GameQuizFragment : Fragment() {
                 tvQuestion.text = getString(R.string.game_quiz_picture)
                 ivQuestion.visibility = View.VISIBLE
                 btnListening.visibility = View.GONE
-                ivQuestion.load("${BuildConfig.BASE_URL}${question.image}")
+                ivQuestion.load("${BuildConfig.BASE_URL.trimEnd('/')}${question.image}"){
+                    listener(
+                        onError = { request, throwable ->
+                            Timber.e("Image loading failed: ${throwable.throwable.message}")
+                        },
+                        onSuccess = {_,_,->
+                            sflIvQuestion.stopShimmer()
+                            sflIvQuestion.visibility=View.GONE
+                            ivQuestion.visibility=View.VISIBLE
+                        }
+                    )
+                }
 
                 showAnswer(question)
-
-                rvLocation(anchorView = ivQuestion)  // Word 문제면 ivQuestion 기준으로 rv 붙이기
+                rvLocation(anchorView = ivQuestion)
             }else{
                 tvNum.text =  getString(R.string.game_quiz_num, currentIndex + 1)
                 tvQuestion.text = getString(R.string.game_quiz_picture)
+
+                sflIvQuestion.stopShimmer()
+                sflIvQuestion.visibility=View.GONE
                 ivQuestion.visibility = View.GONE
                 btnListening.visibility = View.VISIBLE
 
@@ -138,42 +149,12 @@ class GameQuizFragment : Fragment() {
                     speakMessage(question.voice!!)
                 }
             }
-            /*when (currentIndex) {
-                is Quiz.Word -> {
-                    tvNum.text = getString(R.string.game_quiz_num, currentIndex + 1)
-                    tvQuestion.text = question.question
-                    ivQuestion.visibility = View.VISIBLE
-                    btnListening.visibility = View.GONE
-                    ivQuestion.load(question.image)
-
-                    showAnswer(question.answer)
-
-                    rvLocation(anchorView = ivQuestion)  // Word 문제면 ivQuestion 기준으로 rv 붙이기
-                }
-
-                is Quiz.Listening -> {
-                    tvNum.text =  getString(R.string.game_quiz_num, currentIndex + 1)
-                    tvQuestion.text = question.question
-                    ivQuestion.visibility = View.GONE
-                    btnListening.visibility = View.VISIBLE
-
-                    showAnswer(question.answer)
-
-                    rvLocation(anchorView = btnListening)  // Listening 문제면 btnListening 기준으로 rv 붙이기
-
-                    btnListening.setOnClickListener {
-                        speakMessage(question.text)
-                    }
-                }
-
-                else -> {
-                    Timber.e("question type is error")
-                }
-            }*/
         }
+
+        clickCompleteBtn(question)
     }
 
-    private fun clickCompleteBtn(){
+    private fun clickCompleteBtn(question: ResponseQuizDto.QuizDto) {
         binding.btnComplete.setOnClickListener {
             Timber.d("isanswerselected: $isAnswerSelected")
             if (isAnswerSelected) {  // 선택했을 때만 넘어가게
@@ -214,6 +195,10 @@ class GameQuizFragment : Fragment() {
                     }
                 })
                 if (fragment != null) {
+                    val bundle = Bundle()
+                    bundle.putSerializable("question", question)
+
+                    fragment.arguments = bundle
                     requireActivity().supportFragmentManager.beginTransaction()
                         .add(R.id.fcv_result, fragment) // 또는 .replace()
                         .commit()

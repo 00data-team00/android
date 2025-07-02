@@ -49,17 +49,33 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/sfl_iv_question"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="20dp"
+            android:background="@color/shimmer_black"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintWidth_percent="0.65"
+            app:layout_constraintTop_toBottomOf="@id/tv_question"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+        </com.facebook.shimmer.ShimmerFrameLayout>
+
         <ImageView
             android:id="@+id/iv_question"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginTop="20dp"
             android:src="@drawable/ic_question"
+            android:visibility="gone"
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintWidth_percent="0.65"
             app:layout_constraintTop_toBottomOf="@id/tv_question"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
+
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_listening"

@@ -40,6 +40,7 @@ class MainActivity : BaseActivity() {
         //clickBottomNavigation()
         //replaceFragment(HomeFragment())
         val token=intent.getStringExtra("accessToken")
+        Timber.d("token: $token")
         if (token != null) {
             mainViewModel.saveToken(token)
             Timber.d("token: $token")

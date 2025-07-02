@@ -53,8 +53,8 @@ class GameQuizViewModel @Inject constructor(
 
     fun getQuiz( userLang:String){
         viewModelScope.launch {
-            accessToken?.let{
-                baseRepository.getQuiz(accessToken.value!!, level.value!!, userLang).onSuccess { response->
+            _accessToken.let{
+                baseRepository.getQuiz(_accessToken.value!!, _level.value!!, userLang).onSuccess { response->
                     _quizState.value= QuizState.Success(response.quizDtoList)
                     _quiz.value = response.quizDtoList
                 }.onFailure {
@@ -75,9 +75,10 @@ class GameQuizViewModel @Inject constructor(
     }
 
     fun completeQuiz() {
+        Timber.d("level: ${_level.value}")
         viewModelScope.launch {
-            accessToken?.let{
-                baseRepository.quizComplete(accessToken.value!!, level.value!!).onSuccess { response ->
+            _accessToken?.let{
+                baseRepository.quizComplete(_accessToken.value!!, _level.value!!).onSuccess { response ->
                     _quizCompleteState.value = QuizCompleteState.Success
                 }.onFailure {
                     if (it is HttpException) {

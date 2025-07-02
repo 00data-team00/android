@@ -9,6 +9,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -33,7 +34,7 @@ class FollowFragment : Fragment() {
 
     private val followFragmentArgs: FollowFragmentArgs by navArgs()
     private val followViewModel: FollowViewModel by viewModels()
-    private val mainViewModel : MainViewModel by viewModels()
+    private val mainViewModel : MainViewModel by activityViewModels()
     private lateinit var followAdapter: FollowAdapter
 
     override fun onCreateView(
@@ -54,9 +55,8 @@ class FollowFragment : Fragment() {
         val token=mainViewModel.accessToken.value
         if (token != null) {
             followViewModel.saveToken(token)
+            Timber.d("token: $token")
         }
-
-        followViewModel.getFollowers()
 
         val title = followFragmentArgs.title
         binding.tvTitle.text = (if(title=="follower") getString(R.string.follow_list_follower) else getString(R.string.follow_list_following))
@@ -80,7 +80,9 @@ class FollowFragment : Fragment() {
                         )
                         searchList(title, state.response.messages)
                     }
-                    is FollowerState.Loading->{}
+                    is FollowerState.Loading->{
+                        Timber.d("follower state loading")
+                    }
                     is FollowerState.Error->{
                         Timber.e("setChats start chat state is error!!")
                     }
@@ -88,6 +90,7 @@ class FollowFragment : Fragment() {
             }
         }
 
+        followViewModel.getFollowers()
         clickBackButton()
     }
 

@@ -87,7 +87,7 @@ interface BaseService {
     @PATCH("api/game/me/complete")
     suspend fun quizComplete(
         @Header("Authorization") token: String,
-        @Query("level") level:Int,
+        @Query("quizId") level:Int,
     ): Response<Unit>
 
     // explore

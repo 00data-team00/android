@@ -1,6 +1,7 @@
 package com.data.app.presentation.main.home.game.quiz
 
 import android.animation.ObjectAnimator
+import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
@@ -94,7 +95,13 @@ class GameQuizActivity : BaseActivity() {
 
                 lifecycleScope.launch{
                     gameQuizViewModel.level.observe(this@GameQuizActivity){
-                        gameQuizViewModel.getQuiz( "en-US")
+                        val lang = getSharedPreferences("settings", Context.MODE_PRIVATE)
+                            .getString("lang", "ko") ?: "ko"
+
+                        // 언어가 "en"이면 "en-US"로 설정, 아니면 해당 언어 그대로 사용
+                        val locale = if (lang == "en") "en-US" else lang
+
+                        gameQuizViewModel.getQuiz(locale)
                     }
                 }
 
@@ -223,17 +230,19 @@ class GameQuizActivity : BaseActivity() {
         }
 
         if (success) {
+            binding.clGameQuiz.setBackgroundColor(Color.WHITE)
+            binding.tvGameSuccessfail.text = getString(R.string.game_quiz_finalsucess)
+            binding.tvGameComment.text = getString(R.string.game_quiz_commentsuccess)
+            binding.ivGameFinal.setImageResource(R.drawable.ic_correct)
+            binding.btnQuizStop.isSelected = true
+            binding.btnQuizAgain.isSelected = true
+            binding.rvWeeks.setBackgroundResource(R.drawable.bg_week_success_green)
+
             lifecycleScope.launch {
                 gameQuizViewModel.quizCompleteState.collect { state->
                     when(state){
                         is QuizCompleteState.Success->{
-                            binding.clGameQuiz.setBackgroundColor(Color.WHITE)
-                            binding.tvGameSuccessfail.text = getString(R.string.game_quiz_finalsucess)
-                            binding.tvGameComment.text = getString(R.string.game_quiz_commentsuccess)
-                            binding.ivGameFinal.setImageResource(R.drawable.ic_correct)
-                            binding.btnQuizStop.isSelected = true
-                            binding.btnQuizAgain.isSelected = true
-                            binding.rvWeeks.setBackgroundResource(R.drawable.bg_week_success_green)
+                            Timber.d("quiz complete!")
                         }
                         is QuizCompleteState.Loading->{}
                         is QuizCompleteState.Error->{
