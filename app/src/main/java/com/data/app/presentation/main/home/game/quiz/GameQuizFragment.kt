@@ -11,12 +11,15 @@ import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import coil.load
 import com.data.app.BuildConfig
 import com.data.app.R
 import com.data.app.data.response_dto.ResponseQuizDto
 import com.data.app.databinding.FragmentGameQuizBinding
+import com.data.app.extension.QuizCompleteState
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.Locale
 
@@ -161,23 +164,32 @@ class GameQuizFragment : Fragment() {
                 // 선택한 답이 맞았는지 틀렸는지 activity로 전달
                 currentAnswerIsCorrect?.let { isCorrect ->
                     gameActivity?.onQuestionAnswered(isCorrect)
-                    if(isCorrect) updateProgressBar()
+                    if(isCorrect) {
+                        updateProgressBar()
+                        lifecycleScope.launch {
+                            gameQuizViewModel.quizCompleteState.collect { state->
+                                when(state){
+                                    is QuizCompleteState.Success->{
+                                        Timber.d("quiz complete!")
+                                    }
+                                    is QuizCompleteState.Loading->{}
+                                    is QuizCompleteState.Error->{
+                                        Timber.e("quiz complete state error!!!")
+                                    }
+                                }
+                            }
+                        }
+
+                        if(!gameQuizViewModel.accessToken.value.isNullOrEmpty()){
+                            gameQuizViewModel.completeQuiz(currentIndex+1)
+                        }
+                    }
                 }
 
                 if (gameActivity?.isGameFinished == true) {
                     // 생명이 다 떨어져서 Activity에서 이미 finalResult()를 호출한 경우,
                     gameActivity!!.finalResult(false)
                     Timber.d("Game is already finished by Activity. No need to show GameSuccessOrNotFragment.")
-                    /*try {
-                        // 이 프래그먼트가 Activity의 supportFragmentManager에 직접 추가되었다면
-                        requireActivity().supportFragmentManager.beginTransaction()
-                            .remove(this@GameQuizFragment)
-                            .commitAllowingStateLoss() // 또는 commitNowAllowingStateLoss() 고려 (하지만 매우 주의)
-                        Timber.i("GameQuizFragment explicitly requested self-removal because game was already finished by Activity.")
-                    } catch (e: IllegalStateException) {
-                        Timber.e(e, "Error during self-removal of GameQuizFragment")
-                        // 만약 에러 발생 시, 안전하게 리스너만 종료
-                    }*/
                     return@setOnClickListener
                 }
                 val fragment = isCorrectAnswer?.let { it ->
