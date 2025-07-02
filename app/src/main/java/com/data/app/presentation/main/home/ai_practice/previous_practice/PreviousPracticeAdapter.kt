@@ -4,13 +4,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.data.app.data.PreviousPractice
-import com.data.app.data.response_dto.ResponseAIPreviousChatMessagesDto
-import com.data.app.data.response_dto.ResponseAIPreviousRecordsDto
+import com.data.app.data.response_dto.home.ai.ResponseAIPreviousChatMessagesDto
+import com.data.app.data.response_dto.home.ai.ResponseAIPreviousRecordsDto
 import com.data.app.databinding.ItemPreviousPracticeBinding
 import timber.log.Timber
 import java.time.LocalDateTime
-import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
 class PreviousPracticeAdapter(

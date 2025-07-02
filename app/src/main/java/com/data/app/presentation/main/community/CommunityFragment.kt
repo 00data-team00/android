@@ -12,14 +12,19 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.data.app.R
+import com.data.app.data.shared_preferences.AppPreferences
 import com.data.app.databinding.FragmentCommunityBinding
+import com.data.app.extension.community.GetAllTimeLineState
 import com.data.app.presentation.main.MainViewModel
 import com.data.app.presentation.main.OnTabReselectedListener
 import com.data.app.presentation.main.community.write.WritePostActivity
 import com.google.android.material.tabs.TabLayout
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class CommunityFragment:Fragment(), OnTabReselectedListener {
     private var _binding: FragmentCommunityBinding? = null
     private val binding: FragmentCommunityBinding
@@ -28,6 +33,9 @@ class CommunityFragment:Fragment(), OnTabReselectedListener {
     private val mainViewModel:MainViewModel by activityViewModels()
     private val communityViewModel:CommunityViewModel by viewModels()
     private lateinit var postsAdapter:PostsAdapter
+
+    @Inject
+    lateinit var appPreferences: AppPreferences
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -49,26 +57,44 @@ class CommunityFragment:Fragment(), OnTabReselectedListener {
     }
 
     private fun showFeeds(){
-        postsAdapter= PostsAdapter(
-            clickPost = {post->
-                val action=CommunityFragmentDirections
-                    .actionCommunityFragmentToPostDetailFragment(post)
-                findNavController().navigate(action)
-            },
-            clickOtherUser = {profile, name->
-                val action=CommunityFragmentDirections
-                    .actionCommunityFragmentToOtherProfileFragment(profile, name)
-                findNavController().navigate(action)
+        lifecycleScope.launch {
+            communityViewModel.getAllTimeLineState.collect { state ->
+                when (state) {
+                    is GetAllTimeLineState.Success -> {
+                        postsAdapter= PostsAdapter(
+                            clickPost = {post->
+                                /*val action=CommunityFragmentDirections
+                                    .actionCommunityFragmentToPostDetailFragment(post)
+                                findNavController().navigate(action)*/
+                            },
+                            clickOtherUser = {profile, name->
+                                /*val action=CommunityFragmentDirections
+                                    .actionCommunityFragmentToOtherProfileFragment(profile, name)
+                                findNavController().navigate(action)*/
+                            }
+                        )
+                        binding.rvPosts.adapter=postsAdapter
+                        postsAdapter.getList(state.data)
+                        communityViewModel.resetTimeLineState()
+                    }
+
+                    is GetAllTimeLineState.Error -> {
+                        Timber.e("get time line state error!")
+                    }
+
+                    is GetAllTimeLineState.Loading -> {
+                        Timber.d("get time line state loading")
+                    }
+                }
             }
-        )
-        binding.rvPosts.adapter=postsAdapter
-        postsAdapter.getList(communityViewModel.allFeeds)
+        }
 
         setupTabs()
-
     }
 
     private fun setupTabs(){
+        communityViewModel.getAllTimeLine(appPreferences.getAccessToken()!!)
+
         binding.tlCommunity.apply {
             addTab(newTab().setText(getString(R.string.community_all)))
             addTab(newTab().setText(getString(R.string.community_following)))
@@ -80,9 +106,9 @@ class CommunityFragment:Fragment(), OnTabReselectedListener {
         binding.tlCommunity.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 when (tab?.position) {
-                    0 -> postsAdapter.getList(communityViewModel.allFeeds)
-                    1 -> postsAdapter.getList(communityViewModel.followFeeds)
-                    2 -> postsAdapter.getList(communityViewModel.countryFeeds)
+                    0 -> communityViewModel.getAllTimeLine(appPreferences.getAccessToken()!!)
+                    1 -> communityViewModel.getFollowingTimeLine(appPreferences.getAccessToken()!!)
+                    2 -> communityViewModel.getNationTimeLine(appPreferences.getAccessToken()!!)
                 }
                 binding.rvPosts.scrollToPosition(0)
                 Timber.d("tab position: ${tab?.position}")
@@ -139,5 +165,6 @@ class CommunityFragment:Fragment(), OnTabReselectedListener {
 
     override fun onTabReselected() {
         binding.rvPosts.smoothScrollToPosition(0)
+
     }
 }

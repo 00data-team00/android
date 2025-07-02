@@ -1,10 +1,119 @@
 package com.data.app.presentation.main.community
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.data.app.R
 import com.data.app.data.Post
+import com.data.app.domain.repository.BaseRepository
+import com.data.app.extension.community.GetAllTimeLineState
+import com.data.app.extension.community.GetFollowingTimeLineState
+import com.data.app.extension.community.GetNationTimeLineState
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import okhttp3.ResponseBody
+import org.json.JSONObject
+import retrofit2.HttpException
+import timber.log.Timber
+import javax.inject.Inject
 
-class CommunityViewModel:ViewModel() {
+@HiltViewModel
+class CommunityViewModel @Inject constructor(
+    private val baseRepository: BaseRepository
+) : ViewModel() {
+    private val _getAllTimeLineState =
+        MutableStateFlow<GetAllTimeLineState>(GetAllTimeLineState.Loading)
+    val getAllTimeLineState: StateFlow<GetAllTimeLineState> = _getAllTimeLineState.asStateFlow()
+
+    private val _getNationTimeLineState =
+        MutableStateFlow<GetNationTimeLineState>(GetNationTimeLineState.Loading)
+    val getNationTimeLineState: StateFlow<GetNationTimeLineState> =
+        _getNationTimeLineState.asStateFlow()
+
+    private val _getFollowingTimeLineState =
+        MutableStateFlow<GetFollowingTimeLineState>(GetFollowingTimeLineState.Loading)
+    val getFollowingTimeLineState: StateFlow<GetFollowingTimeLineState> =
+        _getFollowingTimeLineState.asStateFlow()
+
+    fun getAllTimeLine(token: String) {
+        viewModelScope.launch {
+            baseRepository.getAllTimeLine(token).onSuccess { response ->
+                _getAllTimeLineState.value = GetAllTimeLineState.Success(response.posts)
+            }.onFailure {
+                _getAllTimeLineState.value = GetAllTimeLineState.Error(it.message.toString())
+                if (it is HttpException) {
+                    try {
+                        val errorBody: ResponseBody? = it.response()?.errorBody()
+                        val errorBodyString = errorBody?.string() ?: ""
+                        httpError(errorBodyString)
+                    } catch (e: Exception) {
+                        // JSON 파싱 실패 시 로깅
+                        Timber.e("Error parsing error body: ${e}")
+                    }
+                }
+            }
+        }
+    }
+
+    fun getNationTimeLine(token: String) {
+        viewModelScope.launch {
+            baseRepository.getNationTimeLine(token).onSuccess { response ->
+                _getAllTimeLineState.value = GetAllTimeLineState.Success(response.posts)
+            }.onFailure {
+                _getAllTimeLineState.value = GetAllTimeLineState.Error(it.message.toString())
+                if (it is HttpException) {
+                    try {
+                        val errorBody: ResponseBody? = it.response()?.errorBody()
+                        val errorBodyString = errorBody?.string() ?: ""
+                        httpError(errorBodyString)
+                    } catch (e: Exception) {
+                        // JSON 파싱 실패 시 로깅
+                        Timber.e("Error parsing error body: ${e}")
+                    }
+                }
+            }
+        }
+    }
+
+    fun getFollowingTimeLine(token: String) {
+        viewModelScope.launch {
+            baseRepository.getFollowingTimeLine(token).onSuccess { response ->
+                _getAllTimeLineState.value = GetAllTimeLineState.Success(response.posts)
+            }.onFailure {
+                _getAllTimeLineState.value = GetAllTimeLineState.Error(it.message.toString())
+                if (it is HttpException) {
+                    try {
+                        val errorBody: ResponseBody? = it.response()?.errorBody()
+                        val errorBodyString = errorBody?.string() ?: ""
+                        httpError(errorBodyString)
+                    } catch (e: Exception) {
+                        // JSON 파싱 실패 시 로깅
+                        Timber.e("Error parsing error body: ${e}")
+                    }
+                }
+            }
+        }
+    }
+
+    fun resetTimeLineState(){
+        _getAllTimeLineState.value=GetAllTimeLineState.Loading
+    }
+
+    private fun httpError(errorBody: String) {
+        // 전체 에러 바디를 로깅하여 디버깅
+        Timber.e("Full error body: $errorBody")
+
+        // JSONObject를 사용하여 메시지 추출
+        val jsonObject = JSONObject(errorBody)
+        val errorMessage = jsonObject.optString("message", "Unknown error")
+
+        // 추출된 에러 메시지 로깅
+        Timber.e("Error message: $errorMessage")
+    }
+
+
     val allFeeds = listOf(
         Post(
             profile = "https://avatars.githubusercontent.com/u/71327548?v=4",
@@ -19,8 +128,18 @@ class CommunityViewModel:ViewModel() {
             ),
             like = 120,
             comments = listOf(
-                Post.Comments("https://avatars.githubusercontent.com/u/71327548?v=4", "Emma", "와 남산 고양이 너무 귀여워요!", 8),
-                Post.Comments("https://avatars.githubusercontent.com/u/71327548?v=4", "Noah", "부럽다.. 다음엔 같이가요!", 5)
+                Post.Comments(
+                    "https://avatars.githubusercontent.com/u/71327548?v=4",
+                    "Emma",
+                    "와 남산 고양이 너무 귀여워요!",
+                    8
+                ),
+                Post.Comments(
+                    "https://avatars.githubusercontent.com/u/71327548?v=4",
+                    "Noah",
+                    "부럽다.. 다음엔 같이가요!",
+                    5
+                )
             )
         ),
         Post(
@@ -32,7 +151,12 @@ class CommunityViewModel:ViewModel() {
             images = null,
             like = 70,
             comments = listOf(
-                Post.Comments("https://avatars.githubusercontent.com/u/71327548?v=4", "Mina", "을지로 근처에 있어요!", 10)
+                Post.Comments(
+                    "https://avatars.githubusercontent.com/u/71327548?v=4",
+                    "Mina",
+                    "을지로 근처에 있어요!",
+                    10
+                )
             )
         ),
         Post(
@@ -48,9 +172,24 @@ class CommunityViewModel:ViewModel() {
             ),
             like = 98,
             comments = listOf(
-                Post.Comments("https://avatars.githubusercontent.com/u/71327548?v=4", "Tom", "참치 ㅋㅋㅋ 귀엽다", 6),
-                Post.Comments("https://avatars.githubusercontent.com/u/71327548?v=4", "Liam", "우리 집은 연어예요 ㅋㅋ", 4),
-                Post.Comments("https://avatars.githubusercontent.com/u/71327548?v=4", "Yuki", "고양이 이름 고민 중인데 참고해야겠다", 3)
+                Post.Comments(
+                    "https://avatars.githubusercontent.com/u/71327548?v=4",
+                    "Tom",
+                    "참치 ㅋㅋㅋ 귀엽다",
+                    6
+                ),
+                Post.Comments(
+                    "https://avatars.githubusercontent.com/u/71327548?v=4",
+                    "Liam",
+                    "우리 집은 연어예요 ㅋㅋ",
+                    4
+                ),
+                Post.Comments(
+                    "https://avatars.githubusercontent.com/u/71327548?v=4",
+                    "Yuki",
+                    "고양이 이름 고민 중인데 참고해야겠다",
+                    3
+                )
             )
         )
     )
@@ -65,8 +204,18 @@ class CommunityViewModel:ViewModel() {
             images = null,
             like = 134,
             comments = listOf(
-                Post.Comments("https://avatars.githubusercontent.com/u/71327548?v=4", "Sophie", "미용한 뒤 애들이 다 그래요 ㅋㅋ", 7),
-                Post.Comments("https://avatars.githubusercontent.com/u/71327548?v=4", "Jack", "사진 공유해줘요!!", 6)
+                Post.Comments(
+                    "https://avatars.githubusercontent.com/u/71327548?v=4",
+                    "Sophie",
+                    "미용한 뒤 애들이 다 그래요 ㅋㅋ",
+                    7
+                ),
+                Post.Comments(
+                    "https://avatars.githubusercontent.com/u/71327548?v=4",
+                    "Jack",
+                    "사진 공유해줘요!!",
+                    6
+                )
             )
         ),
         Post(
@@ -82,7 +231,12 @@ class CommunityViewModel:ViewModel() {
             ),
             like = 150,
             comments = listOf(
-                Post.Comments("https://avatars.githubusercontent.com/u/71327548?v=4", "Leo", "건강하다니 다행이에요! ❤️", 10)
+                Post.Comments(
+                    "https://avatars.githubusercontent.com/u/71327548?v=4",
+                    "Leo",
+                    "건강하다니 다행이에요! ❤️",
+                    10
+                )
             )
         ),
         Post(
@@ -97,9 +251,24 @@ class CommunityViewModel:ViewModel() {
             ),
             like = 210,
             comments = listOf(
-                Post.Comments("https://avatars.githubusercontent.com/u/71327548?v=4", "Ben", "와 대박! 우리 애는 탈출 시도함 ㅠ", 13),
-                Post.Comments("https://avatars.githubusercontent.com/u/71327548?v=4", "Olivia", "용감한 고양이네요!", 8),
-                Post.Comments("https://avatars.githubusercontent.com/u/71327548?v=4", "Nina", "귀엽다앙앙", 4)
+                Post.Comments(
+                    "https://avatars.githubusercontent.com/u/71327548?v=4",
+                    "Ben",
+                    "와 대박! 우리 애는 탈출 시도함 ㅠ",
+                    13
+                ),
+                Post.Comments(
+                    "https://avatars.githubusercontent.com/u/71327548?v=4",
+                    "Olivia",
+                    "용감한 고양이네요!",
+                    8
+                ),
+                Post.Comments(
+                    "https://avatars.githubusercontent.com/u/71327548?v=4",
+                    "Nina",
+                    "귀엽다앙앙",
+                    4
+                )
             )
         )
     )
@@ -118,8 +287,18 @@ class CommunityViewModel:ViewModel() {
             ),
             like = 85,
             comments = listOf(
-                Post.Comments("https://avatars.githubusercontent.com/u/71327548?v=4", "Suji", "맞아요. 정 많으신 분들 많더라구요", 11),
-                Post.Comments("https://avatars.githubusercontent.com/u/71327548?v=4", "Min", "고양이들 천국이네요", 6)
+                Post.Comments(
+                    "https://avatars.githubusercontent.com/u/71327548?v=4",
+                    "Suji",
+                    "맞아요. 정 많으신 분들 많더라구요",
+                    11
+                ),
+                Post.Comments(
+                    "https://avatars.githubusercontent.com/u/71327548?v=4",
+                    "Min",
+                    "고양이들 천국이네요",
+                    6
+                )
             )
         ),
         Post(
@@ -128,14 +307,29 @@ class CommunityViewModel:ViewModel() {
             time = 7,
             isFollowing = false,
             content = "[같은 국가] 한국 고양이 간식 중에 추천해줄 만한 거 있을까요?",
-            images =listOf(
+            images = listOf(
                 R.drawable.ic_image4
             ),
             like = 100,
             comments = listOf(
-                Post.Comments("https://avatars.githubusercontent.com/u/71327548?v=4", "Hoon", "츄르 맛별로 다 좋아요 ㅋㅋ", 5),
-                Post.Comments("https://avatars.githubusercontent.com/u/71327548?v=4", "Yena", "참치맛 강추!", 3),
-                Post.Comments("https://avatars.githubusercontent.com/u/71327548?v=4", "Ray", "베베몬도 괜찮았어요!", 4)
+                Post.Comments(
+                    "https://avatars.githubusercontent.com/u/71327548?v=4",
+                    "Hoon",
+                    "츄르 맛별로 다 좋아요 ㅋㅋ",
+                    5
+                ),
+                Post.Comments(
+                    "https://avatars.githubusercontent.com/u/71327548?v=4",
+                    "Yena",
+                    "참치맛 강추!",
+                    3
+                ),
+                Post.Comments(
+                    "https://avatars.githubusercontent.com/u/71327548?v=4",
+                    "Ray",
+                    "베베몬도 괜찮았어요!",
+                    4
+                )
             )
         ),
         Post(
@@ -151,8 +345,18 @@ class CommunityViewModel:ViewModel() {
             ),
             like = 172,
             comments = listOf(
-                Post.Comments("https://avatars.githubusercontent.com/u/71327548?v=4", "Jisoo", "지자체 보호소 추천드려요!", 9),
-                Post.Comments("https://avatars.githubusercontent.com/u/71327548?v=4", "Hyun", "절차는 생각보다 간단했어요!", 7)
+                Post.Comments(
+                    "https://avatars.githubusercontent.com/u/71327548?v=4",
+                    "Jisoo",
+                    "지자체 보호소 추천드려요!",
+                    9
+                ),
+                Post.Comments(
+                    "https://avatars.githubusercontent.com/u/71327548?v=4",
+                    "Hyun",
+                    "절차는 생각보다 간단했어요!",
+                    7
+                )
             )
         )
     )

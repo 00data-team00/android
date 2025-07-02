@@ -1,6 +1,6 @@
 package com.data.app.extension.login
 
-import com.data.app.data.response_dto.ResponseLoginDto
+import com.data.app.data.response_dto.login.ResponseLoginDto
 
 sealed class LoginState {
     data object Idle:LoginState()

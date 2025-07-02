@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.data.app.data.response_dto.ResponseLoginDto
+import com.data.app.data.response_dto.login.ResponseLoginDto
 import com.data.app.databinding.ActivityLandingBinding
 import com.data.app.extension.login.LoginState
 import com.data.app.presentation.main.MainActivity

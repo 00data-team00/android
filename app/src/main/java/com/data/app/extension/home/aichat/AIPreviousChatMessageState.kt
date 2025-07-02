@@ -1,6 +1,6 @@
 package com.data.app.extension.home.aichat
 
-import com.data.app.data.response_dto.ResponseAIPreviousChatMessagesDto
+import com.data.app.data.response_dto.home.ai.ResponseAIPreviousChatMessagesDto
 
 sealed class AIPreviousChatMessageState {
     data object Loading:AIPreviousChatMessageState()

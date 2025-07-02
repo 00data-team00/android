@@ -1,6 +1,6 @@
 package com.data.app.extension.explore
 
-import com.data.app.data.response_dto.ResponseDeadlineDto
+import com.data.app.data.response_dto.explore.ResponseDeadlineDto
 
 sealed class DeadLineProgramState {
     data object Loading : DeadLineProgramState()

@@ -1,6 +1,6 @@
 package com.data.app.extension.home.aichat
 
-import com.data.app.data.response_dto.ResponseChatStartDto
+import com.data.app.data.response_dto.home.ai.ResponseChatStartDto
 
 sealed class StartChatState {
     data object Loading:StartChatState()

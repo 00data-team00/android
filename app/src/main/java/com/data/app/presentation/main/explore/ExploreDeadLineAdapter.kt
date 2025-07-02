@@ -5,8 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.data.app.R
-import com.data.app.data.DeadLine
-import com.data.app.data.response_dto.ResponseDeadlineDto
+import com.data.app.data.response_dto.explore.ResponseDeadlineDto
 import com.data.app.databinding.ItemDeadlineBinding
 import timber.log.Timber
 

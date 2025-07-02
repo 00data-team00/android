@@ -1,6 +1,6 @@
 package com.data.app.extension.my
 
-import com.data.app.data.response_dto.ResponseProfileDto
+import com.data.app.data.response_dto.my.ResponseProfileDto
 
 sealed class UserProfileState {
     object Loading : UserProfileState()

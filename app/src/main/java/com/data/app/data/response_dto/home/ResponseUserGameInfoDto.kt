@@ -1,4 +1,4 @@
-package com.data.app.data.response_dto
+package com.data.app.data.response_dto.home
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

@@ -1,6 +1,6 @@
 package com.data.app.extension.home.aichat
 
-import com.data.app.data.response_dto.ResponseAIPreviousRecordsDto
+import com.data.app.data.response_dto.home.ai.ResponseAIPreviousRecordsDto
 
 sealed class AIPreviousPracticeState {
     data object Loading:AIPreviousPracticeState()

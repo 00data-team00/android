@@ -1,6 +1,6 @@
 package com.data.app.extension.my
 
-import com.data.app.data.response_dto.ResponseEditProfileDto
+import com.data.app.data.response_dto.community.ResponseEditProfileDto
 
 sealed class EditProfileState {
     data object Loading : EditProfileState()

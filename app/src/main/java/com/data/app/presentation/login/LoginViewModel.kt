@@ -2,7 +2,7 @@ package com.data.app.presentation.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.data.app.data.response_dto.ResponseLoginDto
+import com.data.app.data.response_dto.login.ResponseLoginDto
 import com.data.app.data.shared_preferences.AppPreferences
 import com.data.app.domain.repository.BaseRepository
 import com.data.app.extension.login.LoginState

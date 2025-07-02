@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.data.app.R
 import com.data.app.data.AIPractice
-import com.data.app.data.response_dto.ResponseAITopicsDto
+import com.data.app.data.response_dto.home.ai.ResponseAITopicsDto
 import com.data.app.domain.repository.BaseRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch

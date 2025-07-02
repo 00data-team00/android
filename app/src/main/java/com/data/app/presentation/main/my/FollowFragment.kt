@@ -13,7 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.data.app.R
-import com.data.app.data.response_dto.ResponseFollowersDto
+import com.data.app.data.response_dto.community.ResponseFollowersDto
 import com.data.app.databinding.FragmentFollowBinding
 import com.data.app.extension.community.FollowerState
 import com.data.app.presentation.main.MainViewModel
