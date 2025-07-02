@@ -1,31 +1,39 @@
 package com.data.app.presentation.main.my
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupWindow
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentContainerView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import coil3.load
+import coil.load
+import coil3.request.placeholder
 import coil3.request.transformations
-import coil3.transform.CircleCropTransformation
+import coil.transform.CircleCropTransformation
 import com.data.app.R
 import com.data.app.data.shared_preferences.AppPreferences
 import com.data.app.databinding.FragmentMyBinding
 import com.data.app.extension.MyState
 import com.data.app.presentation.login.LoginActivity
+import com.yalantis.ucrop.UCrop
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.io.File
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -36,10 +44,26 @@ class MyFragment:Fragment() {
 
     private val myViewModel: MyViewModel by viewModels()
     private lateinit var myAdapter: _root_ide_package_.com.data.app.presentation.main.my.MyAdapter
-
+    private lateinit var galleryLauncher: ActivityResultLauncher<Intent>
+    private val PICK_IMAGE_REQUEST = 1
 
     @Inject
     lateinit var appPreferences: AppPreferences
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        // 갤러리에서 이미지 선택하기 위한 launcher
+        galleryLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val selectedImageUri = result.data?.data
+                selectedImageUri?.let { uri ->
+                    Timber.d("갤러리에서 선택된 URI: $uri")
+                    startCrop(uri)  // 선택된 이미지 크롭 시작
+                }
+            }
+        }
+    }
 
 
     override fun onCreateView(
@@ -94,15 +118,42 @@ class MyFragment:Fragment() {
 
     private fun showProfile(profile: String, name: String) {
         with(binding){
+            // val resourceId = resources.getIdentifier("ic_profile", "drawable", requireContext().packageName)
             ivProfile.load(profile){
                 transformations(CircleCropTransformation())
+                placeholder(R.drawable.ic_profile)
+                //fallback(R.drawable.ic_profile) // profile이 null일 때 기본 이미지 표시
             }
             tvName.text=name
             tvCountry.text="한국"
             tvPostCount.text="4"
             tvFollowerCount.text="60"
             tvFollowingCount.text="60"
+
+            btnEdit.setOnClickListener {
+                val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                intent.type = "image/*"
+                galleryLauncher.launch(intent)
+            }
         }
+    }
+
+    private fun startCrop(uri: Uri) {
+        val destinationUri = Uri.fromFile(File(requireContext().cacheDir, "cropped_${System.currentTimeMillis()}.jpg"))
+
+        val options = UCrop.Options().apply {
+            setCircleDimmedLayer(true)     // ✅ 원형 마스크
+            setShowCropFrame(false)        // ❗ 프레임 안 보이게
+            setShowCropGrid(false)         // ❗ 그리드 숨기기
+            setHideBottomControls(true)    // ✅ 비율 고정이면 하단 버튼 숨기기 좋음
+            setToolbarTitle("프로필 사진 자르기")
+        }
+
+        // UCrop 실행
+        UCrop.of(uri, destinationUri)
+            .withAspectRatio(1f, 1f) // ✅ 1:1 비율 고정
+            .withOptions(options)
+            .start(requireContext(), this)
     }
 
     private fun makeList() {
@@ -187,6 +238,27 @@ class MyFragment:Fragment() {
                 val action=MyFragmentDirections.actionMyFragmentToFollowFragment(title)
                 findNavController().navigate(action)
             }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        Timber.d("resultCode: $resultCode, requestCode: $requestCode")
+        if (requestCode == UCrop.REQUEST_CROP && resultCode == Activity.RESULT_OK) {
+            val resultUri = UCrop.getOutput(data!!)  // 크롭된 이미지 URI 받기
+            resultUri?.let {
+                Timber.d("크롭된 이미지 URI: $it")
+                // 크롭된 이미지를 ivProfile에 원형으로 로드
+                binding.ivProfile.load(it) {
+                    transformations(CircleCropTransformation()) // 원형 크롭
+                    placeholder(R.drawable.ic_profile)  // 로딩 중 이미지
+                    error(R.drawable.ic_profile)  // 오류 시 이미지
+                }
+            }
+        } else if (requestCode == UCrop.REQUEST_CROP && resultCode == UCrop.RESULT_ERROR) {
+            val error = UCrop.getError(data!!)
+            Timber.e("크롭 에러 발생: $error")
+            Toast.makeText(requireContext(), "이미지 크롭에 실패했습니다.", Toast.LENGTH_SHORT).show()
         }
     }
 
