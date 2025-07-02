@@ -18,6 +18,7 @@ import com.data.app.data.response_dto.ResponseLoginDto
 import com.data.app.data.response_dto.ResponseEditProfileDto
 import com.data.app.data.response_dto.ResponseQuizDto
 import com.data.app.data.response_dto.ResponseRegisterDto
+import com.data.app.data.response_dto.ResponseUserGameInfoDto
 import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.Body
@@ -51,6 +52,13 @@ interface BaseService {
     suspend fun login(
         @Body requestLoginDto: RequestLoginDto
     ):ResponseLoginDto
+
+    // home
+    @GET("api/me/user-game-info")
+    suspend fun getUserGameInfo(
+        @Header("Authorization") token:String,
+    ): ResponseUserGameInfoDto
+
 
     // ai chat
     @GET("api/chat/topics")

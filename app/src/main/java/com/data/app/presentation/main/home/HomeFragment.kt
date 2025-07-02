@@ -6,8 +6,6 @@ import android.graphics.Bitmap
 import android.graphics.Paint
 import android.graphics.RectF
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
@@ -29,12 +27,14 @@ import com.data.app.presentation.main.MainViewModel
 import com.data.app.presentation.main.OnTabReselectedListener
 import com.data.app.presentation.main.home.ai_practice.AIPracticeActivity
 import com.data.app.presentation.main.home.game.GameTabActivity
-import com.data.app.util.security.updateLocale
 import timber.log.Timber
 import androidx.core.content.edit
-import androidx.navigation.NavOptions
-import androidx.navigation.fragment.findNavController
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import com.data.app.extension.UserGameInfoState
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class HomeFragment:Fragment(), OnTabReselectedListener {
     private var _binding:FragmentHomeBinding?=null
     private val binding:FragmentHomeBinding
@@ -42,6 +42,7 @@ class HomeFragment:Fragment(), OnTabReselectedListener {
 
 
     private val mainViewModel:MainViewModel by activityViewModels()
+    private val homeViewModel: HomeViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -59,13 +60,11 @@ class HomeFragment:Fragment(), OnTabReselectedListener {
 
     private fun setting(){
         mainViewModel.accessToken.observe(viewLifecycleOwner){token->
-            clickPractice(token)
-            clickGame(token)
+            getInfo(token)
         }
         showImage()
         //clickPractice(token)
-        inputMockData()
-
+        inputData()
     }
 
     private fun showImage(){
@@ -90,7 +89,7 @@ class HomeFragment:Fragment(), OnTabReselectedListener {
         }
     }
 
-    private fun inputMockData(){
+    private fun inputData(){
         with(binding){
             tvTitleKor.text=getString(R.string.home_title, "구구")
             tvSubtitleEng.text=getString(R.string.home_subtitle_eng, "GooGoo")
@@ -119,6 +118,31 @@ class HomeFragment:Fragment(), OnTabReselectedListener {
 
             showLanguage()
         }
+    }
+
+    private fun getInfo(token: String) {
+        lifecycleScope.launchWhenResumed {
+            homeViewModel.userGameInfoState.collect { state->
+                when(state){
+                    is UserGameInfoState.Success->{
+                        with(binding){
+                            tvQuizCount1.text=state.response.totalQuizSolved.toString()
+                            tvQuizCount2.text=state.response.quizSolvedToday.toString()
+                            tvConversationCount.text=state.response.chatRoomsCreated.toString()
+                        }
+
+                        clickPractice(token)
+                        clickGame(token, state.response.levelCompleted)
+                    }
+                    is UserGameInfoState.Loading->{}
+                    is UserGameInfoState.Error->{}
+                }
+            }
+        }
+
+        Timber.d("get info token: $token")
+
+        homeViewModel.getUserGameInfo(token)
     }
 
     private fun showLanguage(){
@@ -183,7 +207,7 @@ class HomeFragment:Fragment(), OnTabReselectedListener {
         }
     }
 
-    private fun clickGame(token:String){
+    private fun clickGame(token:String, levelComplete:Int){
         binding.ivQuiz.setOnClickListener{
             val intent= Intent(requireActivity(), GameTabActivity::class.java)
             intent.putExtra("accessToken", token)

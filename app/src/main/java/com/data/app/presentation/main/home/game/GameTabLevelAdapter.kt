@@ -41,11 +41,11 @@ class GameTabLevelAdapter(
         RecyclerView.ViewHolder(binding.root) {
         fun bind(level: GameLevel) {
             binding.tvLevel.text = level.level
-            binding.btnLevel.isSelected = level.isComplete
+            binding.btnLevel.isSelected = level.isOpen
 
             binding.itemLevel.setOnClickListener {
                 Timber.d("goquiz click level")
-                if (level.isComplete) {
+                if (level.isOpen) {
                     clickLevel(position+1)
                 }
             }

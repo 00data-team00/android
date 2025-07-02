@@ -10,6 +10,8 @@ data class ResponseQuizDto (
 ){
     @Serializable
     data class QuizDto(
+        @SerialName("quizId")
+        val QuizId:Int,
         @SerialName("category")
         val category: String,
         @SerialName("quizText")

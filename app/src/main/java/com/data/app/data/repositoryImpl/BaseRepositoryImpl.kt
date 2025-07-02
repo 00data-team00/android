@@ -19,6 +19,7 @@ import com.data.app.data.response_dto.ResponseLoginDto
 import com.data.app.data.response_dto.ResponseEditProfileDto
 import com.data.app.data.response_dto.ResponseQuizDto
 import com.data.app.data.response_dto.ResponseRegisterDto
+import com.data.app.data.response_dto.ResponseUserGameInfoDto
 import com.data.app.domain.repository.BaseRepository
 import okhttp3.MultipartBody
 import retrofit2.Response
@@ -67,6 +68,15 @@ class BaseRepositoryImpl @Inject constructor(
             baseDataSource.login(RequestLoginDto(email, pw))
         }.onFailure {
             Timber.e("base repository login fail: $it")
+        }
+    }
+
+    // home
+    override suspend fun getUserGameInfo(token: String): Result<ResponseUserGameInfoDto> {
+        return runCatching {
+            baseDataSource.getUserGameInfo(token)
+        }.onFailure {
+            Timber.e("base repository get user game info fail!: $it")
         }
     }
 

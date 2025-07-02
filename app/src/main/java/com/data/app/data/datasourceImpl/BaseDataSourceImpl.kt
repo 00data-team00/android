@@ -19,6 +19,7 @@ import com.data.app.data.response_dto.ResponseLoginDto
 import com.data.app.data.response_dto.ResponseEditProfileDto
 import com.data.app.data.response_dto.ResponseQuizDto
 import com.data.app.data.response_dto.ResponseRegisterDto
+import com.data.app.data.response_dto.ResponseUserGameInfoDto
 import com.data.app.data.service.BaseService
 import okhttp3.MultipartBody
 import retrofit2.Response
@@ -34,6 +35,9 @@ class BaseDataSourceImpl @Inject constructor(
 
     // login
     override suspend fun login(requestLoginDto: RequestLoginDto): ResponseLoginDto = baseService.login(requestLoginDto)
+
+    // home
+    override suspend fun getUserGameInfo(token: String): ResponseUserGameInfoDto = baseService.getUserGameInfo(token)
 
     // ai chat
     override suspend fun getAIChatTopics(): ResponseAITopicsDto = baseService.getAIChatTopics()
