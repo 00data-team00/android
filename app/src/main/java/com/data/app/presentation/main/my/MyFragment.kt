@@ -1,9 +1,12 @@
 package com.data.app.presentation.main.my
 
+import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.LayoutInflater
@@ -45,7 +48,10 @@ class MyFragment:Fragment() {
     private val myViewModel: MyViewModel by viewModels()
     private lateinit var myAdapter: _root_ide_package_.com.data.app.presentation.main.my.MyAdapter
     private lateinit var galleryLauncher: ActivityResultLauncher<Intent>
-    private val PICK_IMAGE_REQUEST = 1
+
+    companion object {
+        private const val GALLERY_PERMISSION_CODE = 101
+    }
 
     @Inject
     lateinit var appPreferences: AppPreferences
@@ -131,12 +137,31 @@ class MyFragment:Fragment() {
             tvFollowingCount.text="60"
 
             btnEdit.setOnClickListener {
-                val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-                intent.type = "image/*"
-                galleryLauncher.launch(intent)
+                checkGalleryPermissionAndOpenPicker()
             }
         }
     }
+
+    private fun checkGalleryPermissionAndOpenPicker() {
+        val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            Manifest.permission.READ_MEDIA_IMAGES
+        } else {
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        }
+
+        if (ContextCompat.checkSelfPermission(requireContext(), permission) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(arrayOf(permission), GALLERY_PERMISSION_CODE)
+        } else {
+            openGalleryPicker()
+        }
+    }
+
+    private fun openGalleryPicker() {
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        intent.type = "image/*"
+        galleryLauncher.launch(intent)
+    }
+
 
     private fun startCrop(uri: Uri) {
         val destinationUri = Uri.fromFile(File(requireContext().cacheDir, "cropped_${System.currentTimeMillis()}.jpg"))
@@ -240,6 +265,23 @@ class MyFragment:Fragment() {
             }
         }
     }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        if (requestCode == GALLERY_PERMISSION_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                openGalleryPicker()
+            } else {
+                Toast.makeText(requireContext(), "갤러리 접근 권한이 필요합니다.", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
