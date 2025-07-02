@@ -9,6 +9,6 @@ class MainViewModel:ViewModel() {
     val accessToken:LiveData<String> get()=_accessToken
 
     fun saveToken(token:String){
-        _accessToken.value="Bearer $token"
+        _accessToken.value=token
     }
 }
