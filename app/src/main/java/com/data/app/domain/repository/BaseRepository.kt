@@ -10,6 +10,7 @@ import com.data.app.data.response_dto.ResponseDeadlineDto
 import com.data.app.data.response_dto.ResponseFollowersDto
 import com.data.app.data.response_dto.ResponseLoginDto
 import com.data.app.data.response_dto.ResponseEditProfileDto
+import com.data.app.data.response_dto.ResponseMyPostDto
 import com.data.app.data.response_dto.ResponseProfileDto
 import com.data.app.data.response_dto.ResponseQuizDto
 import com.data.app.data.response_dto.ResponseRegisterDto
@@ -100,6 +101,11 @@ interface BaseRepository {
     suspend fun getMyProfile(
         token:String
     ):Result<ResponseProfileDto>
+
+    suspend fun getMyPosts(
+        token:String,
+    ):Result<ResponseMyPostDto>
+
     suspend fun editProfile(
         token:String,
         image:MultipartBody.Part

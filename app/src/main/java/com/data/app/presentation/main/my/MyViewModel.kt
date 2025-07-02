@@ -6,6 +6,7 @@ import com.data.app.R
 import com.data.app.data.Post
 import com.data.app.domain.repository.BaseRepository
 import com.data.app.extension.EditProfileState
+import com.data.app.extension.MyPostState
 import com.data.app.extension.MyProfileState
 import com.data.app.extension.MyState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,6 +30,10 @@ class MyViewModel @Inject constructor(
 
     private val _myProfileState = MutableStateFlow<MyProfileState>(MyProfileState.Loading)
     val myProfileState: StateFlow<MyProfileState> = _myProfileState.asStateFlow()
+
+    private val _myPostState = MutableStateFlow<MyPostState>(MyPostState.Loading)
+    val myPostState:StateFlow<MyPostState> = _myPostState.asStateFlow()
+
     private val _myState = MutableStateFlow<MyState>(MyState.Loading)
     val myState:StateFlow<MyState> = _myState.asStateFlow()
 
@@ -54,6 +59,27 @@ class MyViewModel @Inject constructor(
             }
         }
     }
+
+    fun getMyPosts(token:String){
+        viewModelScope.launch {
+            baseRepository.getMyPosts(token).onSuccess { response ->
+                _myPostState.value = MyPostState.Success(response)
+            }.onFailure {
+                _myPostState.value = MyPostState.Error(it.message.toString())
+                if (it is HttpException) {
+                    try {
+                        val errorBody: ResponseBody? = it.response()?.errorBody()
+                        val errorBodyString = errorBody?.string() ?: ""
+                        httpError(errorBodyString)
+                    } catch (e: Exception) {
+                        // JSON 파싱 실패 시 로깅
+                        Timber.e("Error parsing error body: ${e}")
+                    }
+                }
+            }
+        }
+    }
+
     fun editProfile(token: String, image: MultipartBody.Part){
         viewModelScope.launch {
             baseRepository.editProfile(token, image).onSuccess { response->

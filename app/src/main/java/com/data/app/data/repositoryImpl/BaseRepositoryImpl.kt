@@ -17,6 +17,7 @@ import com.data.app.data.response_dto.ResponseDeadlineDto
 import com.data.app.data.response_dto.ResponseFollowersDto
 import com.data.app.data.response_dto.ResponseLoginDto
 import com.data.app.data.response_dto.ResponseEditProfileDto
+import com.data.app.data.response_dto.ResponseMyPostDto
 import com.data.app.data.response_dto.ResponseProfileDto
 import com.data.app.data.response_dto.ResponseQuizDto
 import com.data.app.data.response_dto.ResponseRegisterDto
@@ -181,6 +182,14 @@ class BaseRepositoryImpl @Inject constructor(
     }
 
     // my
+    override suspend fun getMyPosts(token: String): Result<ResponseMyPostDto> {
+        return runCatching {
+            baseDataSource.getMyPosts(token)
+        }.onFailure {
+            Timber.e("base repository get my posts fail: $it")
+        }
+    }
+
     override suspend fun getMyProfile(token: String): Result<ResponseProfileDto> {
         return runCatching {
             baseDataSource.getMyProfile(token)
