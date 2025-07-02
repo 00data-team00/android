@@ -5,7 +5,8 @@ import android.graphics.ColorMatrixColorFilter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import coil3.load
+import coil.load
+import coil3.request.placeholder
 import com.data.app.R
 import com.data.app.data.response_dto.ResponseAllProgramDto
 import com.data.app.databinding.ItemAllProgramBinding
@@ -45,7 +46,11 @@ class ExploreProgramAdapter(
     inner class ExploreProgramViewHolder(private val binding:ItemAllProgramBinding):
         RecyclerView.ViewHolder(binding.root){
         fun bind(data: ResponseAllProgramDto.ProgramDto){
-            binding.ivImage.load(R.drawable.ic_all_program)
+            binding.ivImage.load(data.thumbnailUrl){
+                placeholder(R.drawable.ic_all_program)
+                error(R.drawable.ic_all_program)
+                fallback(R.drawable.ic_all_program)
+            }
             binding.tvTitle.text=data.titleNm
             binding.tvDate.text=data.appEndDate
 

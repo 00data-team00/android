@@ -3,7 +3,7 @@ package com.data.app.presentation.main.explore
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import coil3.load
+import coil.load
 import com.data.app.R
 import com.data.app.data.DeadLine
 import com.data.app.data.response_dto.ResponseDeadlineDto
@@ -49,7 +49,11 @@ class ExploreDeadLineAdapter(
         fun bind(data:ResponseDeadlineDto.EduProgram){
             Timber.d("text: ${data.titleNm}")
             with(binding){
-                ivImage.load(R.drawable.ic_image)
+                ivImage.load(data.thumbnailUrl){
+                    placeholder(R.drawable.ic_all_program)
+                    error(R.drawable.ic_all_program)
+                    fallback(R.drawable.ic_all_program)
+                }
                 tvDeadlineDate.text=data.appEndDate
                 tvPrice.text="무료"
                 tvTitle.text=data.titleNm
