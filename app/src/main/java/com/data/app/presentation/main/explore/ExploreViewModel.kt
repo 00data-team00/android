@@ -42,6 +42,8 @@ class ExploreViewModel @Inject constructor(
         if (isLoading || isLastPage) return
         isLoading = true
         viewModelScope.launch {
+            _allProgramsState.value = AllProgramsState.Loading
+
             baseRepository.getAllPrograms(isFree, currentPage, 10).onSuccess { response->
                 Timber.d("currentpage: $currentPage")
                 if (currentPage == 0) {
@@ -74,6 +76,8 @@ class ExploreViewModel @Inject constructor(
 
     fun getDeadLinePrograms(){
         viewModelScope.launch {
+            _deadLineProgramState.value = DeadLineProgramState.Loading
+
             baseRepository.getDeadLinePrograms().onSuccess { response->
                 _deadLineProgramState.value=DeadLineProgramState.Success(response)
                 Timber.d("dead line program state is success!")
@@ -94,6 +98,13 @@ class ExploreViewModel @Inject constructor(
             }
         }
     }
+
+    fun resetPaging() {
+        currentPage = 0
+        isLastPage = false
+        isLoading = false
+    }
+
 
     private fun httpError(errorBody: String) {
         // 전체 에러 바디를 로깅하여 디버깅

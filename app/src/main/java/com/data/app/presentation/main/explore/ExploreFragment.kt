@@ -1,5 +1,6 @@
 package com.data.app.presentation.main.explore
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -12,6 +13,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.data.app.R
+import com.data.app.databinding.DialogExpiredBinding
 import com.data.app.databinding.FragmentExploreBinding
 import com.data.app.extension.AllProgramsState
 import com.data.app.extension.DeadLineProgramState
@@ -52,8 +54,23 @@ class ExploreFragment : Fragment(), OnTabReselectedListener {
 
     private fun getDeadLineList() {
         val deadlineAdapter = ExploreDeadLineAdapter(onClick = { appLink ->
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(appLink))
-            startActivity(intent)
+            if (appLink.isNullOrEmpty() || !appLink.startsWith("http")) {
+                val dialogBinding = DialogExpiredBinding.inflate(LayoutInflater.from(requireContext()))
+
+                val alertDialog = AlertDialog.Builder(requireContext())
+                    .setView(dialogBinding.root)
+                    .create()
+
+                dialogBinding.btnConfirm.setOnClickListener {
+                    alertDialog.dismiss()
+                }
+
+                alertDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+                alertDialog.show()
+            } else {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(appLink))
+                startActivity(intent)
+            }
         })
         binding.rvDeadline.adapter = deadlineAdapter
 
@@ -78,8 +95,23 @@ class ExploreFragment : Fragment(), OnTabReselectedListener {
 
     private fun getProgramList() {
         val programAdapter = ExploreProgramAdapter(clickProgram = { appLink ->
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(appLink))
-            startActivity(intent) // 웹 링크를 엽니다
+            if (appLink.isNullOrEmpty() || !appLink.startsWith("http")) {
+                val dialogBinding = DialogExpiredBinding.inflate(LayoutInflater.from(requireContext()))
+
+                val alertDialog = AlertDialog.Builder(requireContext())
+                    .setView(dialogBinding.root)
+                    .create()
+
+                dialogBinding.btnConfirm.setOnClickListener {
+                    alertDialog.dismiss()
+                }
+
+                alertDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+                alertDialog.show()
+            } else {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(appLink))
+                startActivity(intent)
+            }
         })
         binding.rvAllProgram.adapter = programAdapter
 
@@ -173,5 +205,11 @@ class ExploreFragment : Fragment(), OnTabReselectedListener {
 
     override fun onTabReselected() {
         binding.nsvExplore.smoothScrollTo(0, 0)
+
+        exploreViewModel.resetPaging()
+
+        // 데이터 새로 fetch
+        exploreViewModel.getAllPrograms(isFree = false)  // 혹은 현재 선택된 필터값
+        exploreViewModel.getDeadLinePrograms()
     }
 }

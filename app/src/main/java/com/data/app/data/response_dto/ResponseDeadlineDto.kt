@@ -28,5 +28,7 @@ data class ResponseDeadlineDto(
         val isFree:Boolean,
         @SerialName("appLink")
         val appLink:String,
+        @SerialName("thumbnailUrl")
+        val thumbnailUrl:String?
     )
 }

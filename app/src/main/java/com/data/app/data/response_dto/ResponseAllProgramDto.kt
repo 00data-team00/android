@@ -43,7 +43,9 @@ data class ResponseAllProgramDto(
         @SerialName("isFree")
         val isFree: Boolean,
         @SerialName("appLink")
-        val appLink: String
+        val appLink: String,
+        @SerialName("thumbnailUrl")
+        val thumbnailUrl:String?
     )
 
     @Serializable
