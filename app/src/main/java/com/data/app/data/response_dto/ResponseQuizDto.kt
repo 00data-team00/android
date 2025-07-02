@@ -26,7 +26,7 @@ data class ResponseQuizDto (
         val wordScript: String,
         @SerialName("answerScript")
         val answerScript: String
-    ){
+    ): java.io.Serializable{
         @Serializable
         data class ChoiceDto(
             @SerialName("id")
@@ -35,6 +35,6 @@ data class ResponseQuizDto (
             val word: String,
             @SerialName("description")
             val description: String
-        )
+        ): java.io.Serializable
     }
 }

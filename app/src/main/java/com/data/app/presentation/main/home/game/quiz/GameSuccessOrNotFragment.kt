@@ -20,6 +20,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import com.data.app.R
+import com.data.app.data.response_dto.ResponseQuizDto
 import com.data.app.databinding.FragmentGameSuccessOrNotBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import timber.log.Timber
@@ -129,9 +130,13 @@ class GameSuccessOrNotFragment:Fragment() {
                btnNext.isSelected=true
                btnNext.text=getString(R.string.game_quiz_success_next)
 
-               tvAnswer.text = "보이스피싱"
-               tvAnswerDescription.text = "후배를 둔 것처럼 신뢰를 이용하여 타인을 속이는 방법입니다."
-               tvAnswerReason.text = "신원 미상의 나쁜 사람에게 전화를 받고 당황하는 그림이기 때문에 보이스피싱이 가장 적절해요!"
+               val question = arguments?.getSerializable("question") as ResponseQuizDto.QuizDto
+
+               question?.let{ quiz->
+                   tvAnswer.text = quiz.choices.getOrNull(question.answer - 1)!!.word
+                   tvAnswerDescription.text = quiz.wordScript
+                   tvAnswerReason.text = quiz.answerScript
+               }
            }else{
                tvTitle.text = getString(R.string.game_quiz_incorrect)
                ivEmogi.setImageResource(R.drawable.ic_wrong)
