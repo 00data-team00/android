@@ -11,15 +11,20 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import coil3.load
+import coil.load
 import coil3.request.transformations
-import coil3.transform.CircleCropTransformation
+import coil.transform.CircleCropTransformation
 import com.data.app.R
+import com.data.app.data.shared_preferences.AppPreferences
 import com.data.app.databinding.FragmentOtherProfileBinding
 import com.data.app.extension.OtherState
+import com.data.app.extension.UserProfileState
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class OtherProfileFragment : Fragment() {
     private var _binding: FragmentOtherProfileBinding? = null
     private val binding: FragmentOtherProfileBinding
@@ -28,6 +33,9 @@ class OtherProfileFragment : Fragment() {
     private val otherProfileFragmentArgs: OtherProfileFragmentArgs by navArgs()
     private val otherProfileViewModel: OtherProfileViewModel by viewModels()
     private lateinit var otherProfileAdapter: OtherProfileAdapter
+
+    @Inject
+    lateinit var appPreferences: AppPreferences
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -46,7 +54,7 @@ class OtherProfileFragment : Fragment() {
     private fun setting() {
         val profile = otherProfileFragmentArgs.otherProfile
         val name = otherProfileFragmentArgs.otherName
-        showProfile(profile.toString(), name)
+        showProfile()
         showPosts()
         makeList(profile.toString(), name)
         clickFollowButton()
@@ -54,17 +62,38 @@ class OtherProfileFragment : Fragment() {
         clickBackButton()
     }
 
-    private fun showProfile(profile: String, name: String) {
-        with(binding) {
-            ivProfile.load(profile) {
-                transformations(CircleCropTransformation())
+    private fun showProfile() {
+        lifecycleScope.launch {
+            otherProfileViewModel.userProfileState.collect { userProfileState ->
+                when (userProfileState) {
+                    is UserProfileState.Success -> {
+                        Timber.d("userProfileState is success")
+                        with(binding) {
+                            ivProfile.load(userProfileState.response.profileImage) {
+                                transformations(CircleCropTransformation())
+                            }
+                            tvName.text = userProfileState.response.name
+                            tvCountry.text = userProfileState.response.nationNameKo
+                            tvPostCount.text = userProfileState.response.postCount.toString()
+                            tvFollowerCount.text = userProfileState.response.followerCount.toString()
+                            tvFollowingCount.text = userProfileState.response.followingCount.toString()
+                        }
+                    }
+
+                    is UserProfileState.Loading -> {
+                        Timber.d("userProfileState is loading")
+                    }
+
+                    is UserProfileState.Error -> {
+                        Timber.d("userProfileState is error")
+                    }
+                }
             }
-            tvName.text = name
-            tvCountry.text = getString(R.string.other_profile_country_mock)
-            tvPostCount.text = "4"
-            tvFollowerCount.text = "50"
-            tvFollowingCount.text = "50"
         }
+
+        otherProfileViewModel.getUserProfile(appPreferences.getAccessToken()!!, 1)
+
+
     }
 
     private fun showPosts() {
@@ -124,7 +153,8 @@ class OtherProfileFragment : Fragment() {
             binding.vFollowing to "following"
         ).forEach { (view, title) ->
             view.setOnClickListener {
-                val action = OtherProfileFragmentDirections.actionOtherProfileFragmentToFollowFragment(title)
+                val action =
+                    OtherProfileFragmentDirections.actionOtherProfileFragmentToFollowFragment(title)
                 findNavController().navigate(action)
             }
         }

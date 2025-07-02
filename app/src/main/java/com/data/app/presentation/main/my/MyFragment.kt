@@ -25,6 +25,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import coil.load
 import coil.transform.CircleCropTransformation
+import com.data.app.BuildConfig
 import com.data.app.R
 import com.data.app.data.shared_preferences.AppPreferences
 import com.data.app.databinding.FragmentMyBinding
@@ -42,7 +43,7 @@ import java.io.File
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MyFragment:Fragment() {
+class MyFragment : Fragment() {
     private var _binding: FragmentMyBinding? = null
     private val binding: FragmentMyBinding
         get() = requireNotNull(_binding) { "home fragment is null" }
@@ -61,15 +62,16 @@ class MyFragment:Fragment() {
         super.onCreate(savedInstanceState)
 
         // 갤러리에서 이미지 선택하기 위한 launcher
-        galleryLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                val selectedImageUri = result.data?.data
-                selectedImageUri?.let { uri ->
-                    Timber.d("갤러리에서 선택된 URI: $uri")
-                    startCrop(uri)  // 선택된 이미지 크롭 시작
+        galleryLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                if (result.resultCode == Activity.RESULT_OK) {
+                    val selectedImageUri = result.data?.data
+                    selectedImageUri?.let { uri ->
+                        Timber.d("갤러리에서 선택된 URI: $uri")
+                        startCrop(uri)  // 선택된 이미지 크롭 시작
+                    }
                 }
             }
-        }
     }
 
 
@@ -87,60 +89,83 @@ class MyFragment:Fragment() {
         setting()
     }
 
-    private fun setting(){
+    private fun setting() {
         showPosts()
         makeList()
         clickFollow()
         clickQuit()
     }
 
-    private fun showPosts(){
+    private fun showPosts() {
         lifecycleScope.launch {
-            myViewModel.myState.collect{myState->
-                when(myState){
-                    is MyState.Success->{
+            myViewModel.myState.collect { myState ->
+                when (myState) {
+                    is MyState.Success -> {
                         Timber.d("myState is success")
-                        showProfile(myState.response[0].profile, myState.response[0].id)
-                        myAdapter=
+                        showProfile()
+                        myAdapter =
                             _root_ide_package_.com.data.app.presentation.main.my.MyAdapter(clickPost = { post ->
                                 val action =
                                     MyFragmentDirections.actionMyFragmentToMyPostDetailFragment(post)
                                 findNavController().navigate(action)
                             })
-                        binding.rvPosts.adapter=myAdapter
+                        binding.rvPosts.adapter = myAdapter
                         myAdapter.getList(myState.response)
                     }
-                    is MyState.Loading->{
+
+                    is MyState.Loading -> {
                         Timber.d("myState is loading")
                     }
-                    is MyState.Error ->{
+
+                    is MyState.Error -> {
                         Timber.d("myState is error")
                     }
                 }
             }
         }
 
-        binding.tvId.text="kkuming"
+        binding.tvId.text = "kkuming"
     }
 
-    private fun showProfile(profile: String, name: String) {
-        with(binding){
-            // val resourceId = resources.getIdentifier("ic_profile", "drawable", requireContext().packageName)
-            ivProfile.load(profile){
-                transformations(CircleCropTransformation())
-                placeholder(R.drawable.ic_profile)
-                //fallback(R.drawable.ic_profile) // profile이 null일 때 기본 이미지 표시
-            }
-            tvName.text=name
-            tvCountry.text="한국"
-            tvPostCount.text="4"
-            tvFollowerCount.text="60"
-            tvFollowingCount.text="60"
+    private fun showProfile() {
+        lifecycleScope.launch {
+            myViewModel.myProfileState.collect { myProfileState ->
+                when (myProfileState) {
+                    is com.data.app.extension.MyProfileState.Success -> {
+                        Timber.d("myProfileState is success")
+                        with(binding) {
+                            val imageUrl = BuildConfig.BASE_URL.removeSuffix("/") + myProfileState.response.profileImage
+                            // val resourceId = resources.getIdentifier("ic_profile", "drawable", requireContext().packageName)
+                            ivProfile.load(imageUrl) {
+                                transformations(CircleCropTransformation())
+                                placeholder(R.drawable.ic_profile)
+                                fallback(R.drawable.ic_profile) // profile이 null일 때 기본 이미지 표시
+                            }
+                            tvName.text = myProfileState.response.name
+                            tvCountry.text = myProfileState.response.nationNameKo
+                            tvPostCount.text = myProfileState.response.postCount.toString()
+                            tvFollowerCount.text = myProfileState.response.followerCount.toString()
+                            tvFollowingCount.text = myProfileState.response.postCount.toString()
 
-            btnEdit.setOnClickListener {
-                checkGalleryPermissionAndOpenPicker()
+                            btnEdit.setOnClickListener {
+                                Timber.d("편집 버튼 클릭됨!")
+                                checkGalleryPermissionAndOpenPicker()
+                            }
+                        }
+                    }
+
+                    is com.data.app.extension.MyProfileState.Loading -> {
+                        Timber.d("myProfileState is loading")
+                    }
+
+                    is com.data.app.extension.MyProfileState.Error -> {
+                        Timber.d("myProfileState is error")
+                    }
+                }
             }
         }
+
+        myViewModel.getProfile(appPreferences.getAccessToken()!!)
     }
 
     private fun checkGalleryPermissionAndOpenPicker() {
@@ -150,7 +175,11 @@ class MyFragment:Fragment() {
             Manifest.permission.READ_EXTERNAL_STORAGE
         }
 
-        if (ContextCompat.checkSelfPermission(requireContext(), permission) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                permission
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
             requestPermissions(arrayOf(permission), GALLERY_PERMISSION_CODE)
         } else {
             openGalleryPicker()
@@ -165,7 +194,12 @@ class MyFragment:Fragment() {
 
 
     private fun startCrop(uri: Uri) {
-        val destinationUri = Uri.fromFile(File(requireContext().cacheDir, "cropped_${System.currentTimeMillis()}.jpg"))
+        val destinationUri = Uri.fromFile(
+            File(
+                requireContext().cacheDir,
+                "cropped_${System.currentTimeMillis()}.jpg"
+            )
+        )
 
         val options = UCrop.Options().apply {
             setCircleDimmedLayer(true)     // ✅ 원형 마스크
@@ -183,10 +217,10 @@ class MyFragment:Fragment() {
     }
 
     private fun makeList() {
-       myViewModel.getPosts()
+        myViewModel.getPosts()
     }
 
-    private fun clickQuit(){
+    private fun clickQuit() {
         binding.btnMenu.setOnClickListener {
             val dropdownInflater = LayoutInflater.from(context)
             val popupView = dropdownInflater.inflate(R.layout.dropdown_menu, null)
@@ -200,7 +234,7 @@ class MyFragment:Fragment() {
 
             popupWindow.showAsDropDown(binding.btnMenu, -175, 10)
 
-            popupView.findViewById<TextView>(R.id.tv_logout).setOnClickListener{
+            popupView.findViewById<TextView>(R.id.tv_logout).setOnClickListener {
                 // 로그아웃시 필요한 기능 (사용자 DB정보 없애기 등)
 
 
@@ -232,13 +266,16 @@ class MyFragment:Fragment() {
                 val dialog = builder.create()
                 dialog.show()
 
-                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(requireContext(), android.R.color.black))
-                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(ContextCompat.getColor(requireContext(), android.R.color.black))
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                    .setTextColor(ContextCompat.getColor(requireContext(), android.R.color.black))
+                dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+                    .setTextColor(ContextCompat.getColor(requireContext(), android.R.color.black))
             }
 
-            popupView.findViewById<TextView>(R.id.tv_quit).setOnClickListener{
+            popupView.findViewById<TextView>(R.id.tv_quit).setOnClickListener {
                 // Overlay 컨테이너를 보이게 설정
-                val overlayContainer = requireActivity().findViewById<FragmentContainerView>(R.id.fcv_quit)
+                val overlayContainer =
+                    requireActivity().findViewById<FragmentContainerView>(R.id.fcv_quit)
                 overlayContainer.visibility = View.VISIBLE
 
                 // FragmentB 생성
@@ -255,13 +292,13 @@ class MyFragment:Fragment() {
         }
     }
 
-    private fun clickFollow(){
+    private fun clickFollow() {
         listOf(
             binding.vFollower to "follower",
             binding.vFollowing to "following"
         ).forEach { (view, title) ->
             view.setOnClickListener {
-                val action=MyFragmentDirections.actionMyFragmentToFollowFragment(title)
+                val action = MyFragmentDirections.actionMyFragmentToFollowFragment(title)
                 findNavController().navigate(action)
             }
         }
@@ -293,9 +330,9 @@ class MyFragment:Fragment() {
                 Timber.d("크롭된 이미지 URI: $it")
 
                 lifecycleScope.launch {
-                    myViewModel.editProfileState.collect { state->
-                        when(state){
-                            is EditProfileState.Success->{
+                    myViewModel.editProfileState.collect { state ->
+                        when (state) {
+                            is EditProfileState.Success -> {
                                 // 크롭된 이미지를 ivProfile에 원형으로 로드
                                 binding.ivProfile.load(it) {
                                     transformations(CircleCropTransformation()) // 원형 크롭
@@ -303,10 +340,11 @@ class MyFragment:Fragment() {
                                     error(R.drawable.ic_profile)  // 오류 시 이미지
                                 }
                             }
-                            is EditProfileState.Loading->{}
-                            is EditProfileState.Error->{
+
+                            is EditProfileState.Loading -> {}
+                            is EditProfileState.Error -> {
                                 Timber.e("크롭 에러 발생: ${state.message}")
-                                binding.ivProfile.load(R.drawable.ic_profile){
+                                binding.ivProfile.load(R.drawable.ic_profile) {
                                     transformations(CircleCropTransformation())
                                 }
                             }
@@ -341,6 +379,6 @@ class MyFragment:Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding=null
+        _binding = null
     }
 }

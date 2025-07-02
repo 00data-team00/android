@@ -10,6 +10,7 @@ import com.data.app.data.response_dto.ResponseDeadlineDto
 import com.data.app.data.response_dto.ResponseFollowersDto
 import com.data.app.data.response_dto.ResponseLoginDto
 import com.data.app.data.response_dto.ResponseEditProfileDto
+import com.data.app.data.response_dto.ResponseProfileDto
 import com.data.app.data.response_dto.ResponseQuizDto
 import com.data.app.data.response_dto.ResponseRegisterDto
 import com.data.app.data.response_dto.ResponseUserGameInfoDto
@@ -39,6 +40,12 @@ interface BaseRepository {
         email:String,
         pw:String,
     ):Result<ResponseLoginDto>
+
+    // community
+    suspend fun getUserProfile(
+        token:String,
+        userId:Int,
+    ):Result<ResponseProfileDto>
 
     // home
     suspend fun getUserGameInfo(
@@ -90,6 +97,9 @@ interface BaseRepository {
     suspend fun getDeadLinePrograms():Result<ResponseDeadlineDto>
 
     // my
+    suspend fun getMyProfile(
+        token:String
+    ):Result<ResponseProfileDto>
     suspend fun editProfile(
         token:String,
         image:MultipartBody.Part

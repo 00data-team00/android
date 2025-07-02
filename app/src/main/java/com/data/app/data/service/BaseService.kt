@@ -16,6 +16,7 @@ import com.data.app.data.response_dto.ResponseDeadlineDto
 import com.data.app.data.response_dto.ResponseFollowersDto
 import com.data.app.data.response_dto.ResponseLoginDto
 import com.data.app.data.response_dto.ResponseEditProfileDto
+import com.data.app.data.response_dto.ResponseProfileDto
 import com.data.app.data.response_dto.ResponseQuizDto
 import com.data.app.data.response_dto.ResponseRegisterDto
 import com.data.app.data.response_dto.ResponseUserGameInfoDto
@@ -28,6 +29,7 @@ import retrofit2.http.Multipart
 import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Part
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface BaseService {
@@ -52,6 +54,13 @@ interface BaseService {
     suspend fun login(
         @Body requestLoginDto: RequestLoginDto
     ):ResponseLoginDto
+
+    // community
+    @GET("api/users/{userId}/profile")
+    suspend fun getUserProfile(
+        @Header("Authorization") token:String,
+        @Path("userId") userId:Int,
+    ): ResponseProfileDto
 
     // home
     @GET("api/me/user-game-info")
@@ -115,6 +124,12 @@ interface BaseService {
     suspend fun getDeadLinePrograms():ResponseDeadlineDto
 
     // my
+
+    @GET("api/me/profile")
+    suspend fun getProfile(
+        @Header("Authorization") token:String
+    ): ResponseProfileDto
+
     @Multipart
     @POST("api/me/profile/image")
     suspend fun editProfile(

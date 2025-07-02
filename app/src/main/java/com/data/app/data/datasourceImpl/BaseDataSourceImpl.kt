@@ -17,6 +17,7 @@ import com.data.app.data.response_dto.ResponseDeadlineDto
 import com.data.app.data.response_dto.ResponseFollowersDto
 import com.data.app.data.response_dto.ResponseLoginDto
 import com.data.app.data.response_dto.ResponseEditProfileDto
+import com.data.app.data.response_dto.ResponseProfileDto
 import com.data.app.data.response_dto.ResponseQuizDto
 import com.data.app.data.response_dto.ResponseRegisterDto
 import com.data.app.data.response_dto.ResponseUserGameInfoDto
@@ -35,6 +36,9 @@ class BaseDataSourceImpl @Inject constructor(
 
     // login
     override suspend fun login(requestLoginDto: RequestLoginDto): ResponseLoginDto = baseService.login(requestLoginDto)
+
+    // community
+    override suspend fun getUserProfile(token: String, userId: Int): ResponseProfileDto = baseService.getUserProfile(token, userId)
 
     // home
     override suspend fun getUserGameInfo(token: String): ResponseUserGameInfoDto = baseService.getUserGameInfo(token)
@@ -67,6 +71,7 @@ class BaseDataSourceImpl @Inject constructor(
     override suspend fun getDeadLinePrograms(): ResponseDeadlineDto = baseService.getDeadLinePrograms()
 
     // my
+    override suspend fun getMyProfile(token: String): ResponseProfileDto = baseService.getProfile(token)
     override suspend fun editProfile(token: String, image: MultipartBody.Part): ResponseEditProfileDto = baseService.editProfile(token, image)
 
     // followers
