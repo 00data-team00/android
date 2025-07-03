@@ -20,6 +20,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentContainerView
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -29,11 +30,13 @@ import com.data.app.BuildConfig
 import com.data.app.R
 import com.data.app.data.shared_preferences.AppPreferences
 import com.data.app.databinding.FragmentMyBinding
-import com.data.app.extension.EditProfileState
-import com.data.app.extension.MyPostState
-import com.data.app.extension.MyProfileState
-import com.data.app.extension.MyState
+import com.data.app.extension.community.LikePostState
+import com.data.app.extension.my.EditProfileState
+import com.data.app.extension.my.MyPostState
+import com.data.app.extension.my.MyProfileState
 import com.data.app.presentation.login.LoginActivity
+import com.data.app.presentation.main.MainViewModel
+import com.data.app.presentation.main.OnTabReselectedListener
 import com.yalantis.ucrop.UCrop
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -45,11 +48,12 @@ import java.io.File
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MyFragment : Fragment() {
+class MyFragment : Fragment(), OnTabReselectedListener {
     private var _binding: FragmentMyBinding? = null
     private val binding: FragmentMyBinding
         get() = requireNotNull(_binding) { "home fragment is null" }
     private val myViewModel: MyViewModel by viewModels()
+    private val mainViewModel: MainViewModel by activityViewModels()
     private lateinit var myAdapter: _root_ide_package_.com.data.app.presentation.main.my.MyAdapter
     private lateinit var galleryLauncher: ActivityResultLauncher<Intent>
 
@@ -92,6 +96,16 @@ class MyFragment : Fragment() {
     }
 
     private fun setting() {
+        // ✅ 뒤에서 넘어온 데이터 감지
+        val savedStateHandle = findNavController().currentBackStackEntry?.savedStateHandle
+        savedStateHandle?.getLiveData<Boolean>("should_refresh_profile")?.observe(viewLifecycleOwner) { shouldRefresh ->
+            if (shouldRefresh) {
+                Timber.d("프로필 새로고침 신호 수신")
+                myViewModel.getProfile(appPreferences.getAccessToken()!!)
+                savedStateHandle.remove<Boolean>("should_refresh_profile") // 한 번만 실행되게 삭제
+            }
+        }
+
         showProfile()
 
         makeList()
@@ -103,13 +117,14 @@ class MyFragment : Fragment() {
         lifecycleScope.launch {
             myViewModel.myProfileState.collect { myProfileState ->
                 when (myProfileState) {
-                    is com.data.app.extension.MyProfileState.Success -> {
+                    is MyProfileState.Success -> {
                         Timber.d("myProfileState is success")
+                        mainViewModel.saveUserId(myProfileState.response.userId)
                         with(binding) {
-                            val imageUrl =
-                                BuildConfig.BASE_URL.removeSuffix("/") + myProfileState.response.profileImage
+                            val profile =
+                                myProfileState.response.profileImage?.let { BuildConfig.BASE_URL.removeSuffix("/") + it }
                             // val resourceId = resources.getIdentifier("ic_profile", "drawable", requireContext().packageName)
-                            ivProfile.load(imageUrl) {
+                            ivProfile.load(profile) {
                                 transformations(CircleCropTransformation())
                                 placeholder(R.drawable.ic_profile)
                                 fallback(R.drawable.ic_profile) // profile이 null일 때 기본 이미지 표시
@@ -125,15 +140,15 @@ class MyFragment : Fragment() {
                                 checkGalleryPermissionAndOpenPicker()
                             }
 
-                            showPosts(imageUrl)
+                            showPosts(profile)
                         }
                     }
 
-                    is com.data.app.extension.MyProfileState.Loading -> {
+                    is MyProfileState.Loading -> {
                         Timber.d("myProfileState is loading")
                     }
 
-                    is com.data.app.extension.MyProfileState.Error -> {
+                    is MyProfileState.Error -> {
                         Timber.d("myProfileState is error")
                     }
                 }
@@ -143,19 +158,24 @@ class MyFragment : Fragment() {
         myViewModel.getProfile(appPreferences.getAccessToken()!!)
     }
 
-    private fun showPosts(profile:String) {
+    private fun showPosts(profile:String?) {
         lifecycleScope.launch {
             myViewModel.myPostState.collect { myPostState ->
                 when (myPostState) {
                     is MyPostState.Success -> {
                         myAdapter =
                             _root_ide_package_.com.data.app.presentation.main.my.MyAdapter(clickPost = { post ->
-                               /* val action =
-                                    MyFragmentDirections.actionMyFragmentToMyPostDetailFragment(post)
-                                findNavController().navigate(action)*/
-                            })
+                                val action =
+                                    MyFragmentDirections.actionMyFragmentToMyPostDetailFragment(post.toString())
+                                findNavController().navigate(action)
+                            },
+                                clickLike = { isLike, postId ->
+                                    if(isLike) myViewModel.likePost(appPreferences.getAccessToken()!!, postId)
+                                    else myViewModel.unLikePost(appPreferences.getAccessToken()!!, postId)
+                                })
                         binding.rvPosts.adapter = myAdapter
                         myAdapter.getList(profile, myPostState.response.posts)
+                        myViewModel.resetPostState()
                     }
                     is MyPostState.Loading -> {}
                     is MyPostState.Error -> {}
@@ -165,36 +185,26 @@ class MyFragment : Fragment() {
 
         myViewModel.getMyPosts(appPreferences.getAccessToken()!!)
 
-        /* lifecycleScope.launch {
-             myViewModel.myState.collect { myState ->
-                 when (myState) {
-                     is MyState.Success -> {
-                         Timber.d("myState is success")
-                         showProfile()
-                         myAdapter =
-                             _root_ide_package_.com.data.app.presentation.main.my.MyAdapter(clickPost = { post ->
-                                 val action =
-                                     MyFragmentDirections.actionMyFragmentToMyPostDetailFragment(post)
-                                 findNavController().navigate(action)
-                             })
-                         binding.rvPosts.adapter = myAdapter
-                         myAdapter.getList(myState.response)
-                     }
-
-                     is MyState.Loading -> {
-                         Timber.d("myState is loading")
-                     }
-
-                     is MyState.Error -> {
-                         Timber.d("myState is error")
-                     }
-                 }
-             }
-         }
-
-         binding.tvId.text = "kkuming"*/
+        setLike()
     }
 
+    private fun setLike(){
+        lifecycleScope.launch {
+            myViewModel.likePostState.collect{
+                when(it){
+                    is LikePostState.Success -> {
+                        Timber.d("like post state success!")
+                        myViewModel.resetLikeState()
+                    }
+                    is LikePostState.Loading -> {}
+                    is LikePostState.Error -> {
+                        Timber.e("like post state error!")
+                    }
+                }
+
+            }
+        }
+    }
 
 
     private fun checkGalleryPermissionAndOpenPicker() {
@@ -405,6 +415,9 @@ class MyFragment : Fragment() {
         return MultipartBody.Part.createFormData("image", tempFile.name, requestFile)
     }
 
+    override fun onTabReselected() {
+        myViewModel.getMyPosts(appPreferences.getAccessToken()!!)
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()

@@ -7,22 +7,26 @@ import com.data.app.data.request_dto.RequestRegisterDto
 import com.data.app.data.request_dto.RequestSendMailDto
 import com.data.app.data.request_dto.RequestTranslateDto
 import com.data.app.data.request_dto.RequestVerifyMailDto
-import com.data.app.data.response_dto.ResponseAIPreviousChatMessagesDto
-import com.data.app.data.response_dto.ResponseAIPreviousRecordsDto
-import com.data.app.data.response_dto.ResponseAITopicsDto
-import com.data.app.data.response_dto.ResponseAllProgramDto
-import com.data.app.data.response_dto.ResponseChatAiMessageDto
-import com.data.app.data.response_dto.ResponseChatStartDto
-import com.data.app.data.response_dto.ResponseDeadlineDto
-import com.data.app.data.response_dto.ResponseFollowersDto
-import com.data.app.data.response_dto.ResponseLoginDto
-import com.data.app.data.response_dto.ResponseEditProfileDto
-import com.data.app.data.response_dto.ResponseMyPostDto
-import com.data.app.data.response_dto.ResponseProfileDto
-import com.data.app.data.response_dto.ResponseQuizDto
-import com.data.app.data.response_dto.ResponseRegisterDto
-import com.data.app.data.response_dto.ResponseTranslateDto
-import com.data.app.data.response_dto.ResponseUserGameInfoDto
+import com.data.app.data.response_dto.community.ResponseDeletePostDto
+import com.data.app.data.response_dto.home.ai.ResponseAIPreviousChatMessagesDto
+import com.data.app.data.response_dto.home.ai.ResponseAIPreviousRecordsDto
+import com.data.app.data.response_dto.home.ai.ResponseAITopicsDto
+import com.data.app.data.response_dto.explore.ResponseAllProgramDto
+import com.data.app.data.response_dto.home.ai.ResponseChatAiMessageDto
+import com.data.app.data.response_dto.home.ai.ResponseChatStartDto
+import com.data.app.data.response_dto.explore.ResponseDeadlineDto
+import com.data.app.data.response_dto.community.ResponseFollowListDto
+import com.data.app.data.response_dto.login.ResponseLoginDto
+import com.data.app.data.response_dto.community.ResponseEditProfileDto
+import com.data.app.data.response_dto.community.ResponseFollowDto
+import com.data.app.data.response_dto.community.ResponsePostDetailDto
+import com.data.app.data.response_dto.community.ResponseTimeLineDto
+import com.data.app.data.response_dto.my.ResponseMyPostDto
+import com.data.app.data.response_dto.my.ResponseProfileDto
+import com.data.app.data.response_dto.home.quiz.ResponseQuizDto
+import com.data.app.data.response_dto.login.ResponseRegisterDto
+import com.data.app.data.response_dto.home.ResponseUserGameInfoDto
+import com.data.app.data.response_dto.home.ai.ResponseTranslateDto
 import okhttp3.MultipartBody
 import retrofit2.Response
 
@@ -46,10 +50,77 @@ interface BaseDataSource {
     ):ResponseLoginDto
 
     // community
+    suspend fun getAllTimeLine(
+        token:String,
+    ): ResponseTimeLineDto
+
+    suspend fun getNationTimeLine(
+        token:String,
+    ): ResponseTimeLineDto
+
+    suspend fun getFollowingTimeLine(
+        token:String,
+    ): ResponseTimeLineDto
+
+    suspend fun getPostDetail(
+        token:String,
+        postId:Int,
+    ): ResponsePostDetailDto
+
+    suspend fun likePost(
+        token:String,
+        postId:Int,
+    ): Response<Unit>
+
+    suspend fun unlikePost(
+        token:String,
+        postId:Int,
+    ): Response<Unit>
+
+    suspend fun writeComment(
+        token:String,
+        postId:Int,
+        content:String,
+    ): ResponsePostDetailDto.CommentDto
+
     suspend fun getUserProfile(
         token:String,
         userId:Int,
     ):ResponseProfileDto
+
+    suspend fun getUserPosts(
+        token:String,
+        userId:Int,
+    ): ResponseTimeLineDto
+    suspend fun writePost(
+        token:String,
+        content:String,
+        image:MultipartBody.Part?
+    ): ResponseMyPostDto.PostDto
+
+    suspend fun deletePost(
+        token:String,
+        postId:Int,
+    ): ResponseDeletePostDto
+
+    suspend fun follow(
+        token:String,
+        userId:Int,
+    ): ResponseFollowDto
+
+    suspend fun unFollow(
+        token:String,
+        userId:Int,
+    ):ResponseFollowDto
+
+    suspend fun getFollowerList(
+        token: String
+    ):ResponseFollowListDto
+
+    suspend fun getFollowingList(
+        token: String
+    ):ResponseFollowListDto
+
 
     // home
     suspend fun getUserGameInfo(
@@ -84,7 +155,7 @@ interface BaseDataSource {
     suspend fun getTranslate(
         token:String,
         requestTranslateDto: RequestTranslateDto
-    ):ResponseTranslateDto
+    ): ResponseTranslateDto
 
     // quiz
     suspend fun getQuiz(
@@ -121,12 +192,6 @@ interface BaseDataSource {
         image: MultipartBody.Part
     ): ResponseEditProfileDto
 
-    // followers
-    suspend fun getFollowerList(
-        token: String
-    ):ResponseFollowersDto
-
-    // followings
 
 
 }

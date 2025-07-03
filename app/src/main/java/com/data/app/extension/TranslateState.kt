@@ -1,7 +1,6 @@
 package com.data.app.extension
 
-import com.data.app.data.response_dto.ResponseTranslateDto
-import okhttp3.Response
+import com.data.app.data.response_dto.home.ai.ResponseTranslateDto
 
 sealed class TranslateState {
     data object Loading:TranslateState()

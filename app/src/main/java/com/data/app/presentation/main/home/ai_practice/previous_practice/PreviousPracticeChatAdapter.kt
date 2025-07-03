@@ -7,12 +7,10 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import coil3.load
 import com.data.app.R
-import com.data.app.data.PreviousPractice
-import com.data.app.data.response_dto.ResponseAIPreviousChatMessagesDto
+import com.data.app.data.response_dto.home.ai.ResponseAIPreviousChatMessagesDto
 import com.data.app.databinding.ItemChatAiBinding
 import com.data.app.databinding.ItemChatMyBinding
 import java.time.LocalDateTime
-import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
 class PreviousPracticeChatAdapter(

@@ -1,9 +1,12 @@
 package com.data.app.presentation.main.community.write
 
 import android.Manifest
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -12,18 +15,35 @@ import android.view.View
 import androidx.activity.addCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.widget.addTextChangedListener
+import androidx.lifecycle.lifecycleScope
 import coil3.load
 import coil3.request.transformations
 import coil3.transform.RoundedCornersTransformation
 import com.data.app.R
+import com.data.app.data.shared_preferences.AppPreferences
 import com.data.app.databinding.ActivityWritePostBinding
+import com.data.app.extension.community.WritePostState
 import com.data.app.presentation.main.BaseActivity
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import timber.log.Timber
+import java.io.File
+import java.io.FileOutputStream
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class WritePostActivity : BaseActivity() {
     private lateinit var binding: ActivityWritePostBinding
+    private val writePostViewModel: WritePostViewModel by viewModels()
+    @Inject
+    lateinit var appPreferences: AppPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,6 +57,7 @@ class WritePostActivity : BaseActivity() {
     }
 
     private fun setting() {
+        writeContent()
         showGallerys()
         clickBack()
     }
@@ -48,6 +69,7 @@ class WritePostActivity : BaseActivity() {
                 Timber.d("uri: $uri")
                 with(binding.ivGallery) {
                     visibility = View.VISIBLE
+
 
                     val radiusPx = TypedValue.applyDimension(
                         TypedValue.COMPLEX_UNIT_DIP, 16f, resources.displayMetrics
@@ -140,6 +162,74 @@ class WritePostActivity : BaseActivity() {
         }
 
         return imageList
+    }
+
+    private fun writeContent() {
+        uploadPost()
+
+        with(binding) {
+            etPostWrite.addTextChangedListener {
+                val text = it.toString()
+                val hasInput = text.isNotBlank()
+
+                btnComplete.isSelected = hasInput
+                btnComplete.isEnabled = hasInput  // 클릭 자체도 막고 싶다면 이 줄 추가
+            }
+
+            btnComplete.setOnClickListener {
+                if (btnComplete.isSelected) {
+                    val drawable = binding.ivGallery.drawable
+                    if (drawable == null) {
+                        Timber.d("이미지 없음!")
+                    }
+
+
+                    writePostViewModel.writePost(appPreferences.getAccessToken()!!, etPostWrite.text.toString(),getImage())
+                }
+            }
+        }
+    }
+
+    private fun getImage(): MultipartBody.Part?{
+        val drawable = binding.ivGallery.drawable
+        if (drawable == null) {
+            Timber.e("사진 없음!")
+            return null
+        }
+        val bitmap = (drawable as BitmapDrawable).bitmap
+
+        val file = File.createTempFile("upload_", ".jpg", cacheDir)
+        val outputStream = FileOutputStream(file)
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+        outputStream.flush()
+        outputStream.close()
+
+        val requestBody = file.asRequestBody("image/*".toMediaTypeOrNull())
+        val imagePart = MultipartBody.Part.createFormData("image", file.name, requestBody)
+        return imagePart
+    }
+
+    private fun uploadPost() {
+        lifecycleScope.launch {
+            writePostViewModel.writePostState.collect { writePostState ->
+                when (writePostState) {
+                    is WritePostState.Success -> {
+                        Timber.d("write post success")
+                        setResult(Activity.RESULT_OK)
+                        finish()
+                        overridePendingTransition(R.anim.stay, R.anim.slide_out_right)
+                    }
+
+                    is WritePostState.Loading -> {
+                        Timber.d("write post loading")
+                    }
+
+                    is WritePostState.Error -> {
+                        Timber.e("write post error")
+                    }
+                }
+            }
+        }
     }
 
     private fun clickBack() {

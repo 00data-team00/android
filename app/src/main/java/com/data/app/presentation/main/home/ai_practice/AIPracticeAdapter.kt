@@ -6,11 +6,8 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import coil3.load
-import coil3.request.transformations
-import coil3.transform.RoundedCornersTransformation
 import com.data.app.R
-import com.data.app.data.AIPractice
-import com.data.app.data.response_dto.ResponseAITopicsDto
+import com.data.app.data.response_dto.home.ai.ResponseAITopicsDto
 import com.data.app.databinding.ItemAiPracticeBinding
 import timber.log.Timber
 

@@ -6,15 +6,12 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import coil3.load
-import coil3.request.transformations
-import coil3.transform.RoundedCornersTransformation
 import com.data.app.R
-import com.data.app.data.response_dto.ResponseChatAiMessageDto
-import com.data.app.data.response_dto.ResponseChatStartDto
+import com.data.app.data.response_dto.home.ai.ResponseChatAiMessageDto
+import com.data.app.data.response_dto.home.ai.ResponseChatStartDto
 import com.data.app.databinding.ItemChatAiBinding
 import com.data.app.databinding.ItemChatMyBinding
 import kotlinx.coroutines.CoroutineScope
@@ -24,7 +21,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.time.LocalDateTime
-import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
 

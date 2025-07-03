@@ -5,10 +5,10 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     id ("kotlin-parcelize")
     id("androidx.navigation.safeargs.kotlin")
-    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.22"
+    id("org.jetbrains.kotlin.plugin.serialization") version "2.2.0"
     id("kotlin-kapt")
     id("com.google.devtools.ksp") version "2.1.10-1.0.31"
-    id("com.google.dagger.hilt.android") version "2.51"
+    id("com.google.dagger.hilt.android") version "2.56.2"
 }
 
 android {

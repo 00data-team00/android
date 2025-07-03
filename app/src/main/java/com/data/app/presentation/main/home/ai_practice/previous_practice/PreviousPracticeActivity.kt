@@ -10,8 +10,8 @@ import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.data.app.R
 import com.data.app.databinding.ActivityPreviousPracticeBinding
-import com.data.app.extension.AIPreviousChatMessageState
-import com.data.app.extension.AIPreviousPracticeState
+import com.data.app.extension.home.aichat.AIPreviousChatMessageState
+import com.data.app.extension.home.aichat.AIPreviousPracticeState
 import com.data.app.presentation.main.BaseActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch

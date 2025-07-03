@@ -4,13 +4,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
-import coil3.load
+import coil.load
 import coil3.request.transformations
-import coil3.transform.RoundedCornersTransformation
+import coil.transform.RoundedCornersTransformation
+import timber.log.Timber
 
 class PostDetailImageAdapter(val clickImage: (Int) -> Unit) :
     RecyclerView.Adapter<PostDetailImageAdapter.PostDetailImageViewHolder>() {
-    private val images = mutableListOf<Int>()
+    private val images = mutableListOf<String>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostDetailImageViewHolder {
         val imageView = ImageView(parent.context).apply {
@@ -28,9 +29,9 @@ class PostDetailImageAdapter(val clickImage: (Int) -> Unit) :
         holder.bind(images[position])
     }
 
-    fun getList(list: List<Int>) {
+    fun getList(imageUrl: String) {
         images.clear()
-        images.addAll(list)
+        images.addAll(listOf(imageUrl))
         notifyDataSetChanged()
     }
 
@@ -38,8 +39,9 @@ class PostDetailImageAdapter(val clickImage: (Int) -> Unit) :
     inner class PostDetailImageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val imageView = itemView as ImageView
 
-        fun bind(imageRes: Int) {
+        fun bind(imageRes: String) {
             imageView.scaleType = ImageView.ScaleType.CENTER_CROP
+            Timber.d("imageRes: $imageRes")
 
             imageView.load(imageRes) {
                 transformations(

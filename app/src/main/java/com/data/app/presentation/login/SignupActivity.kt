@@ -17,9 +17,9 @@ import androidx.core.widget.addTextChangedListener
 import com.data.app.presentation.main.MainActivity
 import androidx.core.graphics.toColorInt
 import androidx.lifecycle.lifecycleScope
-import com.data.app.extension.RegisterState
-import com.data.app.extension.SendMailState
-import com.data.app.extension.VerifyMailState
+import com.data.app.extension.login.RegisterState
+import com.data.app.extension.login.SendMailState
+import com.data.app.extension.login.VerifyMailState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.count

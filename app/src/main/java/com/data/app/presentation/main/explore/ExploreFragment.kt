@@ -11,18 +11,15 @@ import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import com.data.app.R
 import com.data.app.databinding.DialogExpiredBinding
 import com.data.app.databinding.FragmentExploreBinding
-import com.data.app.extension.AllProgramsState
-import com.data.app.extension.DeadLineProgramState
+import com.data.app.extension.explore.AllProgramsState
+import com.data.app.extension.explore.DeadLineProgramState
 import com.data.app.presentation.main.OnTabReselectedListener
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import kotlin.math.exp
 
 @AndroidEntryPoint
 class ExploreFragment : Fragment(), OnTabReselectedListener {
@@ -209,7 +206,7 @@ class ExploreFragment : Fragment(), OnTabReselectedListener {
         exploreViewModel.resetPaging()
 
         // 데이터 새로 fetch
-        exploreViewModel.getAllPrograms(isFree = false)  // 혹은 현재 선택된 필터값
+        exploreViewModel.getAllPrograms(isFree = binding.btnFree.isSelected)  // 혹은 현재 선택된 필터값
         exploreViewModel.getDeadLinePrograms()
     }
 }

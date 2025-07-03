@@ -8,22 +8,26 @@ import com.data.app.data.request_dto.RequestRegisterDto
 import com.data.app.data.request_dto.RequestSendMailDto
 import com.data.app.data.request_dto.RequestTranslateDto
 import com.data.app.data.request_dto.RequestVerifyMailDto
-import com.data.app.data.response_dto.ResponseAIPreviousChatMessagesDto
-import com.data.app.data.response_dto.ResponseAIPreviousRecordsDto
-import com.data.app.data.response_dto.ResponseAITopicsDto
-import com.data.app.data.response_dto.ResponseAllProgramDto
-import com.data.app.data.response_dto.ResponseChatAiMessageDto
-import com.data.app.data.response_dto.ResponseChatStartDto
-import com.data.app.data.response_dto.ResponseDeadlineDto
-import com.data.app.data.response_dto.ResponseFollowersDto
-import com.data.app.data.response_dto.ResponseLoginDto
-import com.data.app.data.response_dto.ResponseEditProfileDto
-import com.data.app.data.response_dto.ResponseMyPostDto
-import com.data.app.data.response_dto.ResponseProfileDto
-import com.data.app.data.response_dto.ResponseQuizDto
-import com.data.app.data.response_dto.ResponseRegisterDto
-import com.data.app.data.response_dto.ResponseTranslateDto
-import com.data.app.data.response_dto.ResponseUserGameInfoDto
+import com.data.app.data.response_dto.community.ResponseDeletePostDto
+import com.data.app.data.response_dto.home.ai.ResponseAIPreviousChatMessagesDto
+import com.data.app.data.response_dto.home.ai.ResponseAIPreviousRecordsDto
+import com.data.app.data.response_dto.home.ai.ResponseAITopicsDto
+import com.data.app.data.response_dto.explore.ResponseAllProgramDto
+import com.data.app.data.response_dto.home.ai.ResponseChatAiMessageDto
+import com.data.app.data.response_dto.home.ai.ResponseChatStartDto
+import com.data.app.data.response_dto.explore.ResponseDeadlineDto
+import com.data.app.data.response_dto.community.ResponseFollowListDto
+import com.data.app.data.response_dto.login.ResponseLoginDto
+import com.data.app.data.response_dto.community.ResponseEditProfileDto
+import com.data.app.data.response_dto.community.ResponseFollowDto
+import com.data.app.data.response_dto.community.ResponsePostDetailDto
+import com.data.app.data.response_dto.community.ResponseTimeLineDto
+import com.data.app.data.response_dto.my.ResponseMyPostDto
+import com.data.app.data.response_dto.my.ResponseProfileDto
+import com.data.app.data.response_dto.home.quiz.ResponseQuizDto
+import com.data.app.data.response_dto.login.ResponseRegisterDto
+import com.data.app.data.response_dto.home.ResponseUserGameInfoDto
+import com.data.app.data.response_dto.home.ai.ResponseTranslateDto
 import com.data.app.domain.repository.BaseRepository
 import okhttp3.MultipartBody
 import retrofit2.Response
@@ -76,11 +80,131 @@ class BaseRepositoryImpl @Inject constructor(
     }
 
     // community
+    override suspend fun getAllTimeLine(token: String): Result<ResponseTimeLineDto> {
+        return runCatching {
+            baseDataSource.getAllTimeLine(token)
+        }.onFailure {
+            Timber.e("base repository get all time line fail!: $it")
+        }
+    }
+
+    override suspend fun getNationTimeLine(token: String): Result<ResponseTimeLineDto> {
+        return runCatching {
+            baseDataSource.getNationTimeLine(token)
+        }.onFailure {
+            Timber.e("base repository get my time line fail!: $it")
+        }
+    }
+
+    override suspend fun getFollowingTimeLine(token: String): Result<ResponseTimeLineDto> {
+        return runCatching {
+            baseDataSource.getFollowingTimeLine(token)
+        }.onFailure {
+            Timber.e("base repository get follow time line fail!: $it")
+        }
+    }
+
+    override suspend fun getPostDetail(token: String, postId: Int): Result<ResponsePostDetailDto> {
+        return runCatching {
+            baseDataSource.getPostDetail(token, postId)
+        }.onFailure {
+            Timber.e("base repository get post detail fail!: $it")
+        }
+    }
+
+    override suspend fun likePost(token: String, postId: Int): Result<Response<Unit>> {
+        return runCatching {
+            baseDataSource.likePost(token, postId)
+        }.onFailure {
+            Timber.e("base repository like post fail!: $it")
+        }
+    }
+
+    override suspend fun unlikePost(token: String, postId: Int): Result<Response<Unit>> {
+        return runCatching {
+            baseDataSource.unlikePost(token, postId)
+        }.onFailure {
+            Timber.e("base repository unlike post fail!: $it")
+        }
+    }
+
+    override suspend fun writeComment(
+        token: String,
+        postId: Int,
+        content: String)
+    : Result<ResponsePostDetailDto.CommentDto> {
+        return runCatching {
+            baseDataSource.writeComment(token, postId, content)
+        }.onFailure {
+            Timber.e("base repository write comment fail!: $it")
+        }
+    }
+
     override suspend fun getUserProfile(token: String, userId: Int): Result<ResponseProfileDto> {
         return runCatching {
             baseDataSource.getUserProfile(token, userId)
         }.onFailure {
             Timber.e("base repository get user profile fail!: $it")
+        }
+    }
+
+    override suspend fun getUserPosts(token: String, userId: Int): Result<ResponseTimeLineDto> {
+        return runCatching {
+            baseDataSource.getUserPosts(token, userId)
+        }.onFailure {
+            Timber.e("base repository get user posts fail!: $it")
+        }
+    }
+
+    override suspend fun writePost(
+        token: String,
+        content: String,
+        image: MultipartBody.Part?
+    ): Result<ResponseMyPostDto.PostDto> {
+        return runCatching {
+            baseDataSource.writePost(token, content, image)
+        }.onFailure {
+            Timber.e("base repository write post fail!: $it")
+        }
+    }
+
+    override suspend fun deletePost(token: String, postId: Int): Result<ResponseDeletePostDto> {
+        return runCatching {
+            baseDataSource.deletePost(token, postId)
+        }.onFailure {
+            Timber.e("base repository delete post fail!: $it")
+        }
+    }
+
+    override suspend fun follow(token: String, userId: Int): Result<ResponseFollowDto> {
+        return runCatching {
+            baseDataSource.follow(token, userId)
+        }.onFailure {
+            Timber.e("base repository follow fail!: $it")
+        }
+    }
+
+    override suspend fun unFollow(token: String, userId: Int): Result<ResponseFollowDto> {
+        return runCatching {
+            baseDataSource.unFollow(token, userId)
+        }.onFailure {
+            Timber.e("base repository unfollow fail!: $it")
+        }
+    }
+
+    override suspend fun getFollowerList(token: String): Result<ResponseFollowListDto> {
+        return runCatching {
+            baseDataSource.getFollowerList(token)
+        }.onFailure {
+            Timber.e("base repository get follower list fail: $it")
+        }
+    }
+
+    override suspend fun getFollowingList(token: String): Result<ResponseFollowListDto> {
+        return runCatching {
+            baseDataSource.getFollowingList(token)
+        }.onFailure {
+            Timber.e("base repository get following list fail: $it")
         }
     }
 
@@ -221,12 +345,4 @@ class BaseRepositoryImpl @Inject constructor(
         }
     }
 
-    // followers
-    override suspend fun getFollowerList(token: String): Result<ResponseFollowersDto> {
-        return runCatching {
-            baseDataSource.getFollowerList(token)
-        }.onFailure {
-            Timber.e("base repository get follower list fail: $it")
-        }
-    }
 }

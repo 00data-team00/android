@@ -1,16 +1,13 @@
 package com.data.app.presentation.main.home.game.quiz
 
-import androidx.activity.result.launch
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.data.app.R
-import com.data.app.data.Quiz
-import com.data.app.data.response_dto.ResponseQuizDto
+import com.data.app.data.response_dto.home.quiz.ResponseQuizDto
 import com.data.app.domain.repository.BaseRepository
-import com.data.app.extension.QuizCompleteState
-import com.data.app.extension.QuizState
+import com.data.app.extension.home.quiz.QuizCompleteState
+import com.data.app.extension.home.quiz.QuizState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

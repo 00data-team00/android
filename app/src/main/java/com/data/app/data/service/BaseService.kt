@@ -7,25 +7,30 @@ import com.data.app.data.request_dto.RequestRegisterDto
 import com.data.app.data.request_dto.RequestSendMailDto
 import com.data.app.data.request_dto.RequestTranslateDto
 import com.data.app.data.request_dto.RequestVerifyMailDto
-import com.data.app.data.response_dto.ResponseAIPreviousChatMessagesDto
-import com.data.app.data.response_dto.ResponseAIPreviousRecordsDto
-import com.data.app.data.response_dto.ResponseAITopicsDto
-import com.data.app.data.response_dto.ResponseAllProgramDto
-import com.data.app.data.response_dto.ResponseChatAiMessageDto
-import com.data.app.data.response_dto.ResponseChatStartDto
-import com.data.app.data.response_dto.ResponseDeadlineDto
-import com.data.app.data.response_dto.ResponseFollowersDto
-import com.data.app.data.response_dto.ResponseLoginDto
-import com.data.app.data.response_dto.ResponseEditProfileDto
-import com.data.app.data.response_dto.ResponseMyPostDto
-import com.data.app.data.response_dto.ResponseProfileDto
-import com.data.app.data.response_dto.ResponseQuizDto
-import com.data.app.data.response_dto.ResponseRegisterDto
-import com.data.app.data.response_dto.ResponseTranslateDto
-import com.data.app.data.response_dto.ResponseUserGameInfoDto
+import com.data.app.data.response_dto.community.ResponseDeletePostDto
+import com.data.app.data.response_dto.home.ai.ResponseAIPreviousChatMessagesDto
+import com.data.app.data.response_dto.home.ai.ResponseAIPreviousRecordsDto
+import com.data.app.data.response_dto.home.ai.ResponseAITopicsDto
+import com.data.app.data.response_dto.explore.ResponseAllProgramDto
+import com.data.app.data.response_dto.home.ai.ResponseChatAiMessageDto
+import com.data.app.data.response_dto.home.ai.ResponseChatStartDto
+import com.data.app.data.response_dto.explore.ResponseDeadlineDto
+import com.data.app.data.response_dto.community.ResponseFollowListDto
+import com.data.app.data.response_dto.login.ResponseLoginDto
+import com.data.app.data.response_dto.community.ResponseEditProfileDto
+import com.data.app.data.response_dto.community.ResponseFollowDto
+import com.data.app.data.response_dto.community.ResponsePostDetailDto
+import com.data.app.data.response_dto.community.ResponseTimeLineDto
+import com.data.app.data.response_dto.my.ResponseMyPostDto
+import com.data.app.data.response_dto.my.ResponseProfileDto
+import com.data.app.data.response_dto.home.quiz.ResponseQuizDto
+import com.data.app.data.response_dto.login.ResponseRegisterDto
+import com.data.app.data.response_dto.home.ResponseUserGameInfoDto
+import com.data.app.data.response_dto.home.ai.ResponseTranslateDto
 import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Multipart
@@ -59,11 +64,94 @@ interface BaseService {
     ):ResponseLoginDto
 
     // community
+
+    @GET("api/posts/timeline")
+    suspend fun getAllTimeLine(
+        @Header("Authorization") token:String,
+    ): ResponseTimeLineDto
+
+    @GET("api/me/posts/timeline/nation")
+    suspend fun getNationTimeLine(
+        @Header("Authorization") token:String,
+    ): ResponseTimeLineDto
+
+    @GET("api/me/posts/timeline/following")
+    suspend fun getFollowingTimeLine(
+        @Header("Authorization") token:String,
+    ): ResponseTimeLineDto
+
+    @GET("api/posts/{postId}/detail")
+    suspend fun getPostDetail(
+        @Header("Authorization") token:String,
+        @Path("postId") postId:Int,
+    ): ResponsePostDetailDto
+
+    @POST("api/me/posts/{postId}/like")
+    suspend fun likePost(
+        @Header("Authorization") token:String,
+        @Path("postId") postId:Int,
+    ):Response<Unit>
+
+    @DELETE("api/me/posts/{postId}/like")
+    suspend fun unlikePost(
+        @Header("Authorization") token:String,
+        @Path("postId") postId:Int,
+    ):Response<Unit>
+
+    @POST("api/me/posts/{postId}/comments")
+    suspend fun writeComment(
+        @Header("Authorization") token:String,
+        @Path("postId") postId:Int,
+        @Body content:String,
+    ): ResponsePostDetailDto.CommentDto
+
     @GET("api/users/{userId}/profile")
     suspend fun getUserProfile(
         @Header("Authorization") token:String,
         @Path("userId") userId:Int,
     ): ResponseProfileDto
+
+    @GET("api/users/{userId}/posts")
+    suspend fun getUserPosts(
+        @Header("Authorization") token:String,
+        @Path("userId") userId:Int,
+    ): ResponseTimeLineDto
+
+    @Multipart
+    @POST("api/me/posts")
+    suspend fun writePost(
+        @Header("Authorization") token:String,
+        @Part("content") content: String,
+        @Part image: MultipartBody.Part?
+    ): ResponseMyPostDto.PostDto
+
+    @DELETE("api/me/posts/{postId}")
+    suspend fun deletePost(
+        @Header("Authorization") token:String,
+        @Path("postId") postId:Int,
+    ): ResponseDeletePostDto
+
+    @POST("api/me/follow/{userId}")
+    suspend fun follow(
+        @Header("Authorization") token:String,
+        @Path("userId") userId:Int,
+    ): ResponseFollowDto
+
+    @DELETE("api/me/follow/{userId}")
+    suspend fun unFollow(
+        @Header("Authorization") token:String,
+        @Path("userId") userId:Int,
+    ): ResponseFollowDto
+
+    @GET("api/me/followers")
+    suspend fun getFollowerList(
+        @Header("Authorization") token:String
+    ):ResponseFollowListDto
+
+    @GET("/api/me/following")
+    suspend fun getFollowingList(
+        @Header("Authorization") token:String
+    ): ResponseFollowListDto
 
     // home
     @GET("api/me/user-game-info")
@@ -106,7 +194,7 @@ interface BaseService {
     suspend fun getTranslate(
         @Header("Authorization") token:String,
         @Body requestTranslateDto: RequestTranslateDto,
-    ):ResponseTranslateDto
+    ): ResponseTranslateDto
 
     // quiz
     @POST("api/game/quiz")
@@ -151,9 +239,5 @@ interface BaseService {
         @Header("Authorization") token:String,
         @Part image: MultipartBody.Part
     ): ResponseEditProfileDto
-    // followers
-    @GET("api/me/followers")
-    suspend fun getFollowerList(
-        @Header("Authorization") token:String
-    ):ResponseFollowersDto
+
 }

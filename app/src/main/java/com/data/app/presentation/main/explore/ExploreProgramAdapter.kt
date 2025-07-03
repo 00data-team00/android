@@ -6,9 +6,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
-import coil3.request.placeholder
 import com.data.app.R
-import com.data.app.data.response_dto.ResponseAllProgramDto
+import com.data.app.data.response_dto.explore.ResponseAllProgramDto
 import com.data.app.databinding.ItemAllProgramBinding
 import timber.log.Timber
 import java.text.SimpleDateFormat

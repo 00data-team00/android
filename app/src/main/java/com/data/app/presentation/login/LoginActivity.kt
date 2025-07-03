@@ -14,7 +14,7 @@ import androidx.activity.viewModels
 import com.data.app.databinding.ActivityLoginBinding
 import androidx.core.graphics.toColorInt
 import androidx.lifecycle.lifecycleScope
-import com.data.app.extension.LoginState
+import com.data.app.extension.login.LoginState
 import com.data.app.presentation.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch

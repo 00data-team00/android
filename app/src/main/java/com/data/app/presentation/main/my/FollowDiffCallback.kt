@@ -1,15 +1,14 @@
 package com.data.app.presentation.main.my
 
 import androidx.recyclerview.widget.DiffUtil
-import com.data.app.data.Follow
-import com.data.app.data.response_dto.ResponseFollowersDto
+import com.data.app.data.response_dto.community.ResponseFollowListDto
 
-class FollowDiffCallback : DiffUtil.ItemCallback<ResponseFollowersDto.Follower>() {
-    override fun areItemsTheSame(oldItem: ResponseFollowersDto.Follower, newItem: ResponseFollowersDto.Follower): Boolean {
+class FollowDiffCallback : DiffUtil.ItemCallback<ResponseFollowListDto.Follower>() {
+    override fun areItemsTheSame(oldItem: ResponseFollowListDto.Follower, newItem: ResponseFollowListDto.Follower): Boolean {
         return oldItem.userId == newItem.userId
     }
 
-    override fun areContentsTheSame(oldItem: ResponseFollowersDto.Follower, newItem: ResponseFollowersDto.Follower): Boolean {
+    override fun areContentsTheSame(oldItem: ResponseFollowListDto.Follower, newItem: ResponseFollowListDto.Follower): Boolean {
         return oldItem == newItem
     }
 }

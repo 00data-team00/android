@@ -5,8 +5,10 @@ import androidx.lifecycle.viewModelScope
 import com.data.app.R
 import com.data.app.data.Post
 import com.data.app.domain.repository.BaseRepository
-import com.data.app.extension.OtherState
-import com.data.app.extension.UserProfileState
+import com.data.app.extension.community.FollowState
+import com.data.app.extension.community.GetUserPostState
+import com.data.app.extension.community.OtherState
+import com.data.app.extension.my.UserProfileState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,11 +24,16 @@ import javax.inject.Inject
 class OtherProfileViewModel @Inject constructor(
     private val baseRepository: BaseRepository
 ) :ViewModel() {
-
     private val _userProfileState = MutableStateFlow<UserProfileState>(UserProfileState.Loading)
     val userProfileState: StateFlow<UserProfileState> = _userProfileState.asStateFlow()
     private val _otherState = MutableStateFlow<OtherState>(OtherState.Loading)
     val otherState:StateFlow<OtherState> = _otherState.asStateFlow()
+
+    private val _getUserPostState = MutableStateFlow<GetUserPostState>(GetUserPostState.Loading)
+    val getUserPostState: StateFlow<GetUserPostState> = _getUserPostState.asStateFlow()
+
+    private val _followState = MutableStateFlow<FollowState>(FollowState.Loading)
+    val followState: StateFlow<FollowState> = _followState.asStateFlow()
 
     fun getUserProfile(token:String, userId:Int){
         viewModelScope.launch {
@@ -46,6 +53,70 @@ class OtherProfileViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun getUserPost(token:String, userId:Int){
+        viewModelScope.launch {
+            baseRepository.getUserPosts(token, userId).onSuccess { response ->
+                _getUserPostState.value = GetUserPostState.Success(response.posts)
+            }.onFailure {
+                _getUserPostState.value = GetUserPostState.Error(it.message.toString())
+                if (it is HttpException) {
+                    try {
+                        val errorBody: ResponseBody? = it.response()?.errorBody()
+                        val errorBodyString = errorBody?.string() ?: ""
+                        httpError(errorBodyString)
+                    } catch (e: Exception) {
+                        // JSON 파싱 실패 시 로깅
+                        Timber.e("Error parsing error body: ${e}")
+                    }
+                }
+            }
+        }
+    }
+
+    fun follow(token:String, userId:Int){
+        viewModelScope.launch {
+            baseRepository.follow(token, userId).onSuccess { response ->
+                _followState.value = FollowState.Success(response)
+            }.onFailure {
+                _followState.value = FollowState.Error(it.message.toString())
+                if (it is HttpException) {
+                    try {
+                        val errorBody: ResponseBody? = it.response()?.errorBody()
+                        val errorBodyString = errorBody?.string() ?: ""
+                        httpError(errorBodyString)
+                    } catch (e: Exception) {
+                        // JSON 파싱 실패 시 로깅
+                        Timber.e("Error parsing error body: ${e}")
+                    }
+                }
+            }
+        }
+    }
+
+    fun unFollow(token:String, userId:Int){
+        viewModelScope.launch {
+            baseRepository.unFollow(token, userId).onSuccess { response ->
+                _followState.value = FollowState.Success(response)
+            }.onFailure {
+                _followState.value = FollowState.Error(it.message.toString())
+                if (it is HttpException) {
+                    try {
+                        val errorBody: ResponseBody? = it.response()?.errorBody()
+                        val errorBodyString = errorBody?.string() ?: ""
+                        httpError(errorBodyString)
+                    } catch (e: Exception) {
+                        // JSON 파싱 실패 시 로깅
+                        Timber.e("Error parsing error body: ${e}")
+                    }
+                }
+            }
+        }
+    }
+
+    fun resetFollowState(){
+        _followState.value=FollowState.Loading
     }
 
     private fun httpError(errorBody: String) {

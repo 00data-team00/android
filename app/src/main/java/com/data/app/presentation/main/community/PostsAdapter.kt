@@ -1,102 +1,145 @@
 package com.data.app.presentation.main.community
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ConstraintSet
 import androidx.recyclerview.widget.RecyclerView
-import coil3.load
+import coil.load
 import coil3.request.transformations
-import coil3.transform.CircleCropTransformation
-import coil3.transform.RoundedCornersTransformation
+import coil.transform.CircleCropTransformation
+import coil.transform.RoundedCornersTransformation
+import com.data.app.BuildConfig
 import com.data.app.R
-import com.data.app.data.Post
+import com.data.app.data.response_dto.community.ResponseTimeLineDto
 import com.data.app.databinding.ItemPostBinding
+import com.data.app.presentation.main.community.other.OtherProfileAdapter
+import com.data.app.util.TimeAgoFormatter
 import timber.log.Timber
 
-class PostsAdapter(val clickPost: (Post) -> Unit, val clickOtherUser:(String, String)->Unit) :
-    RecyclerView.Adapter<PostsAdapter.FeedsViewHolder>() {
+class PostsAdapter(
+    val clickPost: (Int) -> Unit,
+    val clickOtherUser: (Int) -> Unit,
+    val clickLikeBtn: (Int, Boolean) -> Unit
+) :
+    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    companion object {
+        private const val VIEW_TYPE_SHIMMER = 0
+        private const val VIEW_TYPE_NORMAL = 1
+    }
+    private val postsList = mutableListOf<ResponseTimeLineDto.TimelinePostItem>()
+    private var isLoading = true
 
-    private val postsList = mutableListOf<Post>()
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FeedsViewHolder {
-        val binding = ItemPostBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return FeedsViewHolder(binding)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return if (viewType == VIEW_TYPE_SHIMMER) {
+            val view = LayoutInflater.from(parent.context)
+                .inflate(R.layout.item_post_shimmer, parent, false)
+            ShimmerViewHolder(view)
+        } else {
+            val binding = ItemPostBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            FeedsViewHolder(binding)
+        }
     }
 
-    override fun getItemCount(): Int = postsList.size
+    override fun getItemCount(): Int =if (isLoading) 5 else postsList.size
 
-    override fun onBindViewHolder(holder: FeedsViewHolder, position: Int) {
-        holder.bind(postsList[position])
+    override fun getItemViewType(position: Int): Int {
+        return if (isLoading) VIEW_TYPE_SHIMMER else VIEW_TYPE_NORMAL
     }
 
-    fun getList(list: List<Post>) {
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        if (holder is FeedsViewHolder) {
+            holder.bind(postsList[position])
+        }
+    }
+
+    fun setLoading(loading: Boolean) {
+        isLoading = loading
+        notifyDataSetChanged()
+    }
+
+    fun getList(list: List<ResponseTimeLineDto.TimelinePostItem>) {
         postsList.clear()
         postsList.addAll(list)
         notifyDataSetChanged()
     }
 
+    inner class ShimmerViewHolder(view: View) : RecyclerView.ViewHolder(view)
+
     inner class FeedsViewHolder(private val binding: ItemPostBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(data: Post) {
+        fun bind(data: ResponseTimeLineDto.TimelinePostItem) {
             with(binding) {
-                ivProfile.load(data.profile) {
+                val profile =
+                    data.authorProfile.profileImage?.let { BuildConfig.BASE_URL.removeSuffix("/") + it }
+                ivProfile.load(profile) {
                     transformations(CircleCropTransformation())
+                    placeholder(R.drawable.ic_profile)
+                    error(R.drawable.ic_profile)
                 }
 
-                val lp = binding.ivImage.layoutParams as ConstraintLayout.LayoutParams
+                val lp = ivImage.layoutParams as ConstraintLayout.LayoutParams
 
-                if (!data.images.isNullOrEmpty()) {
-                    binding.ivImage.visibility = View.VISIBLE
-                    binding.ivImage.load(data.images[0]) {
+                if (!data.post.imageUrl.isNullOrEmpty()) {
+                    ivImage.visibility = View.VISIBLE
+
+                    val imageUrl =
+                        data.post.imageUrl?.let { BuildConfig.BASE_URL.removeSuffix("/") + it }
+                    Timber.d("imageUrl: $imageUrl")
+
+                    ivImage.load(imageUrl) {
                         transformations(RoundedCornersTransformation(30f))
                     }
                     lp.dimensionRatio = "2:1"
                 } else {
-                    binding.ivImage.setImageDrawable(null)
-                    binding.ivImage.visibility = View.GONE
+                    ivImage.setImageDrawable(null)
+                    ivImage.visibility = View.GONE
                     lp.dimensionRatio = null
                 }
 
-                binding.ivImage.layoutParams = lp
+                ivImage.layoutParams = lp
 
-                tvId.text = root.context.getString(R.string.community_id, data.id)
-                tvTime.text = root.context.getString(R.string.community_time, data.time)
+                tvId.text = root.context.getString(R.string.community_id, data.post.authorName)
 
-                btnFollow.isSelected = data.isFollowing
-                if (data.isFollowing) btnFollow.text =
-                    root.context.getString(R.string.community_follow)
-                tvContent.text = data.content
-                tvLikeCount.text = data.like.toString()
-                tvCommentCount.text = data.comments.size.toString()
+                val timeAgo = TimeAgoFormatter.formatTimeAgo(data.post.createdAt)
+                Timber.d("createdAt: ${data.post.createdAt}, formatted: $timeAgo")
+                tvTime.text = root.context.getString(R.string.community_time, timeAgo)
 
-                clickFollow()
-                clickLike()
+                /* btnFollow.isSelected = data.authorProfile.isFollowing
+                 if (data.authorProfile.isFollowing) btnFollow.text =
+                     root.context.getString(R.string.community_follow)*/
+                tvContent.text = data.post.content
+                tvLikeCount.text = data.post.likeCount.toString()
+                tvCommentCount.text = data.post.commentCount.toString()
+
+                if (data.post.isLiked) btnLike.isSelected = true
+
+                //clickFollow()
+                clickLike(data.post.id)
                 clickProfileOrId(data)
 
                 showDetail(data)
             }
         }
 
-        private fun clickFollow(){
-            with(binding){
-                btnFollow.setOnClickListener {
-                    btnFollow.isSelected = !btnFollow.isSelected
-                    btnFollow.text = root.context.getString(
-                        if (btnFollow.isSelected) R.string.community_follow
-                        else R.string.community_following
-                    )
-                    Timber.d("btn is select?${btnFollow.isSelected}")
-                }
-            }
-        }
+        /* private fun clickFollow(){
+             with(binding){
+                 btnFollow.setOnClickListener {
+                     btnFollow.isSelected = !btnFollow.isSelected
+                     btnFollow.text = root.context.getString(
+                         if (btnFollow.isSelected) R.string.community_follow
+                         else R.string.community_following
+                     )
+                     Timber.d("btn is select?${btnFollow.isSelected}")
+                 }
+             }
+         }*/
 
-        private fun clickLike(){
-            with(binding){
+        private fun clickLike(postId: Int) {
+            with(binding) {
                 btnLike.setOnClickListener {
                     btnLike.isSelected = !btnLike.isSelected
+                    clickLikeBtn(postId, btnLike.isSelected)
                     tvLikeCount.text = (
                             if (btnLike.isSelected) tvLikeCount.text.toString().toInt() + 1
                             else tvLikeCount.text.toString().toInt() - 1
@@ -105,17 +148,17 @@ class PostsAdapter(val clickPost: (Post) -> Unit, val clickOtherUser:(String, St
             }
         }
 
-        private fun clickProfileOrId(data: Post){
+        private fun clickProfileOrId(data: ResponseTimeLineDto.TimelinePostItem) {
             listOf(binding.ivProfile, binding.tvId).forEach {
                 it.setOnClickListener {
-                    clickOtherUser(data.profile, data.id)
+                    clickOtherUser(data.post.authorId)
                 }
             }
         }
 
-        private fun showDetail(data: Post){
+        private fun showDetail(data: ResponseTimeLineDto.TimelinePostItem) {
             listOf(binding.tvContent, binding.ivImage).forEach {
-                it.setOnClickListener { clickPost(data) }
+                it.setOnClickListener { clickPost(data.post.id) }
             }
         }
 

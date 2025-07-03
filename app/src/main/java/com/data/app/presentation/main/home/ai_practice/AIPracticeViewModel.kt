@@ -5,13 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.data.app.R
 import com.data.app.data.AIPractice
-import com.data.app.data.response_dto.ResponseAITopicsDto
+import com.data.app.data.response_dto.home.ai.ResponseAITopicsDto
 import com.data.app.domain.repository.BaseRepository
-import com.data.app.extension.AIChatTopicsState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import okhttp3.ResponseBody
 import org.json.JSONObject

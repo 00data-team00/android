@@ -7,8 +7,8 @@ import androidx.lifecycle.viewModelScope
 import com.data.app.R
 import com.data.app.data.PreviousPractice
 import com.data.app.domain.repository.BaseRepository
-import com.data.app.extension.AIPreviousChatMessageState
-import com.data.app.extension.AIPreviousPracticeState
+import com.data.app.extension.home.aichat.AIPreviousChatMessageState
+import com.data.app.extension.home.aichat.AIPreviousPracticeState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

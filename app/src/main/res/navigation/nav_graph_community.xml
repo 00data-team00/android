@@ -29,8 +29,11 @@
         android:name="com.data.app.presentation.main.community.profile_detail.PostDetailFragment"
         android:label="post_detail">
         <argument
+            android:name="postId"
+            app:argType="string"/>
+       <!-- <argument
             android:name="post"
-            app:argType="com.data.app.data.Post"/>
+            app:argType="com.data.app.data.Post"/>-->
         <action
             android:id="@+id/action_postDetailFragment_to_otherProfileFragment"
             app:destination="@id/otherProfileFragment"
@@ -45,11 +48,14 @@
         android:name="com.data.app.presentation.main.community.other.OtherProfileFragment"
         android:label="other_profile">
         <argument
+            android:name="userId"
+            app:argType="string"/>
+        <!--<argument
             android:name="other_profile"
             app:argType="string"/>
         <argument
             android:name="other_name"
-            app:argType="string"/>
+            app:argType="string"/>-->
         <action
             android:id="@+id/action_otherProfileFragment_to_postDetailFragment"
             app:destination="@id/postDetailFragment"

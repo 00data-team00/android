@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.data.app.data.Quiz
-import com.data.app.data.response_dto.ResponseQuizDto
+import com.data.app.data.response_dto.home.quiz.ResponseQuizDto
 import com.data.app.databinding.ItemGameAnswerBinding
 
 class GameQuizAnswerAdapter(

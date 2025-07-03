@@ -40,4 +40,14 @@
         <item name="cornerSize">16dp</item>
     </style>
 
+    <style name="CircleImageView" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+
+    <style name="CustomPopupMenu" parent="Widget.AppCompat.PopupMenu.Overflow">
+        <item name="android:textColor">@color/black</item> <!-- 메뉴 텍스트 색 -->
+        <item name="android:popupBackground">@drawable/bg_dialog_rounded</item> <!-- 배경 drawable -->
+    </style>
+
 </resources>

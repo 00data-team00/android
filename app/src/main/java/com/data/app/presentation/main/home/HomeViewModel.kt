@@ -4,8 +4,8 @@ import androidx.compose.runtime.MutableState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.data.app.domain.repository.BaseRepository
-import com.data.app.extension.LoginState
-import com.data.app.extension.UserGameInfoState
+import com.data.app.extension.login.LoginState
+import com.data.app.extension.home.UserGameInfoState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

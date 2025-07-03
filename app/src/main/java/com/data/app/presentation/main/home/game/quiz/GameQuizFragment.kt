@@ -15,9 +15,9 @@ import androidx.lifecycle.lifecycleScope
 import coil.load
 import com.data.app.BuildConfig
 import com.data.app.R
-import com.data.app.data.response_dto.ResponseQuizDto
+import com.data.app.data.response_dto.home.quiz.ResponseQuizDto
 import com.data.app.databinding.FragmentGameQuizBinding
-import com.data.app.extension.QuizCompleteState
+import com.data.app.extension.home.quiz.QuizCompleteState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import timber.log.Timber

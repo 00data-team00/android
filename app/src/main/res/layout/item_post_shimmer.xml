@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.facebook.shimmer.ShimmerFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/sfl_item_post"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp"
+    app:shimmer_auto_start="true"
+    app:shimmer_duration="1500">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- 프로필 이미지 -->
+        <View
+            android:id="@+id/shimmer_profile"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_shimmer_circle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- 작성자 ID (네모 막대) -->
+        <View
+            android:id="@+id/shimmer_user_id"
+            android:layout_width="100dp"
+            android:layout_height="14dp"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/bg_shimmer_rect"
+            app:layout_constraintStart_toEndOf="@id/shimmer_profile"
+            app:layout_constraintTop_toTopOf="@id/shimmer_profile" />
+
+        <!-- 시간 -->
+        <View
+            android:id="@+id/shimmer_time"
+            android:layout_width="60dp"
+            android:layout_height="10dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/bg_shimmer_rect"
+            app:layout_constraintStart_toEndOf="@id/shimmer_profile"
+            app:layout_constraintTop_toBottomOf="@id/shimmer_user_id" />
+
+        <!-- 게시글 내용 -->
+        <View
+            android:id="@+id/shimmer_content"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="4dp"
+            android:background="@drawable/bg_shimmer_rect"
+            app:layout_constraintTop_toBottomOf="@id/shimmer_profile"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- 이미지 영역 -->
+        <View
+            android:id="@+id/shimmer_image"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/bg_shimmer_rect"
+            app:layout_constraintTop_toBottomOf="@id/shimmer_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintDimensionRatio="2:1" />
+
+        <!-- 좋아요/댓글 영역 -->
+        <View
+            android:id="@+id/v_like"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_shimmer_circle"
+            app:layout_constraintTop_toBottomOf="@id/shimmer_image"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <View
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginStart="10dp"
+            android:background="@drawable/bg_shimmer_circle"
+            app:layout_constraintTop_toBottomOf="@id/shimmer_image"
+            app:layout_constraintStart_toEndOf="@id/v_like" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.facebook.shimmer.ShimmerFrameLayout>

@@ -1,23 +1,25 @@
 package com.data.app.presentation.main.community.profile_detail
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
+import androidx.core.content.ContextCompat
+import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.RecyclerView
-import coil3.load
-import coil3.request.transformations
-import coil3.transform.CircleCropTransformation
-import com.data.app.data.Post
+import coil.load
+import coil.transform.CircleCropTransformation
+import com.data.app.BuildConfig
+import com.data.app.R
+import com.data.app.data.response_dto.community.ResponsePostDetailDto
 import com.data.app.databinding.ItemCommentBinding
 import com.data.app.databinding.ItemCommentWriteBinding
+import timber.log.Timber
 
 class PostDetailAdapter(
-    val addComment:(Int)->Unit,
-    val clickProfileOrId:(String, String)->Unit,
+    val addComment:(String)->Unit,
+    val clickProfileOrId:(Int)->Unit,
 ):RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    private lateinit var user:Post
-    private val commentsList = mutableListOf<Post.Comments>()
+    private var profileUrl:String?=null
+    private val commentsList = mutableListOf<ResponsePostDetailDto.CommentDto>()
 
     companion object {
         private const val VIEW_TYPE_WRITE = 0
@@ -44,54 +46,77 @@ class PostDetailAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is CommentWriteViewHolder) {
-            holder.bind(user)
+            holder.bind(profileUrl)
         } else if (holder is CommentViewHolder) {
             holder.bind(commentsList[position - 1])
         }
     }
 
-    fun getUser(data:Post){
-        user=data
+    fun getUser(profileUrl:String?){
+        if (profileUrl != null) {
+            this.profileUrl = profileUrl
+        }
+
         notifyDataSetChanged()
     }
 
-    fun getList(list: List<Post.Comments>){
+    fun getList(list: List<ResponsePostDetailDto.CommentDto>){
         commentsList.clear()
         commentsList.addAll(list)
         notifyDataSetChanged()
     }
 
+    fun updateComment(comment: ResponsePostDetailDto.CommentDto){
+        commentsList.add(0, comment)
+        notifyItemInserted(0)
+    }
+
     inner class CommentWriteViewHolder(private val binding:ItemCommentWriteBinding):
         RecyclerView.ViewHolder(binding.root){
-        fun bind(data:Post){
-            binding.ivProfile.load(data.profile){
-                transformations(CircleCropTransformation())
+        fun bind(profileUrl: String?){
+            val profile = profileUrl?.takeIf { it.isNotBlank() && it != "null" }?.let {
+                BuildConfig.BASE_URL.removeSuffix("/") + it
+            }
+            Timber.e("ic_profile: $profile")
+
+            binding.ivProfile.post {
+                val context = itemView.context
+
+                try {
+                    binding.ivProfile.load(profile) {
+                        transformations(CircleCropTransformation())
+                        placeholder(R.drawable.ic_profile)
+                        error(R.drawable.ic_profile)
+                    }
+                } catch (e: Exception) {
+                    Timber.e( "Coil load failed: ${e.message}")
+                    binding.ivProfile.setImageResource(R.drawable.ic_profile)
+                }
             }
 
-            clickWrite(data.id, data.profile)
+            binding.etCommentWrite.addTextChangedListener {
+                val hasText = !it.isNullOrBlank()
+
+                val context = itemView.context
+
+                binding.btnWrite.isSelected = hasText
+                binding.btnWrite.setTextColor(
+                    ContextCompat.getColor(context,
+                        if (hasText) R.color.black else R.color.mock_ai_practice_title_gray
+                    )
+                )
+            }
+
+
+           clickWrite()
         }
 
-        private fun clickWrite(user:String, profile:String){
+        private fun clickWrite(){
             binding.btnWrite.setOnClickListener {
-                val text = binding.etCommentWrite.text.toString()
-                if (text.isNotBlank()) {
-                    val newComment = Post.Comments(
-                        profile = profile,
-                        name = user,
-                        content = text,
-                        like = 0
-                    )
-                    commentsList.add(0, newComment)
-                    notifyDataSetChanged()
-                    binding.etCommentWrite.text?.clear()
-
-                    // 키보드 내리기
-                    val imm = binding.root.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                    imm.hideSoftInputFromWindow(binding.etCommentWrite.windowToken, 0)
-
-                    // focus 제거
-                    binding.etCommentWrite.clearFocus()
-                    addComment(commentsList.size)
+                if(binding.btnWrite.isSelected){
+                    val text = binding.etCommentWrite.text.toString()
+                    addComment(text)
+                    binding.etCommentWrite.setText("")
                 }
             }
         }
@@ -99,28 +124,30 @@ class PostDetailAdapter(
 
     inner class CommentViewHolder(private val binding: ItemCommentBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(comment: Post.Comments){
+        fun bind(comment: ResponsePostDetailDto.CommentDto){
             with(binding){
-                ivProfile.load(comment.profile){
+                val profile = comment.commenterProfileImage?.let { BuildConfig.BASE_URL.removeSuffix("/") + it }
+
+                ivProfile.load(profile) {
                     transformations(CircleCropTransformation())
+                    placeholder(R.drawable.ic_profile)
+                    error(R.drawable.ic_profile)
                 }
-                tvId.text=comment.name
+                tvId.text=comment.commenterName
                 tvContent.text=comment.content
-                tvLikeCount.text=comment.like.toString()
-
-
+                //tvLikeCount.text="1"
             }
 
             listOf(binding.ivProfile, binding.tvId).forEach {
                 it.setOnClickListener {
-                    clickProfileOrId(comment.profile, comment.name)
+                    clickProfileOrId(comment.commenterId)
                 }
             }
 
-            clickLike()
+            //clickLike()
         }
 
-        private fun clickLike(){
+       /* private fun clickLike(){
             with(binding){
                 btnLike.setOnClickListener {
                     btnLike.isSelected = !btnLike.isSelected
@@ -130,6 +157,6 @@ class PostDetailAdapter(
                             ).toString()
                 }
             }
-        }
+        }*/
     }
 }

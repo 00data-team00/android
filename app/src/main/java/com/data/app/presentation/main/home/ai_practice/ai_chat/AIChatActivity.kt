@@ -33,9 +33,9 @@ import androidx.core.graphics.toColorInt
 import androidx.lifecycle.lifecycleScope
 import com.data.app.R
 import com.data.app.data.PreviousPractice
-import com.data.app.extension.AiChatState
-import com.data.app.extension.StartChatState
 import com.data.app.extension.TranslateState
+import com.data.app.extension.home.aichat.AiChatState
+import com.data.app.extension.home.aichat.StartChatState
 import com.data.app.presentation.main.BaseActivity
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
@@ -394,10 +394,6 @@ class AIChatActivity: BaseActivity() {
             }
         }
     }
-
-    setTranslate(1)
-    setTranslate(2)
-    setTranslate(3)
 
     private var blinkingJob: Job? = null
     private fun startBlinking() {

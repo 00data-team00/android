@@ -31,7 +31,7 @@ import timber.log.Timber
 import androidx.core.content.edit
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.data.app.extension.UserGameInfoState
+import com.data.app.extension.home.UserGameInfoState
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
