@@ -133,7 +133,7 @@ class MyFragment : Fragment(), OnTabReselectedListener {
                             tvCountry.text = myProfileState.response.nationNameKo
                             tvPostCount.text = myProfileState.response.postCount.toString()
                             tvFollowerCount.text = myProfileState.response.followerCount.toString()
-                            tvFollowingCount.text = myProfileState.response.postCount.toString()
+                            tvFollowingCount.text = myProfileState.response.followingCount.toString()
 
                             btnEdit.setOnClickListener {
                                 Timber.d("편집 버튼 클릭됨!")

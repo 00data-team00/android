@@ -10,7 +10,7 @@ import com.data.app.data.PreviousPractice
 import com.data.app.domain.repository.BaseRepository
 import com.data.app.extension.home.aichat.AiChatState
 import com.data.app.extension.home.aichat.StartChatState
-import com.data.app.extension.TranslateState
+import com.data.app.extension.home.aichat.TranslateState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -44,14 +44,28 @@ class AIChatViewModel @Inject constructor(
     }
 
     fun getTranslate(messageId: Int, userLang: String){
+       // _translateState.value = TranslateState.Loading
         viewModelScope.launch {
             baseRepository.getTranslate(_accessToken.value!!, messageId, userLang).onSuccess { response ->
                 _translateState.value = TranslateState.Success(response)
                 Timber.d("translate success!")
             }.onFailure {
                 _translateState.value = TranslateState.Error("get translate state erro!")
+                if (it is HttpException) {
+                    try {
+                        val errorBody: ResponseBody? = it.response()?.errorBody()
+                        val errorBodyString = errorBody?.string() ?: ""
+                        httpError(errorBodyString)
+                    } catch (e: Exception) {
+                        // JSON 파싱 실패 시 로깅
+                        Timber.e("Error parsing error body: ${e}")
+                    }
+                }
             }
         }
+    }
+    fun resetTranslateState() {
+        _translateState.value = TranslateState.Idle
     }
 
     fun startChat(topicId: Int) {

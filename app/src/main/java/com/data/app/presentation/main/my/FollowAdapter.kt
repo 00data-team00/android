@@ -72,14 +72,14 @@ class FollowAdapter(
             with(binding) {
                 btnFollow.apply {
                     if (isSelected) {
-                        text = context.getString(R.string.community_follow)
-                        setTextColor(ContextCompat.getColor(context, R.color.white))
-                    } else {
                         text = context.getString(R.string.community_following)
+                        setTextColor(ContextCompat.getColor(context, R.color.community_content_black))
+                    } else {
+                        text = context.getString(R.string.community_follow)
                         setTextColor(
                             ContextCompat.getColor(
                                 context,
-                                R.color.community_content_black
+                                R.color.white
                             )
                         )
                     }

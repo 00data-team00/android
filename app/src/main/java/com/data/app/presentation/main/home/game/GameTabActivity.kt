@@ -52,7 +52,7 @@ class GameTabActivity : BaseActivity() {
 
     private fun showWeeks() {
         val weekAdapter = GameTabWeekAdapter()
-        binding.rvWeeks.adapter = weekAdapter
+        //binding.rvWeeks.adapter = weekAdapter
         weekAdapter.getList(gameTabViewModel.weeks)
     }
 
