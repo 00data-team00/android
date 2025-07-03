@@ -57,9 +57,11 @@ RecyclerView.Adapter<OtherProfileAdapter.OtherProfileViewHolder>(){
                 val lp = binding.ivImage.layoutParams as ConstraintLayout.LayoutParams
 
                 val post = data.post
+                Timber.d("imageUrl: ${post.imageUrl}")
                 if (!post.imageUrl.isNullOrEmpty()) {
+                    val imageUrl = post.imageUrl.let { BuildConfig.BASE_URL.removeSuffix("/") + it }
                     binding.ivImage.visibility = View.VISIBLE
-                    binding.ivImage.load(data.post.imageUrl) {
+                    binding.ivImage.load(imageUrl) {
                         transformations(RoundedCornersTransformation(30f))
                     }
                     lp.dimensionRatio = "2:1"

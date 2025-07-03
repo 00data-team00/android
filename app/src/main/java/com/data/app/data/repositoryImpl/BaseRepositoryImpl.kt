@@ -15,7 +15,7 @@ import com.data.app.data.response_dto.explore.ResponseAllProgramDto
 import com.data.app.data.response_dto.home.ai.ResponseChatAiMessageDto
 import com.data.app.data.response_dto.home.ai.ResponseChatStartDto
 import com.data.app.data.response_dto.explore.ResponseDeadlineDto
-import com.data.app.data.response_dto.community.ResponseFollowersDto
+import com.data.app.data.response_dto.community.ResponseFollowListDto
 import com.data.app.data.response_dto.login.ResponseLoginDto
 import com.data.app.data.response_dto.community.ResponseEditProfileDto
 import com.data.app.data.response_dto.community.ResponseFollowDto
@@ -190,6 +190,22 @@ class BaseRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getFollowerList(token: String): Result<ResponseFollowListDto> {
+        return runCatching {
+            baseDataSource.getFollowerList(token)
+        }.onFailure {
+            Timber.e("base repository get follower list fail: $it")
+        }
+    }
+
+    override suspend fun getFollowingList(token: String): Result<ResponseFollowListDto> {
+        return runCatching {
+            baseDataSource.getFollowingList(token)
+        }.onFailure {
+            Timber.e("base repository get following list fail: $it")
+        }
+    }
+
     // home
     override suspend fun getUserGameInfo(token: String): Result<ResponseUserGameInfoDto> {
         return runCatching {
@@ -314,12 +330,4 @@ class BaseRepositoryImpl @Inject constructor(
         }
     }
 
-    // followers
-    override suspend fun getFollowerList(token: String): Result<ResponseFollowersDto> {
-        return runCatching {
-            baseDataSource.getFollowerList(token)
-        }.onFailure {
-            Timber.e("base repository get follower list fail: $it")
-        }
-    }
 }

@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ResponseFollowersDto (
+data class ResponseFollowListDto (
     @SerialName("followList")
     val messages:List<Follower>
 ){
@@ -15,7 +15,7 @@ data class ResponseFollowersDto (
         @SerialName("name")
         val name:String,
         @SerialName("profileImage")
-        val profileImage:String,
+        val profileImage:String?,
         @SerialName("isFollowing")
         val isFollowing:Boolean
     )

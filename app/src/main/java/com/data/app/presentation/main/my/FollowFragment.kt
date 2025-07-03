@@ -13,9 +13,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.data.app.R
-import com.data.app.data.response_dto.community.ResponseFollowersDto
+import com.data.app.data.response_dto.community.ResponseFollowListDto
 import com.data.app.databinding.FragmentFollowBinding
-import com.data.app.extension.community.FollowerState
+import com.data.app.extension.community.FollowListState
+import com.data.app.extension.community.FollowState
 import com.data.app.presentation.main.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -53,20 +54,27 @@ class FollowFragment : Fragment() {
             Timber.d("token: $token")
         }
 
+        setFollow()
+
         val title = followFragmentArgs.title
         binding.tvTitle.text = (if(title=="follower") getString(R.string.follow_list_follower) else getString(R.string.follow_list_following))
 
+        followAdapter = FollowAdapter(clickProfile = { userId ->
+            val action =
+                FollowFragmentDirections.actionFollowFragmentToOtherProfileFragment(userId.toString())
+            findNavController().navigate(action)
+        },
+            clickFollow = {isFollow, userId ->
+                if(isFollow) followViewModel.follow(token!!, userId)
+                else followViewModel.unFollow(token!!, userId)
+        })
+        binding.rvFollowList.adapter = followAdapter
+        binding.rvFollowList.itemAnimator = null
+
         lifecycleScope.launch {
-            followViewModel.followerState.collect{state->
+            followViewModel.followListState.collect{state->
                 when(state){
-                    is FollowerState.Success->{
-                        followAdapter = FollowAdapter(clickProfile = { userId ->
-                            val action =
-                                FollowFragmentDirections.actionFollowFragmentToOtherProfileFragment(userId.toString())
-                            findNavController().navigate(action)
-                        })
-                        binding.rvFollowList.adapter = followAdapter
-                        binding.rvFollowList.itemAnimator = null
+                    is FollowListState.Success->{
                         followAdapter.submitList(
                             if (title == "follower") {
                                 state.response.messages
@@ -75,21 +83,41 @@ class FollowFragment : Fragment() {
                         )
                         searchList(title, state.response.messages)
                     }
-                    is FollowerState.Loading->{
+                    is FollowListState.Loading->{
                         Timber.d("follower state loading")
                     }
-                    is FollowerState.Error->{
+                    is FollowListState.Error->{
                         Timber.e("setChats start chat state is error!!")
                     }
                 }
             }
         }
 
-        followViewModel.getFollowers()
+        if(title=="follower") followViewModel.getFollowers()
+        else followViewModel.getFollowing()
         clickBackButton()
     }
 
-    private fun searchList(title:String, followlist:List<ResponseFollowersDto.Follower>){
+    private fun setFollow(){
+        lifecycleScope.launch {
+            followViewModel.followState.collect{
+                when(it){
+                    is FollowState.Success->{
+                        followViewModel.resetFollowState()
+                        followAdapter.resetBtn()
+                    }
+                    is FollowState.Loading->{
+                        Timber.d("follower state loading")
+                    }
+                    is FollowState.Error->{
+                        Timber.e("setChats start chat state is error!!")
+                    }
+                }
+            }
+        }
+    }
+
+    private fun searchList(title:String, followlist:List<ResponseFollowListDto.Follower>){
         binding.etSearch.doOnTextChanged{ text, _, _, _ ->
             val keyword = text.toString().trim()
 
@@ -108,10 +136,18 @@ class FollowFragment : Fragment() {
 
     private fun clickBackButton() {
         binding.btnBack.setOnClickListener {
+            findNavController().previousBackStackEntry
+                ?.savedStateHandle
+                ?.set("should_refresh_profile", true)
+
             findNavController().popBackStack()
         }
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            findNavController().previousBackStackEntry
+                ?.savedStateHandle
+                ?.set("should_refresh_profile", true)
+
             findNavController().popBackStack()
         }
     }

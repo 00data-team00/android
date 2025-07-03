@@ -1,9 +1,0 @@
-package com.data.app.extension.community
-
-import com.data.app.data.response_dto.community.ResponseFollowersDto
-
-sealed class FollowerState {
-    data object Loading:FollowerState()
-    data class Success(val response: ResponseFollowersDto):FollowerState()
-    data class Error(val message: String):FollowerState()
-}

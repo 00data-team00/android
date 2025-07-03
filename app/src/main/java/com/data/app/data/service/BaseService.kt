@@ -14,7 +14,7 @@ import com.data.app.data.response_dto.explore.ResponseAllProgramDto
 import com.data.app.data.response_dto.home.ai.ResponseChatAiMessageDto
 import com.data.app.data.response_dto.home.ai.ResponseChatStartDto
 import com.data.app.data.response_dto.explore.ResponseDeadlineDto
-import com.data.app.data.response_dto.community.ResponseFollowersDto
+import com.data.app.data.response_dto.community.ResponseFollowListDto
 import com.data.app.data.response_dto.login.ResponseLoginDto
 import com.data.app.data.response_dto.community.ResponseEditProfileDto
 import com.data.app.data.response_dto.community.ResponseFollowDto
@@ -141,6 +141,16 @@ interface BaseService {
         @Path("userId") userId:Int,
     ): ResponseFollowDto
 
+    @GET("api/me/followers")
+    suspend fun getFollowerList(
+        @Header("Authorization") token:String
+    ):ResponseFollowListDto
+
+    @GET("/api/me/following")
+    suspend fun getFollowingList(
+        @Header("Authorization") token:String
+    ): ResponseFollowListDto
+
     // home
     @GET("api/me/user-game-info")
     suspend fun getUserGameInfo(
@@ -220,9 +230,5 @@ interface BaseService {
         @Header("Authorization") token:String,
         @Part image: MultipartBody.Part
     ): ResponseEditProfileDto
-    // followers
-    @GET("api/me/followers")
-    suspend fun getFollowerList(
-        @Header("Authorization") token:String
-    ):ResponseFollowersDto
+
 }

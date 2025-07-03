@@ -14,7 +14,7 @@ import com.data.app.data.response_dto.explore.ResponseAllProgramDto
 import com.data.app.data.response_dto.home.ai.ResponseChatAiMessageDto
 import com.data.app.data.response_dto.home.ai.ResponseChatStartDto
 import com.data.app.data.response_dto.explore.ResponseDeadlineDto
-import com.data.app.data.response_dto.community.ResponseFollowersDto
+import com.data.app.data.response_dto.community.ResponseFollowListDto
 import com.data.app.data.response_dto.login.ResponseLoginDto
 import com.data.app.data.response_dto.community.ResponseEditProfileDto
 import com.data.app.data.response_dto.community.ResponseFollowDto
@@ -111,6 +111,15 @@ interface BaseDataSource {
         userId:Int,
     ):ResponseFollowDto
 
+    suspend fun getFollowerList(
+        token: String
+    ):ResponseFollowListDto
+
+    suspend fun getFollowingList(
+        token: String
+    ):ResponseFollowListDto
+
+
     // home
     suspend fun getUserGameInfo(
         token:String,
@@ -174,13 +183,5 @@ interface BaseDataSource {
         token:String,
         image: MultipartBody.Part
     ): ResponseEditProfileDto
-
-    // followers
-    suspend fun getFollowerList(
-        token: String
-    ):ResponseFollowersDto
-
-    // followings
-
 
 }

@@ -4,7 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.data.app.data.Follow
 import com.data.app.domain.repository.BaseRepository
-import com.data.app.extension.community.FollowerState
+import com.data.app.extension.community.FollowListState
+import com.data.app.extension.community.FollowState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,10 +20,13 @@ import javax.inject.Inject
 @HiltViewModel
 class FollowViewModel @Inject constructor(
     private val baseRepository: BaseRepository
-):ViewModel() {
+) : ViewModel() {
     private var accessToken: String? = null
-    private val _followerState = MutableStateFlow<FollowerState>(FollowerState.Loading)
-    val followerState: StateFlow<FollowerState> = _followerState.asStateFlow()
+    private val _followListState = MutableStateFlow<FollowListState>(FollowListState.Loading)
+    val followListState: StateFlow<FollowListState> = _followListState.asStateFlow()
+    
+    private val _followState = MutableStateFlow<FollowState>(FollowState.Loading)
+    val followState: StateFlow<FollowState> = _followState.asStateFlow()
 
     fun saveToken(token: String) {
         accessToken = token
@@ -30,12 +34,12 @@ class FollowViewModel @Inject constructor(
 
     fun getFollowers() {
         viewModelScope.launch {
-            accessToken?.let{
+            accessToken?.let {
                 baseRepository.getFollowerList(accessToken!!).onSuccess { response ->
-                    _followerState.value = FollowerState.Success(response)
+                    _followListState.value = FollowListState.Success(response)
                     Timber.d("Get followers success!")
                 }.onFailure {
-                    _followerState.value = FollowerState.Error("Get followers failed!")
+                    _followListState.value = FollowListState.Error("Get followers failed!")
                     if (it is HttpException) {
                         try {
                             val errorBody: ResponseBody? = it.response()?.errorBody()
@@ -51,6 +55,77 @@ class FollowViewModel @Inject constructor(
         }
     }
 
+    fun getFollowing() {
+        viewModelScope.launch {
+            accessToken?.let {
+                baseRepository.getFollowingList(accessToken!!).onSuccess { response ->
+                    _followListState.value = FollowListState.Success(response)
+                    Timber.d("Get following")
+                }.onFailure {
+                    _followListState.value = FollowListState.Error("Get following failed!")
+                    if (it is HttpException) {
+                        try {
+                            val errorBody: ResponseBody? = it.response()?.errorBody()
+                            val errorBodyString = errorBody?.string() ?: ""
+                            httpError(errorBodyString)
+                        } catch (e: Exception) {
+                            // JSON 파싱 실패 시 로깅
+                            Timber.e("Error parsing error body: ${e}")
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    fun follow(token:String, userId:Int){
+        viewModelScope.launch {
+            baseRepository.follow(token, userId).onSuccess { response ->
+                _followState.value = FollowState.Success(response)
+            }.onFailure {
+                _followState.value = FollowState.Error(it.message.toString())
+                if (it is HttpException) {
+                    try {
+                        val errorBody: ResponseBody? = it.response()?.errorBody()
+                        val errorBodyString = errorBody?.string() ?: ""
+                        httpError(errorBodyString)
+                    } catch (e: Exception) {
+                        // JSON 파싱 실패 시 로깅
+                        Timber.e("Error parsing error body: ${e}")
+                    }
+                }
+            }
+        }
+    }
+
+    fun unFollow(token:String, userId:Int){
+        viewModelScope.launch {
+            baseRepository.unFollow(token, userId).onSuccess { response ->
+                _followState.value = FollowState.Success(response)
+            }.onFailure {
+                _followState.value = FollowState.Error(it.message.toString())
+                if (it is HttpException) {
+                    try {
+                        val errorBody: ResponseBody? = it.response()?.errorBody()
+                        val errorBodyString = errorBody?.string() ?: ""
+                        httpError(errorBodyString)
+                    } catch (e: Exception) {
+                        // JSON 파싱 실패 시 로깅
+                        Timber.e("Error parsing error body: ${e}")
+                    }
+                }
+            }
+        }
+    }
+
+    fun resetFollowState(){
+        _followState.value=FollowState.Loading
+    }
+
+    fun resetFollowListState() {
+        _followListState.value = FollowListState.Loading
+    }
+
     private fun httpError(errorBody: String) {
         // 전체 에러 바디를 로깅하여 디버깅
         Timber.e("Full error body: $errorBody")
@@ -60,7 +135,7 @@ class FollowViewModel @Inject constructor(
         val errorMessage = jsonObject.optString("message", "Unknown error")
 
         // 추출된 에러 메시지 로깅
-        Timber.e( "Error message: $errorMessage")
+        Timber.e("Error message: $errorMessage")
     }
 
 

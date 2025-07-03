@@ -1,7 +1,6 @@
 package com.data.app.extension.community
 
 import com.data.app.data.response_dto.community.ResponseFollowDto
-import com.data.app.data.response_dto.community.ResponseFollowersDto
 
 sealed class FollowState {
     data object Loading:FollowState()

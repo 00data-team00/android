@@ -96,6 +96,16 @@ class MyFragment : Fragment(), OnTabReselectedListener {
     }
 
     private fun setting() {
+        // ✅ 뒤에서 넘어온 데이터 감지
+        val savedStateHandle = findNavController().currentBackStackEntry?.savedStateHandle
+        savedStateHandle?.getLiveData<Boolean>("should_refresh_profile")?.observe(viewLifecycleOwner) { shouldRefresh ->
+            if (shouldRefresh) {
+                Timber.d("프로필 새로고침 신호 수신")
+                myViewModel.getProfile(appPreferences.getAccessToken()!!)
+                savedStateHandle.remove<Boolean>("should_refresh_profile") // 한 번만 실행되게 삭제
+            }
+        }
+
         showProfile()
 
         makeList()

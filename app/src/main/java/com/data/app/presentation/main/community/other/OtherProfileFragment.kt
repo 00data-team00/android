@@ -94,8 +94,6 @@ class OtherProfileFragment : Fragment() {
         showProfile(userId)
         showPosts(userId)
         getFollowState()
-
-        clickFollow()
         clickBackButton()
     }
 
@@ -131,6 +129,7 @@ class OtherProfileFragment : Fragment() {
                                     setTextColor(resources.getColor(R.color.bnv_unclicked_black))
                                     text = getString(R.string.my_profile_edit)
 
+                                    clickFollow()
                                     clickEditButton()
                                 } else {
                                     setBackgroundResource(R.drawable.btn_follow)
