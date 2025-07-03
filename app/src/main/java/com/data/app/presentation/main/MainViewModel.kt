@@ -17,4 +17,6 @@ class MainViewModel:ViewModel() {
     fun saveUserId(id:Int){
         userId=id
     }
+
+    fun getUserId():Int = userId!!
 }

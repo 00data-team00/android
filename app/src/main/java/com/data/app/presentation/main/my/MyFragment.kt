@@ -109,7 +109,7 @@ class MyFragment : Fragment(), OnTabReselectedListener {
                 when (myProfileState) {
                     is MyProfileState.Success -> {
                         Timber.d("myProfileState is success")
-                        //mainViewModel.saveUserId(myProfileState.response.)
+                        mainViewModel.saveUserId(myProfileState.response.userId)
                         with(binding) {
                             val profile =
                                 myProfileState.response.profileImage?.let { BuildConfig.BASE_URL.removeSuffix("/") + it }
@@ -176,34 +176,6 @@ class MyFragment : Fragment(), OnTabReselectedListener {
         myViewModel.getMyPosts(appPreferences.getAccessToken()!!)
 
         setLike()
-        /* lifecycleScope.launch {
-             myViewModel.myState.collect { myState ->
-                 when (myState) {
-                     is MyState.Success -> {
-                         Timber.d("myState is success")
-                         showProfile()
-                         myAdapter =
-                             _root_ide_package_.com.data.app.presentation.main.my.MyAdapter(clickPost = { post ->
-                                 val action =
-                                     MyFragmentDirections.actionMyFragmentToMyPostDetailFragment(post)
-                                 findNavController().navigate(action)
-                             })
-                         binding.rvPosts.adapter = myAdapter
-                         myAdapter.getList(myState.response)
-                     }
-
-                     is MyState.Loading -> {
-                         Timber.d("myState is loading")
-                     }
-
-                     is MyState.Error -> {
-                         Timber.d("myState is error")
-                     }
-                 }
-             }
-         }
-
-         binding.tvId.text = "kkuming"*/
     }
 
     private fun setLike(){

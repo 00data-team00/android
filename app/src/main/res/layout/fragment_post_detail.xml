@@ -55,6 +55,19 @@
             app:layout_constraintStart_toEndOf="@id/tv_id"
             app:layout_constraintTop_toTopOf="@id/tv_id" />
 
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_menu"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/ic_menu_black_24"
+            android:visibility="gone"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintWidth_percent="0.06"
+            app:layout_constraintTop_toTopOf="@id/btn_back"
+            app:layout_constraintBottom_toBottomOf="@id/btn_back"
+            app:layout_constraintEnd_toEndOf="@id/btn_share"/>
+
+
         <!--<androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_follow"
             android:layout_width="0dp"
