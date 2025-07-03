@@ -111,10 +111,10 @@ class MyFragment : Fragment(), OnTabReselectedListener {
                         Timber.d("myProfileState is success")
                         //mainViewModel.saveUserId(myProfileState.response.)
                         with(binding) {
-                            val imageUrl =
+                            val profile =
                                 myProfileState.response.profileImage?.let { BuildConfig.BASE_URL.removeSuffix("/") + it }
                             // val resourceId = resources.getIdentifier("ic_profile", "drawable", requireContext().packageName)
-                            ivProfile.load(imageUrl) {
+                            ivProfile.load(profile) {
                                 transformations(CircleCropTransformation())
                                 placeholder(R.drawable.ic_profile)
                                 fallback(R.drawable.ic_profile) // profile이 null일 때 기본 이미지 표시
@@ -130,7 +130,7 @@ class MyFragment : Fragment(), OnTabReselectedListener {
                                 checkGalleryPermissionAndOpenPicker()
                             }
 
-                            showPosts(imageUrl)
+                            showPosts(profile)
                         }
                     }
 

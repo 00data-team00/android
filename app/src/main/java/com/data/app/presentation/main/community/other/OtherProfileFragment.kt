@@ -13,10 +13,11 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import coil.load
 import coil.transform.CircleCropTransformation
+import com.data.app.BuildConfig
 import com.data.app.R
 import com.data.app.data.shared_preferences.AppPreferences
 import com.data.app.databinding.FragmentOtherProfileBinding
-import com.data.app.extension.community.OtherState
+import com.data.app.extension.community.GetUserPostState
 import com.data.app.extension.my.UserProfileState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -50,29 +51,28 @@ class OtherProfileFragment : Fragment() {
         setting()
     }
 
-    // 관광데이터 7/7 오후 19시 이후에 가능
-    // 하루 전날 컨설팅 링크 문자로
-    // 팀원 전체에 보냄
-
     private fun setting() {
-        val userId = otherProfileFragmentArgs.userId
-        showProfile()
-        //showPosts()
-        //makeList(userId)
+        val userId = otherProfileFragmentArgs.userId.toInt()
+        showProfile(userId)
+        showPosts(userId)
         clickFollowButton()
         clickFollow()
         clickBackButton()
     }
 
-    private fun showProfile() {
+    private fun showProfile(userId: Int) {
         lifecycleScope.launch {
             otherProfileViewModel.userProfileState.collect { userProfileState ->
                 when (userProfileState) {
                     is UserProfileState.Success -> {
                         Timber.d("userProfileState is success")
                         with(binding) {
-                            ivProfile.load(userProfileState.response.profileImage) {
+                            val profile =
+                                userProfileState.response.profileImage?.let { BuildConfig.BASE_URL.removeSuffix("/") + it }
+                            ivProfile.load(profile) {
                                 transformations(CircleCropTransformation())
+                                placeholder(R.drawable.ic_profile)
+                                error(R.drawable.ic_profile)
                             }
                             tvName.text = userProfileState.response.name
                             tvCountry.text = userProfileState.response.nationNameKo
@@ -93,44 +93,42 @@ class OtherProfileFragment : Fragment() {
             }
         }
 
-        otherProfileViewModel.getUserProfile(appPreferences.getAccessToken()!!, 1)
-
-
+        otherProfileViewModel.getUserProfile(appPreferences.getAccessToken()!!, userId)
     }
 
-   /* private fun showPosts() {
+    private fun showPosts(userId: Int) {
         lifecycleScope.launch {
-            otherProfileViewModel.otherState.collect { otherState ->
-                when (otherState) {
-                    is OtherState.Success -> {
+            otherProfileViewModel.getUserPostState.collect { getUserPostState ->
+                when (getUserPostState) {
+                    is GetUserPostState.Success -> {
                         Timber.d("otherState is success")
-                        otherProfileAdapter = OtherProfileAdapter(clickPost = { post ->
+                        otherProfileAdapter = OtherProfileAdapter(clickPost = { userId ->
                             val action =
                                 OtherProfileFragmentDirections.actionOtherProfileFragmentToPostDetailFragment(
-                                    post
+                                    userId.toString()
                                 )
                             findNavController().navigate(action)
-                        })
+                        },
+                            clickLike = { postId, isLike ->
+
+                            })
                         binding.rvPosts.adapter = otherProfileAdapter
-                        otherProfileAdapter.getList(otherState.response)
+                        otherProfileAdapter.getList(getUserPostState.data)
                     }
 
-                    is OtherState.Loading -> {
+                    is GetUserPostState.Loading -> {
                         Timber.d("otherState is loading")
                     }
 
-                    is OtherState.Error -> {
+                    is GetUserPostState.Error -> {
                         Timber.d("otherState is error")
                     }
                 }
             }
         }
-    }*/
 
-    private fun makeList(profile: String, name: String) {
-        otherProfileViewModel.getOtherProfile(profile, name)
+        otherProfileViewModel.getUserPost(appPreferences.getAccessToken()!!, userId)
     }
-
     private fun clickFollowButton() {
         with(binding.btnFollow) {
             setOnClickListener {

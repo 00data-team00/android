@@ -84,6 +84,10 @@ interface BaseDataSource {
         userId:Int,
     ):ResponseProfileDto
 
+    suspend fun getUserPosts(
+        token:String,
+        userId:Int,
+    ): ResponseTimeLineDto
     suspend fun writePost(
         token:String,
         content:String,

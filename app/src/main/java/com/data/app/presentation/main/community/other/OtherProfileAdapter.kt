@@ -5,21 +5,24 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
-import coil3.load
+import coil.load
+import coil3.request.placeholder
 import coil3.request.transformations
-import coil3.transform.CircleCropTransformation
-import coil3.transform.RoundedCornersTransformation
+import coil.transform.CircleCropTransformation
+import coil.transform.RoundedCornersTransformation
 import com.data.app.BuildConfig
 import com.data.app.R
 import com.data.app.data.Post
+import com.data.app.data.response_dto.community.ResponseTimeLineDto
 import com.data.app.data.response_dto.my.ResponseMyPostDto
 import com.data.app.databinding.ItemPostBinding
 import com.data.app.util.TimeAgoFormatter
 import timber.log.Timber
 
-class OtherProfileAdapter(val clickPost:(Int)->Unit):
+class OtherProfileAdapter(val clickPost:(Int)->Unit, val clickLike:(Int, Boolean)->Unit):
 RecyclerView.Adapter<OtherProfileAdapter.OtherProfileViewHolder>(){
-    private val postsList = mutableListOf<ResponseMyPostDto.PostDto>()
+
+    private val postsList = mutableListOf<ResponseTimeLineDto.TimelinePostItem>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OtherProfileViewHolder {
         val binding = ItemPostBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -32,7 +35,7 @@ RecyclerView.Adapter<OtherProfileAdapter.OtherProfileViewHolder>(){
         holder.bind(postsList[position])
     }
 
-    fun getList(list: List<ResponseMyPostDto.PostDto>) {
+    fun getList(list: List<ResponseTimeLineDto.TimelinePostItem>) {
         postsList.clear()
         postsList.addAll(list)
         notifyDataSetChanged()
@@ -40,22 +43,23 @@ RecyclerView.Adapter<OtherProfileAdapter.OtherProfileViewHolder>(){
 
     inner class OtherProfileViewHolder(private val binding: ItemPostBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(data: ResponseMyPostDto.PostDto) {
+        fun bind(data: ResponseTimeLineDto.TimelinePostItem) {
             with(binding) {
                 val profile =
-                    BuildConfig.BASE_URL.removeSuffix("/")
+                    data.authorProfile.profileImage?.let { BuildConfig.BASE_URL.removeSuffix("/") + it }
+                Timber.d("profile is $profile")
                 binding.ivProfile.load(profile){
                     transformations(CircleCropTransformation())
+                    placeholder(R.drawable.ic_profile)
+                    error(R.drawable.ic_profile)
                 }
-                /*ivProfile.load(data.) {
-                    transformations(CircleCropTransformation())
-                }
-*/
+
                 val lp = binding.ivImage.layoutParams as ConstraintLayout.LayoutParams
 
-                /*if (!data.images.isNullOrEmpty()) {
+                val post = data.post
+                if (!post.imageUrl.isNullOrEmpty()) {
                     binding.ivImage.visibility = View.VISIBLE
-                    binding.ivImage.load(data.images[0]) {
+                    binding.ivImage.load(data.post.imageUrl) {
                         transformations(RoundedCornersTransformation(30f))
                     }
                     lp.dimensionRatio = "2:1"
@@ -63,7 +67,7 @@ RecyclerView.Adapter<OtherProfileAdapter.OtherProfileViewHolder>(){
                     binding.ivImage.setImageDrawable(null)
                     binding.ivImage.visibility = View.GONE
                     lp.dimensionRatio = null
-                }*/
+                }
 
                 binding.ivImage.setImageDrawable(null)
                 binding.ivImage.visibility = View.GONE
@@ -71,22 +75,21 @@ RecyclerView.Adapter<OtherProfileAdapter.OtherProfileViewHolder>(){
 
                 binding.ivImage.layoutParams = lp
 
-                tvId.text = root.context.getString(R.string.community_id, data.id)
+                tvId.text = root.context.getString(R.string.community_id, data.authorProfile.name)
 
-                val timeAgo = TimeAgoFormatter.formatTimeAgo(data.createdAt)
+                val timeAgo = TimeAgoFormatter.formatTimeAgo(post.createdAt)
                 tvTime.text = root.context.getString(R.string.community_time, timeAgo)
 
               /*  btnFollow.isSelected = data.isFollowing
                 if (data.isFollowing) btnFollow.text =
                     root.context.getString(R.string.community_follow)*/
-                tvContent.text = data.content
-                tvLikeCount.text = data.likeCount.toString()
-                tvCommentCount.text = data.commentCount.toString()
+                tvContent.text = post.content
+                tvLikeCount.text = post.likeCount.toString()
+                tvCommentCount.text = post.commentCount.toString()
 
                // clickFollow()
-                clickLike()
-
-                //showDetail(data)
+                clickLike(post.id)
+                showDetail(post.authorId)
             }
         }
 
@@ -103,7 +106,7 @@ RecyclerView.Adapter<OtherProfileAdapter.OtherProfileViewHolder>(){
             }
         }*/
 
-        private fun clickLike(){
+        private fun clickLike(postId:Int){
             with(binding){
                 btnLike.setOnClickListener {
                     btnLike.isSelected = !btnLike.isSelected
@@ -111,15 +114,17 @@ RecyclerView.Adapter<OtherProfileAdapter.OtherProfileViewHolder>(){
                             if (btnLike.isSelected) tvLikeCount.text.toString().toInt() + 1
                             else tvLikeCount.text.toString().toInt() - 1
                             ).toString()
+
+                    clickLike(postId, btnLike.isSelected)
                 }
             }
         }
 
-        /*private fun showDetail(data: Post){
+        private fun showDetail(userId:Int){
             listOf(binding.tvContent, binding.ivImage).forEach {
-                it.setOnClickListener { clickPost(data) }
+                it.setOnClickListener { clickPost(userId) }
             }
-        }*/
+        }
 
     }
 }

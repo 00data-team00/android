@@ -74,11 +74,13 @@ class CommunityFragment:Fragment(), OnTabReselectedListener {
             }
         )
         binding.rvPosts.adapter=postsAdapter
+        postsAdapter.setLoading(true)
 
         lifecycleScope.launch {
             communityViewModel.getAllTimeLineState.collect { state ->
                 when (state) {
                     is GetAllTimeLineState.Success -> {
+                        postsAdapter.setLoading(false)
                         postsAdapter.getList(state.data)
                         //binding.rvPosts.scrollToPosition(0)
 
