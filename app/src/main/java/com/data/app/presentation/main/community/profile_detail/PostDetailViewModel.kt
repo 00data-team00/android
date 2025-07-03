@@ -3,6 +3,7 @@ package com.data.app.presentation.main.community.profile_detail
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.data.app.domain.repository.BaseRepository
+import com.data.app.extension.community.DeletePostState
 import com.data.app.extension.community.GetAllTimeLineState
 import com.data.app.extension.community.LikePostState
 import com.data.app.extension.community.PostDetailState
@@ -30,6 +31,9 @@ class PostDetailViewModel @Inject constructor(
 
     private val _writeCommentState = MutableStateFlow<WriteCommentState>(WriteCommentState.Loading)
     val writeCommentState: StateFlow<WriteCommentState> = _writeCommentState.asStateFlow()
+
+    private val _deletePostState = MutableStateFlow<DeletePostState>(DeletePostState.Loading)
+    val deletePostState: StateFlow<DeletePostState> = _deletePostState.asStateFlow()
 
     fun getPostDetail(token: String, postId: Int) {
         viewModelScope.launch {
@@ -97,6 +101,26 @@ class PostDetailViewModel @Inject constructor(
                 _writeCommentState.value = WriteCommentState.Success(it)
             }.onFailure {
                 _writeCommentState.value = WriteCommentState.Error(it.message.toString())
+                if (it is HttpException) {
+                    try {
+                        val errorBody: ResponseBody? = it.response()?.errorBody()
+                        val errorBodyString = errorBody?.string() ?: ""
+                        httpError(errorBodyString)
+                    } catch (e: Exception) {
+                        // JSON 파싱 실패 시 로깅
+                        Timber.e("Error parsing error body: ${e}")
+                    }
+                }
+            }
+        }
+    }
+
+    fun deletePost(token:String, postId:Int){
+        viewModelScope.launch {
+            baseRepository.deletePost(token, postId).onSuccess { response->
+                _deletePostState.value = DeletePostState.Success(response)
+            }.onFailure {
+                _deletePostState.value = DeletePostState.Error(it.message.toString())
                 if (it is HttpException) {
                     try {
                         val errorBody: ResponseBody? = it.response()?.errorBody()

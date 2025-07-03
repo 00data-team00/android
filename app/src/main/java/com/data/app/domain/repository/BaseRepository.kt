@@ -1,5 +1,6 @@
 package com.data.app.domain.repository
 
+import com.data.app.data.response_dto.community.ResponseDeletePostDto
 import com.data.app.data.response_dto.home.ai.ResponseAIPreviousChatMessagesDto
 import com.data.app.data.response_dto.home.ai.ResponseAIPreviousRecordsDto
 import com.data.app.data.response_dto.home.ai.ResponseAITopicsDto
@@ -93,6 +94,11 @@ interface BaseRepository {
         content:String,
         image:MultipartBody.Part?
     ):Result<ResponseMyPostDto.PostDto>
+
+    suspend fun deletePost(
+        token:String,
+        postId:Int,
+    ):Result<ResponseDeletePostDto>
 
     // home
     suspend fun getUserGameInfo(
