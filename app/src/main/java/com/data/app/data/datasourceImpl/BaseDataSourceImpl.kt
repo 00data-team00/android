@@ -49,6 +49,7 @@ class BaseDataSourceImpl @Inject constructor(
     override suspend fun unlikePost(token: String, postId: Int): Response<Unit> = baseService.unlikePost(token, postId)
     override suspend fun writeComment(token: String, postId: Int, content: String): ResponsePostDetailDto.CommentDto = baseService.writeComment(token, postId, content)
     override suspend fun getUserProfile(token: String, userId: Int): ResponseProfileDto = baseService.getUserProfile(token, userId)
+    override suspend fun getUserPosts(token: String, userId: Int): ResponseTimeLineDto = baseService.getUserPosts(token, userId)
     override suspend fun writePost(
         token: String,
         content: String,

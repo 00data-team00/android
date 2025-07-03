@@ -107,6 +107,12 @@ interface BaseService {
         @Path("userId") userId:Int,
     ): ResponseProfileDto
 
+    @GET("api/users/{userId}/posts")
+    suspend fun getUserPosts(
+        @Header("Authorization") token:String,
+        @Path("userId") userId:Int,
+    ): ResponseTimeLineDto
+
     @Multipart
     @POST("api/me/posts")
     suspend fun writePost(

@@ -13,6 +13,7 @@ import com.data.app.BuildConfig
 import com.data.app.R
 import com.data.app.data.response_dto.community.ResponseTimeLineDto
 import com.data.app.databinding.ItemPostBinding
+import com.data.app.presentation.main.community.other.OtherProfileAdapter
 import com.data.app.util.TimeAgoFormatter
 import timber.log.Timber
 
@@ -21,19 +22,40 @@ class PostsAdapter(
     val clickOtherUser: (Int) -> Unit,
     val clickLikeBtn: (Int, Boolean) -> Unit
 ) :
-    RecyclerView.Adapter<PostsAdapter.FeedsViewHolder>() {
-
+    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    companion object {
+        private const val VIEW_TYPE_SHIMMER = 0
+        private const val VIEW_TYPE_NORMAL = 1
+    }
     private val postsList = mutableListOf<ResponseTimeLineDto.TimelinePostItem>()
+    private var isLoading = true
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FeedsViewHolder {
-        val binding = ItemPostBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return FeedsViewHolder(binding)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return if (viewType == VIEW_TYPE_SHIMMER) {
+            val view = LayoutInflater.from(parent.context)
+                .inflate(R.layout.item_post_shimmer, parent, false)
+            ShimmerViewHolder(view)
+        } else {
+            val binding = ItemPostBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            FeedsViewHolder(binding)
+        }
     }
 
-    override fun getItemCount(): Int = postsList.size
+    override fun getItemCount(): Int =if (isLoading) 5 else postsList.size
 
-    override fun onBindViewHolder(holder: FeedsViewHolder, position: Int) {
-        holder.bind(postsList[position])
+    override fun getItemViewType(position: Int): Int {
+        return if (isLoading) VIEW_TYPE_SHIMMER else VIEW_TYPE_NORMAL
+    }
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        if (holder is FeedsViewHolder) {
+            holder.bind(postsList[position])
+        }
+    }
+
+    fun setLoading(loading: Boolean) {
+        isLoading = loading
+        notifyDataSetChanged()
     }
 
     fun getList(list: List<ResponseTimeLineDto.TimelinePostItem>) {
@@ -41,6 +63,8 @@ class PostsAdapter(
         postsList.addAll(list)
         notifyDataSetChanged()
     }
+
+    inner class ShimmerViewHolder(view: View) : RecyclerView.ViewHolder(view)
 
     inner class FeedsViewHolder(private val binding: ItemPostBinding) :
         RecyclerView.ViewHolder(binding.root) {

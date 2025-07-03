@@ -144,6 +144,14 @@ class BaseRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getUserPosts(token: String, userId: Int): Result<ResponseTimeLineDto> {
+        return runCatching {
+            baseDataSource.getUserPosts(token, userId)
+        }.onFailure {
+            Timber.e("base repository get user posts fail!: $it")
+        }
+    }
+
     override suspend fun writePost(
         token: String,
         content: String,

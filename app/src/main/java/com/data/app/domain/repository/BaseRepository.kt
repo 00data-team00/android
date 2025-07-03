@@ -83,6 +83,11 @@ interface BaseRepository {
         userId:Int,
     ):Result<ResponseProfileDto>
 
+    suspend fun getUserPosts(
+        token:String,
+        userId:Int,
+    ):Result<ResponseTimeLineDto>
+
     suspend fun writePost(
         token:String,
         content:String,
