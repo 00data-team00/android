@@ -63,14 +63,14 @@ class CommunityFragment:Fragment(), OnTabReselectedListener {
                     is GetAllTimeLineState.Success -> {
                         postsAdapter= PostsAdapter(
                             clickPost = {post->
-                                /*val action=CommunityFragmentDirections
-                                    .actionCommunityFragmentToPostDetailFragment(post)
-                                findNavController().navigate(action)*/
+                                val action=CommunityFragmentDirections
+                                    .actionCommunityFragmentToPostDetailFragment(post.toString())
+                                findNavController().navigate(action)
                             },
-                            clickOtherUser = {profile, name->
-                                /*val action=CommunityFragmentDirections
-                                    .actionCommunityFragmentToOtherProfileFragment(profile, name)
-                                findNavController().navigate(action)*/
+                            clickOtherUser = {userId->
+                                val action=CommunityFragmentDirections
+                                    .actionCommunityFragmentToOtherProfileFragment(userId.toString())
+                                findNavController().navigate(action)
                             }
                         )
                         binding.rvPosts.adapter=postsAdapter

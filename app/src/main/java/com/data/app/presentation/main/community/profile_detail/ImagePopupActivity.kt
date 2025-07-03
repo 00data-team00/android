@@ -10,10 +10,11 @@ import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
-import coil3.load
+import coil.load
 import com.data.app.R
 import com.data.app.databinding.ActivityImagePopupBinding
 import com.data.app.presentation.main.BaseActivity
+import timber.log.Timber
 
 class ImagePopupActivity() : BaseActivity() {
     private lateinit var binding: ActivityImagePopupBinding
@@ -36,8 +37,10 @@ class ImagePopupActivity() : BaseActivity() {
     }
 
     private fun showImage() {
-        val images = intent.getIntegerArrayListExtra("imageList") ?: arrayListOf(R.drawable.bg_post_gray)
+        val images = intent.getStringArrayListExtra("imageList") ?: arrayListOf(R.drawable.bg_post_gray)
         val startIndex = intent.getIntExtra("startIndex", 0).coerceIn(0, images.lastIndex)
+
+        Timber.d("images: $images")
 
         val adapter = object : RecyclerView.Adapter<ImageViewHolder>() {
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {

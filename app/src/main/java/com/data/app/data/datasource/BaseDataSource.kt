@@ -16,6 +16,7 @@ import com.data.app.data.response_dto.explore.ResponseDeadlineDto
 import com.data.app.data.response_dto.community.ResponseFollowersDto
 import com.data.app.data.response_dto.login.ResponseLoginDto
 import com.data.app.data.response_dto.community.ResponseEditProfileDto
+import com.data.app.data.response_dto.community.ResponsePostDetailDto
 import com.data.app.data.response_dto.community.ResponseTimeLineDto
 import com.data.app.data.response_dto.my.ResponseMyPostDto
 import com.data.app.data.response_dto.my.ResponseProfileDto
@@ -45,7 +46,6 @@ interface BaseDataSource {
     ):ResponseLoginDto
 
     // community
-
     suspend fun getAllTimeLine(
         token:String,
     ): ResponseTimeLineDto
@@ -57,6 +57,11 @@ interface BaseDataSource {
     suspend fun getFollowingTimeLine(
         token:String,
     ): ResponseTimeLineDto
+
+    suspend fun getPostDetail(
+        token:String,
+        postId:Int,
+    ): ResponsePostDetailDto
 
     suspend fun getUserProfile(
         token:String,

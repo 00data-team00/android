@@ -60,9 +60,9 @@ class FollowFragment : Fragment() {
             followViewModel.followerState.collect{state->
                 when(state){
                     is FollowerState.Success->{
-                        followAdapter = FollowAdapter(clickProfile = { profile, name ->
+                        followAdapter = FollowAdapter(clickProfile = { userId ->
                             val action =
-                                FollowFragmentDirections.actionFollowFragmentToOtherProfileFragment(profile, name)
+                                FollowFragmentDirections.actionFollowFragmentToOtherProfileFragment(userId.toString())
                             findNavController().navigate(action)
                         })
                         binding.rvFollowList.adapter = followAdapter

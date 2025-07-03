@@ -1,16 +1,14 @@
-package com.data.app.data.response_dto.my
+package com.data.app.extension.community
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ResponseProfileDto(
-    @SerialName("userId")
-    val userId:Int,
+data class OtherProfileState (
     @SerialName("name")
     val name: String,
     @SerialName("profileImage")
-    val profileImage: String?,
+    val profileImage: String?, // Nullable 고려: String? = null
     @SerialName("postCount")
     val postCount: Int,
     @SerialName("followerCount")
@@ -20,7 +18,7 @@ data class ResponseProfileDto(
     @SerialName("isFollowing")
     val isFollowing: Boolean,
     @SerialName("nationName")
-    val nationName:String,
+    val nationName: String,
     @SerialName("nationNameKo")
-    val nationNameKo:String
+    val nationNameKo: String
 )

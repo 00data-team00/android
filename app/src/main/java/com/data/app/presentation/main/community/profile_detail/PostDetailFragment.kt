@@ -8,24 +8,40 @@ import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.RecyclerView
-import coil3.load
+import coil.load
+import coil3.request.placeholder
 import coil3.request.transformations
-import coil3.transform.CircleCropTransformation
+import coil.transform.CircleCropTransformation
+import com.data.app.BuildConfig
 import com.data.app.R
 import com.data.app.data.Post
+import com.data.app.data.response_dto.community.ResponsePostDetailDto
+import com.data.app.data.shared_preferences.AppPreferences
 import com.data.app.databinding.FragmentPostDetailBinding
+import com.data.app.extension.community.PostDetailState
+import com.data.app.util.TimeAgoFormatter
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class PostDetailFragment : Fragment() {
     private var _binding: FragmentPostDetailBinding? = null
     private val binding: FragmentPostDetailBinding
         get() = requireNotNull(_binding) { "home fragment is null" }
 
     private val postDetailFragmentArgs: PostDetailFragmentArgs by navArgs()
-    private lateinit var communityDetailAdapter: PostDetailAdapter
+    private val postDetailViewModel: PostDetailViewModel by viewModels()
+    private lateinit var postDetailAdapter: PostDetailAdapter
+
+    @Inject
+    lateinit var appPreferences: AppPreferences
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -42,50 +58,85 @@ class PostDetailFragment : Fragment() {
     }
 
     private fun setting() {
-        val post = postDetailFragmentArgs.post
-        showPost(post)
-        showComments(post)
+        getPost()
         clickBackButton()
     }
 
-    private fun showPost(post: Post) {
-        with(binding) {
-            ivProfile.load(post.profile) {
-                transformations(CircleCropTransformation())
-            }
-            tvId.text = getString(R.string.community_id, post.id)
-            tvTime.text = getString(R.string.community_time, post.time)
-            tvContent.text = post.content
-            tvLikeCount.text = post.like.toString()
-            tvCommentCount.text = post.comments.size.toString()
+    private fun getPost() {
+        val postId = postDetailFragmentArgs.postId.toInt()
+        lifecycleScope.launch {
+            postDetailViewModel.postDetailState.collect { postState ->
+                when (postState) {
+                    is PostDetailState.Success -> {
+                        val post = postState.response
 
-            btnFollow.isSelected = post.isFollowing
+                        //binding.btnFollow.isSelected = post.isFollowing
+                        showPost(post)
+                        showImages(post)
+                        showComments(post.authorProfileImage, post.comments)
+                    }
 
-            listOf(ivProfile, tvId).forEach {
-                it.setOnClickListener {
-                    clickProfileOrId(post.profile, post.id)
+                    is PostDetailState.Loading -> {}
+                    is PostDetailState.Error -> {}
                 }
             }
         }
-        showImages(post)
-        clickFollow()
-        clickLike()
+
+        postDetailViewModel.getPostDetail(appPreferences.getAccessToken()!!, postId)
+
+        /*
+         showImages(post)
+         clickFollow()
+         clickLike()*/
     }
 
-    private fun showImages(post: Post) {
+    private fun showPost(post: ResponsePostDetailDto){
+        with(binding){
+            val profile = post.authorProfileImage?.let { BuildConfig.BASE_URL.removeSuffix("/") + it }
+
+            binding.ivProfile.load(profile) {
+                transformations(CircleCropTransformation())
+                placeholder(R.drawable.ic_profile)
+                error(R.drawable.ic_profile)
+            }
+
+            tvId.text = getString(R.string.community_id, post.authorName)
+
+            val timeAgo = TimeAgoFormatter.formatTimeAgo(post.createdAt)
+            tvTime.text = getString(R.string.community_time, timeAgo)
+            tvContent.text = post.content
+            tvLikeCount.text = post.likeCount.toString()
+            tvCommentCount.text = post.commentCount.toString()
+
+            //btnFollow.isSelected = post.
+
+            listOf(ivProfile, tvId).forEach {
+                it.setOnClickListener {
+                    clickProfileOrId(post.authorId)
+                }
+            }
+        }
+
+    }
+
+    private fun showImages(post: ResponsePostDetailDto) {
         val lp = binding.vpImages.layoutParams as ConstraintLayout.LayoutParams
-        if (!post.images.isNullOrEmpty()) {
+        val imageUrl =
+            post.imageUrl?.let { BuildConfig.BASE_URL.removeSuffix("/") + it }
+
+        if (!imageUrl.isNullOrEmpty()) {
             val postDetailImageAdapter = PostDetailImageAdapter(clickImage = { position ->
                 val intent = Intent(requireContext(), ImagePopupActivity::class.java).apply {
-                    putIntegerArrayListExtra("imageList", ArrayList(post.images))
+                    putStringArrayListExtra("imageList", arrayListOf(imageUrl))
                     putExtra("startIndex", position)
                 }
                 startActivity(intent)
                 requireActivity().overridePendingTransition(0, 0)
             })
 
+            Timber.d("imageUrl: $imageUrl")
             binding.vpImages.adapter = postDetailImageAdapter
-            postDetailImageAdapter.getList(post.images)
+            postDetailImageAdapter.getList(imageUrl)
 
             // ViewPager 간 마진 설정
             binding.vpImages.apply {
@@ -108,25 +159,26 @@ class PostDetailFragment : Fragment() {
 
     }
 
-    private fun showComments(post: Post) {
-        communityDetailAdapter = PostDetailAdapter(addComment = { size ->
-            binding.tvCommentCount.text = size.toString()
-        },
-            clickProfileOrId = {profile, name->
-                clickProfileOrId(profile, name)
+    private fun showComments(profileUrl:String?, post: List<ResponsePostDetailDto.CommentDto>) {
+        postDetailAdapter = PostDetailAdapter(
+            addComment = { size ->
+                binding.tvCommentCount.text = size.toString()
+            },
+            clickProfileOrId = { userId ->
+                clickProfileOrId(userId)
             }
         )
-        binding.rvComments.adapter = communityDetailAdapter
-        communityDetailAdapter.getUser(post)
-        communityDetailAdapter.getList(post.comments)
+        binding.rvComments.adapter = postDetailAdapter
+        postDetailAdapter.getUser(profileUrl)
+        postDetailAdapter.getList(post)
     }
 
-    private fun clickProfileOrId(profile:String, name:String){
-        val action=PostDetailFragmentDirections.actionPostDetailFragmentToOtherProfileFragment(profile, name)
+    private fun clickProfileOrId(userId:Int) {
+        val action = PostDetailFragmentDirections.actionPostDetailFragmentToOtherProfileFragment(userId.toString())
         findNavController().navigate(action)
     }
 
-    private fun clickFollow() {
+   /* private fun clickFollow() {
         with(binding.btnFollow) {
             setOnClickListener {
                 isSelected = !isSelected
@@ -137,7 +189,7 @@ class PostDetailFragment : Fragment() {
             }
         }
     }
-
+*/
     private fun clickLike() {
         Timber.d("like count: ${binding.tvLikeCount.text}")
         with(binding) {

@@ -206,7 +206,7 @@ class ExploreFragment : Fragment(), OnTabReselectedListener {
         exploreViewModel.resetPaging()
 
         // 데이터 새로 fetch
-        exploreViewModel.getAllPrograms(isFree = false)  // 혹은 현재 선택된 필터값
+        exploreViewModel.getAllPrograms(isFree = binding.btnFree.isSelected)  // 혹은 현재 선택된 필터값
         exploreViewModel.getDeadLinePrograms()
     }
 }

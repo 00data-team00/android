@@ -22,7 +22,6 @@ import javax.inject.Inject
 class OtherProfileViewModel @Inject constructor(
     private val baseRepository: BaseRepository
 ) :ViewModel() {
-
     private val _userProfileState = MutableStateFlow<UserProfileState>(UserProfileState.Loading)
     val userProfileState: StateFlow<UserProfileState> = _userProfileState.asStateFlow()
     private val _otherState = MutableStateFlow<OtherState>(OtherState.Loading)

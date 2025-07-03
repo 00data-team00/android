@@ -10,7 +10,7 @@
         android:label="my">
         <action
             android:id="@+id/action_myFragment_to_myPostDetailFragment"
-            app:destination="@id/myPostDetailFragment"
+            app:destination="@id/postDetailFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/stay"
             app:popEnterAnim="@anim/stay"
@@ -25,14 +25,14 @@
             app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
 
-    <fragment
+    <!--<fragment
         android:id="@+id/myPostDetailFragment"
         android:name="com.data.app.presentation.main.community.profile_detail.PostDetailFragment"
         android:label="my_post_detail">
         <argument
             android:name="post"
             app:argType="com.data.app.data.Post"/>
-    </fragment>
+    </fragment>-->
 
     <fragment
         android:id="@+id/followFragment"
@@ -55,12 +55,17 @@
         android:id="@+id/otherProfileFragment"
         android:name="com.data.app.presentation.main.community.other.OtherProfileFragment"
         android:label="other_profile">
+
         <argument
+            android:name="userId"
+            app:argType="string"/>
+
+        <!--<argument
             android:name="other_profile"
             app:argType="string"/>
         <argument
             android:name="other_name"
-            app:argType="string"/>
+            app:argType="string"/>-->
         <action
             android:id="@+id/action_otherProfileFragment_to_postDetailFragment"
             app:destination="@id/postDetailFragment"
@@ -82,8 +87,11 @@
         android:name="com.data.app.presentation.main.community.profile_detail.PostDetailFragment"
         android:label="post_detail">
         <argument
+            android:name="postId"
+            app:argType="string"/>
+    <!--    <argument
             android:name="post"
-            app:argType="com.data.app.data.Post"/>
+            app:argType="com.data.app.data.Post"/>-->
         <action
             android:id="@+id/action_postDetailFragment_to_otherProfileFragment"
             app:destination="@id/otherProfileFragment"

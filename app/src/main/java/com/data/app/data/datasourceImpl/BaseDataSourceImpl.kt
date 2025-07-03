@@ -17,6 +17,7 @@ import com.data.app.data.response_dto.explore.ResponseDeadlineDto
 import com.data.app.data.response_dto.community.ResponseFollowersDto
 import com.data.app.data.response_dto.login.ResponseLoginDto
 import com.data.app.data.response_dto.community.ResponseEditProfileDto
+import com.data.app.data.response_dto.community.ResponsePostDetailDto
 import com.data.app.data.response_dto.community.ResponseTimeLineDto
 import com.data.app.data.response_dto.my.ResponseMyPostDto
 import com.data.app.data.response_dto.my.ResponseProfileDto
@@ -43,6 +44,7 @@ class BaseDataSourceImpl @Inject constructor(
     override suspend fun getAllTimeLine(token: String): ResponseTimeLineDto = baseService.getAllTimeLine(token)
     override suspend fun getNationTimeLine(token: String): ResponseTimeLineDto = baseService.getNationTimeLine(token)
     override suspend fun getFollowingTimeLine(token: String): ResponseTimeLineDto = baseService.getFollowingTimeLine(token)
+    override suspend fun getPostDetail(token: String, postId: Int): ResponsePostDetailDto = baseService.getPostDetail(token, postId)
     override suspend fun getUserProfile(token: String, userId: Int): ResponseProfileDto = baseService.getUserProfile(token, userId)
     override suspend fun writePost(
         token: String,

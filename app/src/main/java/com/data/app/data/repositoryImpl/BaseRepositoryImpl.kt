@@ -17,6 +17,7 @@ import com.data.app.data.response_dto.explore.ResponseDeadlineDto
 import com.data.app.data.response_dto.community.ResponseFollowersDto
 import com.data.app.data.response_dto.login.ResponseLoginDto
 import com.data.app.data.response_dto.community.ResponseEditProfileDto
+import com.data.app.data.response_dto.community.ResponsePostDetailDto
 import com.data.app.data.response_dto.community.ResponseTimeLineDto
 import com.data.app.data.response_dto.my.ResponseMyPostDto
 import com.data.app.data.response_dto.my.ResponseProfileDto
@@ -96,6 +97,14 @@ class BaseRepositoryImpl @Inject constructor(
             baseDataSource.getFollowingTimeLine(token)
         }.onFailure {
             Timber.e("base repository get follow time line fail!: $it")
+        }
+    }
+
+    override suspend fun getPostDetail(token: String, postId: Int): Result<ResponsePostDetailDto> {
+        return runCatching {
+            baseDataSource.getPostDetail(token, postId)
+        }.onFailure {
+            Timber.e("base repository get post detail fail!: $it")
         }
     }
 

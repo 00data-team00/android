@@ -5,17 +5,18 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
-import coil3.load
+import coil.load
 import coil3.request.transformations
-import coil3.transform.CircleCropTransformation
-import coil3.transform.RoundedCornersTransformation
+import coil.transform.CircleCropTransformation
+import coil.transform.RoundedCornersTransformation
+import com.data.app.BuildConfig
 import com.data.app.R
 import com.data.app.data.response_dto.community.ResponseTimeLineDto
 import com.data.app.databinding.ItemPostBinding
 import com.data.app.util.TimeAgoFormatter
 import timber.log.Timber
 
-class PostsAdapter(val clickPost: (ResponseTimeLineDto.Posts) -> Unit, val clickOtherUser:(String, String)->Unit) :
+class PostsAdapter(val clickPost: (Int) -> Unit, val clickOtherUser:(Int)->Unit) :
     RecyclerView.Adapter<PostsAdapter.FeedsViewHolder>() {
 
     private val postsList = mutableListOf<ResponseTimeLineDto.Posts>()
@@ -41,7 +42,9 @@ class PostsAdapter(val clickPost: (ResponseTimeLineDto.Posts) -> Unit, val click
         RecyclerView.ViewHolder(binding.root) {
         fun bind(data: ResponseTimeLineDto.Posts) {
             with(binding) {
-                ivProfile.load(data.authorProfile.profileImage) {
+                val profile =
+                    BuildConfig.BASE_URL.removeSuffix("/")+data.authorProfile.profileImage
+                ivProfile.load(profile) {
                     transformations(CircleCropTransformation())
                 }
 
@@ -49,7 +52,11 @@ class PostsAdapter(val clickPost: (ResponseTimeLineDto.Posts) -> Unit, val click
 
                 if (!data.post.imageUrl.isNullOrEmpty()) {
                     binding.ivImage.visibility = View.VISIBLE
-                    binding.ivImage.load(data.post.imageUrl) {
+
+                    val imageUrl =
+                        BuildConfig.BASE_URL.removeSuffix("/")+data.post.imageUrl
+                    Timber.d("imageUrl: $imageUrl")
+                    binding.ivImage.load(imageUrl) {
                         transformations(RoundedCornersTransformation(30f))
                     }
                     lp.dimensionRatio = "2:1"
@@ -67,14 +74,14 @@ class PostsAdapter(val clickPost: (ResponseTimeLineDto.Posts) -> Unit, val click
                 Timber.d("createdAt: ${data.post.createdAt}, formatted: $timeAgo")
                 tvTime.text = root.context.getString(R.string.community_time, timeAgo)
 
-                btnFollow.isSelected = data.authorProfile.isFollowing
+               /* btnFollow.isSelected = data.authorProfile.isFollowing
                 if (data.authorProfile.isFollowing) btnFollow.text =
-                    root.context.getString(R.string.community_follow)
+                    root.context.getString(R.string.community_follow)*/
                 tvContent.text = data.post.content
                 tvLikeCount.text = data.post.likeCount.toString()
                 tvCommentCount.text = data.post.commentCount.toString()
 
-                clickFollow()
+                //clickFollow()
                 clickLike()
                 clickProfileOrId(data)
 
@@ -82,7 +89,7 @@ class PostsAdapter(val clickPost: (ResponseTimeLineDto.Posts) -> Unit, val click
             }
         }
 
-        private fun clickFollow(){
+       /* private fun clickFollow(){
             with(binding){
                 btnFollow.setOnClickListener {
                     btnFollow.isSelected = !btnFollow.isSelected
@@ -93,7 +100,7 @@ class PostsAdapter(val clickPost: (ResponseTimeLineDto.Posts) -> Unit, val click
                     Timber.d("btn is select?${btnFollow.isSelected}")
                 }
             }
-        }
+        }*/
 
         private fun clickLike(){
             with(binding){
@@ -110,14 +117,14 @@ class PostsAdapter(val clickPost: (ResponseTimeLineDto.Posts) -> Unit, val click
         private fun clickProfileOrId(data: ResponseTimeLineDto.Posts){
             listOf(binding.ivProfile, binding.tvId).forEach {
                 it.setOnClickListener {
-                    clickOtherUser(data.authorProfile.profileImage, data.post.authorName)
+                    clickOtherUser(data.post.authorId)
                 }
             }
         }
 
         private fun showDetail(data: ResponseTimeLineDto.Posts){
             listOf(binding.tvContent, binding.ivImage).forEach {
-                it.setOnClickListener { clickPost(data) }
+                it.setOnClickListener { clickPost(data.post.id) }
             }
         }
 

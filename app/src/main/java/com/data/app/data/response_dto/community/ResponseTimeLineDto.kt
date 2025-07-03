@@ -22,7 +22,7 @@ data class ResponseTimeLineDto (
             @SerialName("name")
             val name: String,
             @SerialName("profileImage")
-            val profileImage: String, // Nullable 고려: String? = null
+            val profileImage: String?, // Nullable 고려: String? = null
             @SerialName("postCount")
             val postCount: Int,
             @SerialName("followerCount")

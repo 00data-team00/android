@@ -50,12 +50,15 @@ class OtherProfileFragment : Fragment() {
         setting()
     }
 
+    // 관광데이터 7/7 오후 19시 이후에 가능
+    // 하루 전날 컨설팅 링크 문자로
+    // 팀원 전체에 보냄
+
     private fun setting() {
-        val profile = otherProfileFragmentArgs.otherProfile
-        val name = otherProfileFragmentArgs.otherName
+        val userId = otherProfileFragmentArgs.userId
         showProfile()
-        showPosts()
-        makeList(profile.toString(), name)
+        //showPosts()
+        //makeList(userId)
         clickFollowButton()
         clickFollow()
         clickBackButton()
@@ -95,7 +98,7 @@ class OtherProfileFragment : Fragment() {
 
     }
 
-    private fun showPosts() {
+   /* private fun showPosts() {
         lifecycleScope.launch {
             otherProfileViewModel.otherState.collect { otherState ->
                 when (otherState) {
@@ -122,7 +125,7 @@ class OtherProfileFragment : Fragment() {
                 }
             }
         }
-    }
+    }*/
 
     private fun makeList(profile: String, name: String) {
         otherProfileViewModel.getOtherProfile(profile, name)
