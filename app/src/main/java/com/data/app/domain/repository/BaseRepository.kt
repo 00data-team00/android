@@ -72,6 +72,12 @@ interface BaseRepository {
         postId:Int,
     ):Result<Response<Unit>>
 
+    suspend fun writeComment(
+        token:String,
+        postId:Int,
+        content:String,
+    ):Result<ResponsePostDetailDto.CommentDto>
+
     suspend fun getUserProfile(
         token:String,
         userId:Int,

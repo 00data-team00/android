@@ -24,7 +24,9 @@ data class ResponsePostDetailDto (
     @SerialName("createdAt")
     val createdAt: String, // "YYYY-MM-DDTHH:mm:ss.SSSZ"
     @SerialName("comments")
-    val comments: List<CommentDto>
+    val comments: List<CommentDto>,
+    @SerialName("isLiked")
+    val isLiked: Boolean
 ) {
     @Serializable
     data class CommentDto(

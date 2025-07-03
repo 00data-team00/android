@@ -4,8 +4,7 @@
     android:layout_height="wrap_content"
     android:background="@color/white"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-
-    <ImageView
+    <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/iv_profile"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -13,6 +12,7 @@
         android:layout_marginTop="15dp"
         android:layout_marginStart="20dp"
         android:scaleType="centerCrop"
+        app:shapeAppearanceOverlay="@style/CircleImageView"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintWidth_percent="0.15"
         app:layout_constraintTop_toTopOf="parent"
@@ -41,7 +41,7 @@
         android:textSize="14sp"
         android:layout_marginBottom="15dp"
         android:layout_marginTop="10dp"
-        android:background="@drawable/bg_post_white"
+        android:background="@drawable/btn_comment_write"
         app:layout_constraintDimensionRatio="2:1"
         app:layout_constraintWidth_percent="0.15"
         app:layout_constraintTop_toBottomOf="@id/et_comment_write"

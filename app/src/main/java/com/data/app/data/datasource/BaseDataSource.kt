@@ -73,6 +73,12 @@ interface BaseDataSource {
         postId:Int,
     ): Response<Unit>
 
+    suspend fun writeComment(
+        token:String,
+        postId:Int,
+        content:String,
+    ): ResponsePostDetailDto.CommentDto
+
     suspend fun getUserProfile(
         token:String,
         userId:Int,

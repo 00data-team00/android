@@ -124,6 +124,18 @@ class BaseRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun writeComment(
+        token: String,
+        postId: Int,
+        content: String)
+    : Result<ResponsePostDetailDto.CommentDto> {
+        return runCatching {
+            baseDataSource.writeComment(token, postId, content)
+        }.onFailure {
+            Timber.e("base repository write comment fail!: $it")
+        }
+    }
+
     override suspend fun getUserProfile(token: String, userId: Int): Result<ResponseProfileDto> {
         return runCatching {
             baseDataSource.getUserProfile(token, userId)

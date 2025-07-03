@@ -1,26 +1,21 @@
 package com.data.app.presentation.main.community.profile_detail
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat
+import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
-import coil3.request.error
-import coil3.request.placeholder
-import coil3.request.transformations
 import coil.transform.CircleCropTransformation
 import com.data.app.BuildConfig
 import com.data.app.R
-import com.data.app.data.Post
 import com.data.app.data.response_dto.community.ResponsePostDetailDto
 import com.data.app.databinding.ItemCommentBinding
 import com.data.app.databinding.ItemCommentWriteBinding
 import timber.log.Timber
 
 class PostDetailAdapter(
-    val addComment:(Int)->Unit,
+    val addComment:(String)->Unit,
     val clickProfileOrId:(Int)->Unit,
 ):RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var profileUrl:String?=null
@@ -61,6 +56,7 @@ class PostDetailAdapter(
         if (profileUrl != null) {
             this.profileUrl = profileUrl
         }
+
         notifyDataSetChanged()
     }
 
@@ -70,9 +66,14 @@ class PostDetailAdapter(
         notifyDataSetChanged()
     }
 
+    fun updateComment(comment: ResponsePostDetailDto.CommentDto){
+        commentsList.add(0, comment)
+        notifyItemInserted(0)
+    }
+
     inner class CommentWriteViewHolder(private val binding:ItemCommentWriteBinding):
         RecyclerView.ViewHolder(binding.root){
-        fun bind(profileUrl:String?){
+        fun bind(profileUrl: String?){
             val profile = profileUrl?.takeIf { it.isNotBlank() && it != "null" }?.let {
                 BuildConfig.BASE_URL.removeSuffix("/") + it
             }
@@ -93,34 +94,32 @@ class PostDetailAdapter(
                 }
             }
 
+            binding.etCommentWrite.addTextChangedListener {
+                val hasText = !it.isNullOrBlank()
 
-           // clickWrite(data.id, data.profile)
+                val context = itemView.context
+
+                binding.btnWrite.isSelected = hasText
+                binding.btnWrite.setTextColor(
+                    ContextCompat.getColor(context,
+                        if (hasText) R.color.black else R.color.mock_ai_practice_title_gray
+                    )
+                )
+            }
+
+
+           clickWrite()
         }
 
-       /* private fun clickWrite(user:String, profile:String){
+        private fun clickWrite(){
             binding.btnWrite.setOnClickListener {
-                val text = binding.etCommentWrite.text.toString()
-                if (text.isNotBlank()) {
-                    val newComment = Post.Comments(
-                        profile = profile,
-                        name = user,
-                        content = text,
-                        like = 0
-                    )
-                    commentsList.add(0, newComment)
-                    notifyDataSetChanged()
-                    binding.etCommentWrite.text?.clear()
-
-                    // 키보드 내리기
-                    val imm = binding.root.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                    imm.hideSoftInputFromWindow(binding.etCommentWrite.windowToken, 0)
-
-                    // focus 제거
-                    binding.etCommentWrite.clearFocus()
-                    addComment(commentsList.size)
+                if(binding.btnWrite.isSelected){
+                    val text = binding.etCommentWrite.text.toString()
+                    addComment(text)
+                    binding.etCommentWrite.setText("")
                 }
             }
-        }*/
+        }
     }
 
     inner class CommentViewHolder(private val binding: ItemCommentBinding) :

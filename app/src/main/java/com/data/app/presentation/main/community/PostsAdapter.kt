@@ -23,7 +23,7 @@ class PostsAdapter(
 ) :
     RecyclerView.Adapter<PostsAdapter.FeedsViewHolder>() {
 
-    private val postsList = mutableListOf<ResponseTimeLineDto.Posts>()
+    private val postsList = mutableListOf<ResponseTimeLineDto.TimelinePostItem>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FeedsViewHolder {
         val binding = ItemPostBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -36,7 +36,7 @@ class PostsAdapter(
         holder.bind(postsList[position])
     }
 
-    fun getList(list: List<ResponseTimeLineDto.Posts>) {
+    fun getList(list: List<ResponseTimeLineDto.TimelinePostItem>) {
         postsList.clear()
         postsList.addAll(list)
         notifyDataSetChanged()
@@ -44,7 +44,7 @@ class PostsAdapter(
 
     inner class FeedsViewHolder(private val binding: ItemPostBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(data: ResponseTimeLineDto.Posts) {
+        fun bind(data: ResponseTimeLineDto.TimelinePostItem) {
             with(binding) {
                 val profile =
                     data.authorProfile.profileImage?.let { BuildConfig.BASE_URL.removeSuffix("/") + it }
@@ -88,7 +88,7 @@ class PostsAdapter(
                 tvLikeCount.text = data.post.likeCount.toString()
                 tvCommentCount.text = data.post.commentCount.toString()
 
-                if(data.authorProfile.isLiked) btnLike.isSelected=true
+                if (data.authorProfile.isLiked) btnLike.isSelected = true
 
                 //clickFollow()
                 clickLike(data.post.id)
@@ -124,7 +124,7 @@ class PostsAdapter(
             }
         }
 
-        private fun clickProfileOrId(data: ResponseTimeLineDto.Posts) {
+        private fun clickProfileOrId(data: ResponseTimeLineDto.TimelinePostItem) {
             listOf(binding.ivProfile, binding.tvId).forEach {
                 it.setOnClickListener {
                     clickOtherUser(data.post.authorId)
@@ -132,7 +132,7 @@ class PostsAdapter(
             }
         }
 
-        private fun showDetail(data: ResponseTimeLineDto.Posts) {
+        private fun showDetail(data: ResponseTimeLineDto.TimelinePostItem) {
             listOf(binding.tvContent, binding.ivImage).forEach {
                 it.setOnClickListener { clickPost(data.post.id) }
             }
