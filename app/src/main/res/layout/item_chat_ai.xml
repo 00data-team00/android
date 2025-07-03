@@ -70,6 +70,32 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@id/iv_background"/>
 
+    <ImageView
+        android:id="@+id/iv_load1"
+        android:layout_width="40dp"
+        android:layout_height="50dp"
+        android:src="@drawable/icon_dotdotdot_grey_24"
+        android:scaleType="fitCenter"
+        android:visibility="gone"
+        android:layout_gravity="center"
+        app:layout_constraintStart_toStartOf="@id/iv_background"
+        app:layout_constraintEnd_toEndOf="@id/iv_background"
+        app:layout_constraintBottom_toTopOf="@id/tv_time"
+        app:layout_constraintTop_toBottomOf="@id/tv_name"/>
+
+    <ImageView
+        android:id="@+id/iv_load2"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/icon_dotdotdot_grey_24"
+        android:scaleType="fitCenter"
+        android:visibility="gone"
+        android:layout_gravity="center"
+        app:layout_constraintStart_toStartOf="@id/iv_background"
+        app:layout_constraintEnd_toEndOf="@id/iv_background"
+        app:layout_constraintBottom_toTopOf="@id/tv_time"
+        app:layout_constraintTop_toBottomOf="@id/tv_name"/>
+
     <TextView
         android:id="@+id/tv_time"
         android:layout_width="0dp"

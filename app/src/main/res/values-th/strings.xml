@@ -3,6 +3,9 @@
     <string name="app_name">app</string>
 
     <!--login & signup-->
+    <string name="service_name">바름</string>
+
+    <!--login & signup-->
     <string name="login_landing">Speak Korean.\nPlay the Game.\nMaster It.</string>
     <string name="login_ruready">Ready to level up\nyour Korean?</string>
     <string name="login_tocontinue">Sign up with Social of fill the form to continue.</string>
