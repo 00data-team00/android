@@ -156,6 +156,7 @@ class AIChatActivity : BaseActivity() {
 
         val currentTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))
         aiChatAdapter.loadAiMessage(currentTime)
+        binding.rvChat.scrollToPosition(aiChatAdapter.itemCount - 1)
 
         aiChatViewModel.startChat(topicId)
         getAiChat()
@@ -217,6 +218,7 @@ class AIChatActivity : BaseActivity() {
 
                 val currentTime2 = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))
                 aiChatAdapter.loadAiMessage(currentTime2)
+                binding.rvChat.scrollToPosition(aiChatAdapter.itemCount - 1)
 
                 aiChatViewModel.getAiChat(newstring)
             }

@@ -8,12 +8,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.data.app.R
+import com.data.app.data.response_dto.community.ResponseTimeLineDto
+import com.data.app.data.response_dto.explore.ResponseAllProgramDto
 import com.data.app.data.shared_preferences.AppPreferences
 import com.data.app.databinding.FragmentCommunityBinding
 import com.data.app.extension.community.GetAllTimeLineState
@@ -102,6 +105,8 @@ class CommunityFragment : Fragment(), OnTabReselectedListener {
             communityViewModel.getAllTimeLineState.collect { state ->
                 when (state) {
                     is GetAllTimeLineState.Success -> {
+                        searchList(state.data)
+
                         postsAdapter.setLoading(false)
                         postsAdapter.getList(state.data)
                         //binding.rvPosts.scrollToPosition(0)
@@ -251,6 +256,23 @@ class CommunityFragment : Fragment(), OnTabReselectedListener {
                  }
              }
          }*/
+    }
+
+    private fun searchList(followlist: List<ResponseTimeLineDto.TimelinePostItem>){
+        binding.etSearch.doOnTextChanged{ text, _, _, _ ->
+            val keyword = text.toString().trim()
+
+            Timber.d("keyword: $keyword")
+
+            if (keyword.isEmpty()) {
+                postsAdapter.updateList(followlist)
+            } else {
+                val filteredList = followlist.filter {
+                    it.post.content.contains(keyword, ignoreCase = true)
+                }
+                postsAdapter.updateList(filteredList)
+            }
+        }
     }
 
     override fun onPause() {

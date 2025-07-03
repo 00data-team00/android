@@ -16,7 +16,7 @@ class PreviousPracticeAdapter(
     private val clickChat:(String)->Unit
 ):RecyclerView.Adapter<PreviousPracticeAdapter.PreviousPracticeViewHolder>(){
 
-    private val practiceRecordsList = mutableListOf<ResponseAIPreviousRecordsDto.ChatRoom>()
+    private var practiceRecordsList = mutableListOf<ResponseAIPreviousRecordsDto.ChatRoom>()
     private var selectedPosition: Int? = null
     private val practiceChatMessagesMap = mutableMapOf<Int, List<ResponseAIPreviousChatMessagesDto.Message>>()
 
@@ -30,6 +30,11 @@ class PreviousPracticeAdapter(
 
     override fun onBindViewHolder(holder: PreviousPracticeViewHolder, position: Int) {
         holder.bind(practiceRecordsList[position])
+    }
+
+    fun updateList(list: List<ResponseAIPreviousRecordsDto.ChatRoom>) {
+        practiceRecordsList = list.toMutableList()
+        notifyDataSetChanged()
     }
 
     fun getRecordsList(list: List<ResponseAIPreviousRecordsDto.ChatRoom>){
