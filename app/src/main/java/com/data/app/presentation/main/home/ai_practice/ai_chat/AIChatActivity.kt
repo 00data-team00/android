@@ -33,19 +33,22 @@ import androidx.core.graphics.toColorInt
 import androidx.lifecycle.lifecycleScope
 import com.data.app.R
 import com.data.app.data.PreviousPractice
-import com.data.app.extension.TranslateState
+import com.data.app.extension.home.aichat.TranslateState
 import com.data.app.extension.home.aichat.AiChatState
 import com.data.app.extension.home.aichat.StartChatState
 import com.data.app.presentation.main.BaseActivity
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import java.text.SimpleDateFormat
 import java.util.Date
 
 @AndroidEntryPoint
-class AIChatActivity: BaseActivity() {
-    private lateinit var binding:ActivityAiChatBinding
+class AIChatActivity : BaseActivity() {
+    private lateinit var binding: ActivityAiChatBinding
 
-    private val aiChatViewModel:AIChatViewModel by viewModels()
+    private val aiChatViewModel: AIChatViewModel by viewModels()
     private lateinit var aiChatAdapter: AIChatAdapter
 
     private lateinit var speechRecognizer: SpeechRecognizer
@@ -62,7 +65,7 @@ class AIChatActivity: BaseActivity() {
     private var topicKr: String? = ""
     private var topicEn: String? = ""
 
-    override fun onCreate(savedInstanceState: Bundle?){
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAiChatBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -75,22 +78,31 @@ class AIChatActivity: BaseActivity() {
     }
 
     private fun setting() {
-        val token=intent.getStringExtra("accessToken")
-        val topicId=intent.getIntExtra("topicId", -1)
-        topicKr=intent.getStringExtra("topic")
-        topicEn=intent.getStringExtra("topic_en")
+        val token = intent.getStringExtra("accessToken")
+        val topicId = intent.getIntExtra("topicId", -1)
+        topicKr = intent.getStringExtra("topic")
+        topicEn = intent.getStringExtra("topic_en")
         Timber.d("topicId: $topicId, accessToken: $token")
 
-        aiChatViewModel.accessToken.observe(this){
+        aiChatViewModel.accessToken.observe(this) {
             speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this)
             speechRecognizer.setRecognitionListener(recognitionListener)
             recognizerIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
-                putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE,packageName) //여분의 키
+                putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, packageName) //여분의 키
                 putExtra(RecognizerIntent.EXTRA_LANGUAGE, "ko-KR")
                 // 자동 종료 시간을없애는건 불가능 -> 30초로 바꿈
-                putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, 30000) // 30초
-                putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_POSSIBLY_COMPLETE_SILENCE_LENGTH_MILLIS, 30000) // 30초
-                putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_MINIMUM_LENGTH_MILLIS, 30000) // 최소 듣기 시간 (30초)
+                putExtra(
+                    RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS,
+                    30000
+                ) // 30초
+                putExtra(
+                    RecognizerIntent.EXTRA_SPEECH_INPUT_POSSIBLY_COMPLETE_SILENCE_LENGTH_MILLIS,
+                    30000
+                ) // 30초
+                putExtra(
+                    RecognizerIntent.EXTRA_SPEECH_INPUT_MINIMUM_LENGTH_MILLIS,
+                    30000
+                ) // 최소 듣기 시간 (30초)
             }
 
             setTitle()
@@ -117,18 +129,22 @@ class AIChatActivity: BaseActivity() {
         else binding.tvAichatEssential.visibility = View.GONE
     }
 
-    private fun setChats(topicId:Int) {
-        aiChatAdapter = AIChatAdapter(clickChat = {chat -> speakMessage(chat)}, request = {id -> getTranslate(id)}, change = {pos -> setTranslate(pos)})
+    private fun setChats(topicId: Int) {
+        aiChatAdapter = AIChatAdapter(
+            clickChat = { chat -> speakMessage(chat) },
+            request = { id -> getTranslate(id) },
+            change = { pos -> setTranslate(pos) })
         binding.rvChat.adapter = aiChatAdapter
         lifecycleScope.launch {
-            aiChatViewModel.startChatState.collect{state->
-                when(state){
-                    is StartChatState.Success->{
+            aiChatViewModel.startChatState.collect { state ->
+                when (state) {
+                    is StartChatState.Success -> {
                         aiChatAdapter.startAiMessage(state.response)
                         binding.rvChat.scrollToPosition(aiChatAdapter.itemCount - 1)
                     }
-                    is StartChatState.Loading->{}
-                    is StartChatState.Error->{
+
+                    is StartChatState.Loading -> {}
+                    is StartChatState.Error -> {
                         Timber.e("setChats start chat state is error!!")
                     }
                 }
@@ -140,16 +156,17 @@ class AIChatActivity: BaseActivity() {
         //aiChatAdapter.getList(aiChatViewModel.mockAIChat.chatList)
     }
 
-    private fun getAiChat(){
+    private fun getAiChat() {
         lifecycleScope.launch {
-            aiChatViewModel.aiChatState.collect{ state->
-                when(state){
-                    is AiChatState.Success->{
+            aiChatViewModel.aiChatState.collect { state ->
+                when (state) {
+                    is AiChatState.Success -> {
                         aiChatAdapter.addAiMessage(state.response.aiMessage)
                         binding.rvChat.scrollToPosition(aiChatAdapter.itemCount - 1)
                     }
-                    is AiChatState.Loading->{}
-                    is AiChatState.Error->{
+
+                    is AiChatState.Loading -> {}
+                    is AiChatState.Error -> {
                         Timber.e("get ai chat error!!")
                     }
                 }
@@ -167,13 +184,15 @@ class AIChatActivity: BaseActivity() {
     }
 
     private fun clickSendButton() {
-        binding.btnMicsend.setOnClickListener{
-            if (binding.tvListentext.text != "Listening .. .."){
+        binding.btnMicsend.setOnClickListener {
+            if (binding.tvListentext.text != "Listening .. ..") {
                 val newstring = binding.tvListentext.text.toString()
                 speechRecognizer.stopListening()
                 speechRecognizer.cancel()
-                if (::refreshHandler.isInitialized) {refreshHandler.removeCallbacksAndMessages(null)}
-                with(binding){
+                if (::refreshHandler.isInitialized) {
+                    refreshHandler.removeCallbacksAndMessages(null)
+                }
+                with(binding) {
                     binding.btnMic.visibility = View.VISIBLE
                     binding.btnMicsend.visibility = View.GONE
                     binding.btnMicexit.visibility = View.GONE
@@ -195,11 +214,13 @@ class AIChatActivity: BaseActivity() {
     }
 
     private fun clickExitButton() {
-        binding.btnMicexit.setOnClickListener{
+        binding.btnMicexit.setOnClickListener {
             speechRecognizer.stopListening()
             speechRecognizer.cancel()
-            if (::refreshHandler.isInitialized) {refreshHandler.removeCallbacksAndMessages(null)}
-            with(binding){
+            if (::refreshHandler.isInitialized) {
+                refreshHandler.removeCallbacksAndMessages(null)
+            }
+            with(binding) {
                 binding.btnMic.visibility = View.VISIBLE
                 binding.btnMicsend.visibility = View.GONE
                 binding.btnMicexit.visibility = View.GONE
@@ -229,7 +250,7 @@ class AIChatActivity: BaseActivity() {
 
     // 말하기 버튼 클릭
     private fun clickButton() {
-        binding.btnMic.setOnClickListener{
+        binding.btnMic.setOnClickListener {
             binding.btnMicexit.visibility = View.VISIBLE
             binding.cardListening.visibility = View.VISIBLE
             binding.btnMic.visibility = View.GONE
@@ -248,11 +269,10 @@ class AIChatActivity: BaseActivity() {
     // 음성 듣는 listener
     private val recognitionListener: RecognitionListener = object : RecognitionListener {
         override fun onReadyForSpeech(params: Bundle) {
-            if (binding.tvListentext.text == "Listening .. .."){
+            if (binding.tvListentext.text == "Listening .. ..") {
                 Toast.makeText(this@AIChatActivity, "이제 말씀하세요!", Toast.LENGTH_SHORT).show()
                 startBlinking()
-            }
-            else Toast.makeText(this@AIChatActivity, "잠시 지연..", Toast.LENGTH_SHORT).show()
+            } else Toast.makeText(this@AIChatActivity, "잠시 지연..", Toast.LENGTH_SHORT).show()
         }
 
         override fun onBeginningOfSpeech() {
@@ -298,10 +318,10 @@ class AIChatActivity: BaseActivity() {
         // 부분 인식 결과를 사용할 수 있을 때 호출
         override fun onPartialResults(partialResults: Bundle) {
             val matches = partialResults.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
-            if (!matches.isNullOrEmpty()){
+            if (!matches.isNullOrEmpty()) {
                 binding.tvListentext.setTextColor("#339933".toColorInt())
                 var currentText = binding.tvListentext.text.toString()
-                if(currentText == "Listening .. ..") currentText = ""
+                if (currentText == "Listening .. ..") currentText = ""
                 var newText = matches.joinToString(separator = " ")
                 binding.tvListentext.text = "$currentText $newText"
             }
@@ -358,41 +378,80 @@ class AIChatActivity: BaseActivity() {
     }
 
     private fun speakMessage(text: String) {
-        if (text.isNotBlank()){
-            Log.d("aifragment","startinitialmessage, ttsready: $isTTSReady")
+        if (text.isNotBlank()) {
+            Log.d("aifragment", "startinitialmessage, ttsready: $isTTSReady")
             if (isTTSReady) { // TTS가 준비되었고, 프래그먼트가 보일 때만 실행
                 // 설명 메시지를 TTS로 말하기
-                textToSpeech?.speak(text,TextToSpeech.QUEUE_FLUSH,null,"")
+                textToSpeech?.speak(text, TextToSpeech.QUEUE_FLUSH, null, "")
                 Log.d("aifragment", "tts is ready")
-            }else{
-                Log.d("aifragment","tts is not ready")
+            } else {
+                Log.d("aifragment", "tts is not ready")
             }
         }
     }
 
     private fun getTranslate(messageId: Int) {
-        if (lang != "ko"){
+        Timber.d("get translate msgId: ${messageId}")
+        if (lang != "ko") {
             if (lang == "en") lang = "en-us"
             aiChatViewModel.getTranslate(messageId, lang)
         }
     }
 
     private fun setTranslate(position: Int) {
-        lifecycleScope.launch {
-            aiChatViewModel.translateState.collect{ state->
+        Timber.d("set translate")
+
+        aiChatViewModel.resetTranslateState()
+
+        lifecycleScope.launchWhenStarted {
+            aiChatViewModel.translateState.collectLatest { state ->
+                when (state) {
+                    is TranslateState.Success -> {
+                        Timber.d("translate success: ${state.response.text}")
+                        aiChatAdapter.translatePosition(position, state.response.text)
+                        aiChatViewModel.resetTranslateState() // collect 종료 유도
+                        cancel() // 이 collect 종료
+                    }
+
+                    is TranslateState.Loading -> Timber.d("translate loading...")
+                    is TranslateState.Error -> {
+                        Timber.e("translate error: ${state.message}")
+                        aiChatViewModel.resetTranslateState()
+                        cancel()
+                    }
+
+                    else -> Unit
+                }
+            }
+        }
+        /*lifecycleScope.launch {
+            val state = aiChatViewModel.translateState.first{ it is TranslateState.Success || it is TranslateState.Error }
+
+            when (state) {
+                is TranslateState.Success -> {
+                    Timber.d(state.response.text)
+                    aiChatAdapter.translatePosition(position, state.response.text)
+                }
+                is TranslateState.Error -> {
+                    Timber.e("get translate error!!")
+                }
+                else -> Unit
+            }
+            *//*aiChatViewModel.translateState.collect{ state->
                 when(state){
                     is TranslateState.Success->{
-                        Timber.d(position.toString())
+                        Timber.d(state.response.text)
                         aiChatAdapter.translatePosition(position, state.response.text)
                     }
-                    is TranslateState.Loading->{}
+                    is TranslateState.Loading->{
+                        Timber.d("get translate loading!!")
+                    }
                     is TranslateState.Error->{
                         Timber.e("get translate error!!")
                     }
                 }
-
-            }
-        }
+            }*//*
+        }*/
     }
 
     private var blinkingJob: Job? = null

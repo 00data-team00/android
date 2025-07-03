@@ -235,7 +235,7 @@ class GameQuizActivity : BaseActivity() {
             binding.ivGameFinal.setImageResource(R.drawable.ic_correct)
             binding.btnQuizStop.isSelected = true
             binding.btnQuizAgain.isSelected = true
-            binding.rvWeeks.setBackgroundResource(R.drawable.bg_week_success_green)
+           // binding.rvWeeks.setBackgroundResource(R.drawable.bg_week_success_green)
 
            /* lifecycleScope.launch {
                 gameQuizViewModel.quizCompleteState.collect { state->
@@ -261,7 +261,7 @@ class GameQuizActivity : BaseActivity() {
             binding.ivGameFinal.setImageResource(R.drawable.ic_wrong)
             binding.btnQuizStop.isSelected = false
             binding.btnQuizAgain.isSelected = false
-            binding.rvWeeks.setBackgroundResource(R.drawable.bg_week_fail_white)
+           // binding.rvWeeks.setBackgroundResource(R.drawable.bg_week_fail_white)
             binding.progressQuiz.progressTintList =
                 ColorStateList.valueOf(ContextCompat.getColor(this, R.color.game_flag_red))
         }
@@ -285,11 +285,11 @@ class GameQuizActivity : BaseActivity() {
             Week("토", false),
             Week("일", false),
         )
-        binding.rvWeeks.setPadding(0, binding.rvWeeks.paddingTop, 0, binding.rvWeeks.paddingBottom) //  좌우 패딩 초기화
+       /* binding.rvWeeks.setPadding(0, binding.rvWeeks.paddingTop, 0, binding.rvWeeks.paddingBottom) //  좌우 패딩 초기화
         binding.rvWeeks.scrollToPosition(0)
         binding.rvWeeks.adapter = weekAdapter
         weekAdapter.getList(weeks)
-        centerAlignItems(binding.rvWeeks, weekAdapter)
+        centerAlignItems(binding.rvWeeks, weekAdapter)*/
     }
 
     private fun centerAlignItems(recyclerView: RecyclerView, adapter: GameTabWeekAdapter) {
@@ -367,7 +367,7 @@ class GameQuizActivity : BaseActivity() {
             setLife()
             setQuestion()
 
-            binding.rvWeeks.adapter=null
+           // binding.rvWeeks.adapter=null
             binding.progressQuiz.progress=0
             binding.progressQuiz.progressDrawable?.clearColorFilter()
         }

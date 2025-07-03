@@ -133,6 +133,7 @@ class AIChatAdapter(
                 setCustomTouchListener(
                     targetView = binding.tvChat,
                     onLongPress = {
+                        Timber.d("ai chat long pressing~")
                         change(pos)
                         request(content.messageId)
                     },

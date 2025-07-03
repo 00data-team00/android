@@ -93,7 +93,7 @@ class OtherProfileFragment : Fragment() {
         val userId = otherProfileFragmentArgs.userId.toInt()
         showProfile(userId)
         showPosts(userId)
-        getFollowState()
+        getFollowState(userId)
         clickBackButton()
     }
 
@@ -133,14 +133,15 @@ class OtherProfileFragment : Fragment() {
                                     clickEditButton()
                                 } else {
                                     setBackgroundResource(R.drawable.btn_follow)
+                                    Timber.d("isSelected: $isSelected")
                                     if (userProfileState.response.isFollowing) {
                                         isSelected = true
                                         text = getString(R.string.community_following)
-                                        setTextColor(resources.getColor(R.color.white))
+                                        setTextColor(resources.getColor(R.color.bnv_unclicked_black))
                                     } else {
                                         isSelected = false
                                         text = getString(R.string.community_follow)
-                                        setTextColor(resources.getColor(R.color.bnv_unclicked_black))
+                                        setTextColor(resources.getColor(R.color.white))
                                     }
 
                                     clickFollowButton(userId)
@@ -163,7 +164,7 @@ class OtherProfileFragment : Fragment() {
         otherProfileViewModel.getUserProfile(appPreferences.getAccessToken()!!, userId)
     }
 
-    private fun clickEditButton(){
+    private fun clickEditButton() {
         binding.btnFollow.setOnClickListener {
             val currentUserId = mainViewModel.getUserId()
             val thisProfileUserId = otherProfileFragmentArgs.userId.toInt()
@@ -252,18 +253,22 @@ class OtherProfileFragment : Fragment() {
         otherProfileViewModel.getUserPost(appPreferences.getAccessToken()!!, userId)
     }
 
-    private fun getFollowState() {
+    private fun getFollowState(userId:Int) {
         lifecycleScope.launch {
             otherProfileViewModel.followState.collect { followState ->
                 when (followState) {
                     is FollowState.Success -> {
                         Timber.d("followState is success")
-                        isRequesting=false
-                        binding.btnFollow.isEnabled=true
+                      //  isRequesting = false
+
+                        otherProfileViewModel.getUserProfile(appPreferences.getAccessToken()!!, userId)
+                        otherProfileViewModel.resetFollowState()
                     }
+
                     is FollowState.Loading -> {
                         Timber.d("followState is loading")
                     }
+
                     is FollowState.Error -> {
                         Timber.e("followState is error: ${followState.message}")
                     }
@@ -276,29 +281,35 @@ class OtherProfileFragment : Fragment() {
     private fun clickFollowButton(userId: Int) {
         with(binding.btnFollow) {
             setOnClickListener {
-                if (isRequesting) return@setOnClickListener
+                //if (isRequesting) return@setOnClickListener
 
-                isRequesting = true
+              /*  isRequesting = true
                 isEnabled = false // 버튼 비활성화
-                isSelected = !isSelected
+*/
+               /* with(binding.btnFollow){
+                    //isSelected=!isSelected
 
-                text = context.getString(
-                    if (isSelected) R.string.community_follow
-                    else R.string.community_following
-                )
-                setTextColor(
-                    ContextCompat.getColor(
-                        context,
-                        if (isSelected) R.color.white else R.color.bnv_unclicked_black
+                    text = context.getString(
+                        if (isSelected) R.string.community_following
+                        else R.string.community_follow
                     )
-                )
+                    setTextColor(
+                        ContextCompat.getColor(
+                            context,
+                            if (isSelected)R.color.bnv_unclicked_black else R.color.white
+                        )
+                    )
+                    //isEnabled = true
+                }*/
 
-                if (isSelected) otherProfileViewModel.follow(
-                    appPreferences.getAccessToken()!!,
-                    userId
-                )
-                else otherProfileViewModel.unFollow(appPreferences.getAccessToken()!!, userId)
+                if (isSelected) {
+                    otherProfileViewModel.unFollow(
+                        appPreferences.getAccessToken()!!,
+                        userId
+                    )
+                } else otherProfileViewModel.follow(appPreferences.getAccessToken()!!, userId)
 
+               //
 
             }
         }
