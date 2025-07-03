@@ -17,6 +17,7 @@ import com.data.app.data.response_dto.explore.ResponseDeadlineDto
 import com.data.app.data.response_dto.community.ResponseFollowersDto
 import com.data.app.data.response_dto.login.ResponseLoginDto
 import com.data.app.data.response_dto.community.ResponseEditProfileDto
+import com.data.app.data.response_dto.community.ResponseFollowDto
 import com.data.app.data.response_dto.community.ResponsePostDetailDto
 import com.data.app.data.response_dto.community.ResponseTimeLineDto
 import com.data.app.data.response_dto.my.ResponseMyPostDto
@@ -99,6 +100,16 @@ interface BaseDataSource {
         token:String,
         postId:Int,
     ): ResponseDeletePostDto
+
+    suspend fun follow(
+        token:String,
+        userId:Int,
+    ): ResponseFollowDto
+
+    suspend fun unFollow(
+        token:String,
+        userId:Int,
+    ):ResponseFollowDto
 
     // home
     suspend fun getUserGameInfo(

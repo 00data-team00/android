@@ -112,7 +112,7 @@ class PostsAdapter(
                 tvLikeCount.text = data.post.likeCount.toString()
                 tvCommentCount.text = data.post.commentCount.toString()
 
-                if (data.authorProfile.isLiked) btnLike.isSelected = true
+                if (data.post.isLiked) btnLike.isSelected = true
 
                 //clickFollow()
                 clickLike(data.post.id)

@@ -21,8 +21,9 @@
 
     <TextView
         android:id='@+id/tv_id'
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:maxWidth="130dp"
         android:layout_marginStart="10dp"
         android:textColor="@color/community_name_gray"
         app:layout_constraintTop_toTopOf="@id/iv_profile"

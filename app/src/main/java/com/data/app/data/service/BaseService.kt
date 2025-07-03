@@ -17,6 +17,7 @@ import com.data.app.data.response_dto.explore.ResponseDeadlineDto
 import com.data.app.data.response_dto.community.ResponseFollowersDto
 import com.data.app.data.response_dto.login.ResponseLoginDto
 import com.data.app.data.response_dto.community.ResponseEditProfileDto
+import com.data.app.data.response_dto.community.ResponseFollowDto
 import com.data.app.data.response_dto.community.ResponsePostDetailDto
 import com.data.app.data.response_dto.community.ResponseTimeLineDto
 import com.data.app.data.response_dto.my.ResponseMyPostDto
@@ -114,12 +115,6 @@ interface BaseService {
         @Path("userId") userId:Int,
     ): ResponseTimeLineDto
 
-    @DELETE("api/me/posts/{postId}")
-    suspend fun deletePost(
-        @Header("Authorization") token:String,
-        @Path("postId") postId:Int,
-    ): ResponseDeletePostDto
-
     @Multipart
     @POST("api/me/posts")
     suspend fun writePost(
@@ -127,6 +122,24 @@ interface BaseService {
         @Part("content") content: String,
         @Part image: MultipartBody.Part?
     ): ResponseMyPostDto.PostDto
+
+    @DELETE("api/me/posts/{postId}")
+    suspend fun deletePost(
+        @Header("Authorization") token:String,
+        @Path("postId") postId:Int,
+    ): ResponseDeletePostDto
+
+    @POST("api/me/follow/{userId}")
+    suspend fun follow(
+        @Header("Authorization") token:String,
+        @Path("userId") userId:Int,
+    ): ResponseFollowDto
+
+    @DELETE("api/me/follow/{userId}")
+    suspend fun unFollow(
+        @Header("Authorization") token:String,
+        @Path("userId") userId:Int,
+    ): ResponseFollowDto
 
     // home
     @GET("api/me/user-game-info")

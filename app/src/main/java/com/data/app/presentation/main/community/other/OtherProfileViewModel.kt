@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.data.app.R
 import com.data.app.data.Post
 import com.data.app.domain.repository.BaseRepository
+import com.data.app.extension.community.FollowState
 import com.data.app.extension.community.GetUserPostState
 import com.data.app.extension.community.OtherState
 import com.data.app.extension.my.UserProfileState
@@ -30,6 +31,9 @@ class OtherProfileViewModel @Inject constructor(
 
     private val _getUserPostState = MutableStateFlow<GetUserPostState>(GetUserPostState.Loading)
     val getUserPostState: StateFlow<GetUserPostState> = _getUserPostState.asStateFlow()
+
+    private val _followState = MutableStateFlow<FollowState>(FollowState.Loading)
+    val followState: StateFlow<FollowState> = _followState.asStateFlow()
 
     fun getUserProfile(token:String, userId:Int){
         viewModelScope.launch {
@@ -69,6 +73,50 @@ class OtherProfileViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun follow(token:String, userId:Int){
+        viewModelScope.launch {
+            baseRepository.follow(token, userId).onSuccess { response ->
+                _followState.value = FollowState.Success(response)
+            }.onFailure {
+                _followState.value = FollowState.Error(it.message.toString())
+                if (it is HttpException) {
+                    try {
+                        val errorBody: ResponseBody? = it.response()?.errorBody()
+                        val errorBodyString = errorBody?.string() ?: ""
+                        httpError(errorBodyString)
+                    } catch (e: Exception) {
+                        // JSON 파싱 실패 시 로깅
+                        Timber.e("Error parsing error body: ${e}")
+                    }
+                }
+            }
+        }
+    }
+
+    fun unFollow(token:String, userId:Int){
+        viewModelScope.launch {
+            baseRepository.unFollow(token, userId).onSuccess { response ->
+                _followState.value = FollowState.Success(response)
+            }.onFailure {
+                _followState.value = FollowState.Error(it.message.toString())
+                if (it is HttpException) {
+                    try {
+                        val errorBody: ResponseBody? = it.response()?.errorBody()
+                        val errorBodyString = errorBody?.string() ?: ""
+                        httpError(errorBodyString)
+                    } catch (e: Exception) {
+                        // JSON 파싱 실패 시 로깅
+                        Timber.e("Error parsing error body: ${e}")
+                    }
+                }
+            }
+        }
+    }
+
+    fun resetFollowState(){
+        _followState.value=FollowState.Loading
     }
 
     private fun httpError(errorBody: String) {

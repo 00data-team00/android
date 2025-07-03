@@ -37,6 +37,7 @@
         android:layout_height="300dp"
         android:layout_marginTop="30dp"
         android:gravity="top"
+        android:breakStrategy="simple"
         android:hint="@string/post_write_hint"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"

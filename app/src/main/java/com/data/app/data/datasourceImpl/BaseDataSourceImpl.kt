@@ -18,6 +18,7 @@ import com.data.app.data.response_dto.explore.ResponseDeadlineDto
 import com.data.app.data.response_dto.community.ResponseFollowersDto
 import com.data.app.data.response_dto.login.ResponseLoginDto
 import com.data.app.data.response_dto.community.ResponseEditProfileDto
+import com.data.app.data.response_dto.community.ResponseFollowDto
 import com.data.app.data.response_dto.community.ResponsePostDetailDto
 import com.data.app.data.response_dto.community.ResponseTimeLineDto
 import com.data.app.data.response_dto.my.ResponseMyPostDto
@@ -58,6 +59,8 @@ class BaseDataSourceImpl @Inject constructor(
     ): ResponseMyPostDto.PostDto = baseService.writePost(token, content, image)
 
     override suspend fun deletePost(token: String, postId: Int): ResponseDeletePostDto = baseService.deletePost(token, postId)
+    override suspend fun follow(token: String, userId: Int): ResponseFollowDto = baseService.follow(token, userId)
+    override suspend fun unFollow(token: String, userId: Int): ResponseFollowDto = baseService.unFollow(token, userId)
 
     // home
     override suspend fun getUserGameInfo(token: String): ResponseUserGameInfoDto = baseService.getUserGameInfo(token)
