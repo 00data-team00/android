@@ -62,6 +62,16 @@ interface BaseRepository {
         postId:Int,
     ):Result<ResponsePostDetailDto>
 
+    suspend fun likePost(
+        token:String,
+        postId:Int,
+    ):Result<Response<Unit>>
+
+    suspend fun unlikePost(
+        token:String,
+        postId:Int,
+    ):Result<Response<Unit>>
+
     suspend fun getUserProfile(
         token:String,
         userId:Int,

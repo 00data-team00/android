@@ -36,6 +36,8 @@ data class ResponsePostDetailDto (
         val commenterId: Int,
         @SerialName("commenterName")
         val commenterName: String,
+        @SerialName("commenterProfileImage")
+        val commenterProfileImage:String?,
         @SerialName("content")
         val content: String,
         @SerialName("createdAt")

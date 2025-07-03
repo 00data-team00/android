@@ -63,6 +63,16 @@ interface BaseDataSource {
         postId:Int,
     ): ResponsePostDetailDto
 
+    suspend fun likePost(
+        token:String,
+        postId:Int,
+    ): Response<Unit>
+
+    suspend fun unlikePost(
+        token:String,
+        postId:Int,
+    ): Response<Unit>
+
     suspend fun getUserProfile(
         token:String,
         userId:Int,

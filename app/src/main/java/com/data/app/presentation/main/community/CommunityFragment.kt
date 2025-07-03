@@ -15,6 +15,7 @@ import com.data.app.R
 import com.data.app.data.shared_preferences.AppPreferences
 import com.data.app.databinding.FragmentCommunityBinding
 import com.data.app.extension.community.GetAllTimeLineState
+import com.data.app.extension.community.LikePostState
 import com.data.app.presentation.main.MainViewModel
 import com.data.app.presentation.main.OnTabReselectedListener
 import com.data.app.presentation.main.community.write.WritePostActivity
@@ -30,9 +31,9 @@ class CommunityFragment:Fragment(), OnTabReselectedListener {
     private val binding: FragmentCommunityBinding
         get() = requireNotNull(_binding) { "home fragment is null" }
 
-    private val mainViewModel:MainViewModel by activityViewModels()
     private val communityViewModel:CommunityViewModel by viewModels()
     private lateinit var postsAdapter:PostsAdapter
+
 
     @Inject
     lateinit var appPreferences: AppPreferences
@@ -57,24 +58,35 @@ class CommunityFragment:Fragment(), OnTabReselectedListener {
     }
 
     private fun showFeeds(){
+        postsAdapter= PostsAdapter(
+            clickPost = {post->
+                val action=CommunityFragmentDirections
+                    .actionCommunityFragmentToPostDetailFragment(post.toString())
+                findNavController().navigate(action)
+            },
+            clickOtherUser = {userId->
+                val action=CommunityFragmentDirections
+                    .actionCommunityFragmentToOtherProfileFragment(userId.toString())
+                findNavController().navigate(action)
+            },
+            clickLikeBtn = { postId, isLike ->
+                clickLikeBtn(postId, isLike)
+            }
+        )
+        binding.rvPosts.adapter=postsAdapter
+
         lifecycleScope.launch {
             communityViewModel.getAllTimeLineState.collect { state ->
                 when (state) {
                     is GetAllTimeLineState.Success -> {
-                        postsAdapter= PostsAdapter(
-                            clickPost = {post->
-                                val action=CommunityFragmentDirections
-                                    .actionCommunityFragmentToPostDetailFragment(post.toString())
-                                findNavController().navigate(action)
-                            },
-                            clickOtherUser = {userId->
-                                val action=CommunityFragmentDirections
-                                    .actionCommunityFragmentToOtherProfileFragment(userId.toString())
-                                findNavController().navigate(action)
-                            }
-                        )
-                        binding.rvPosts.adapter=postsAdapter
                         postsAdapter.getList(state.data)
+                        //binding.rvPosts.scrollToPosition(0)
+
+                        // 이전 스크롤 위치 가져옴
+                        if (communityViewModel.recyclerViewState != null) {
+                            binding.rvPosts.layoutManager?.onRestoreInstanceState(communityViewModel.recyclerViewState)
+                            communityViewModel.recyclerViewState = null // 재사용 방지
+                        }
                         communityViewModel.resetTimeLineState()
                     }
 
@@ -92,13 +104,54 @@ class CommunityFragment:Fragment(), OnTabReselectedListener {
         setupTabs()
     }
 
+    private fun clickLikeBtn(postId:Int, isLike:Boolean){
+        lifecycleScope.launch {
+            communityViewModel.likePostState.collect { state ->
+                when (state) {
+                    is LikePostState.Success -> {
+                        Timber.d("like post state success!")
+                        communityViewModel.resetLikeState()
+                    }
+
+                    is LikePostState.Error -> {
+                        Timber.e("like post state error!")
+                    }
+
+                    is LikePostState.Loading -> {
+                        Timber.d("like post state loading")
+                    }
+                }
+            }
+        }
+
+        if(isLike) communityViewModel.likePost(appPreferences.getAccessToken()!!, postId)
+        else communityViewModel.unLikePost(appPreferences.getAccessToken()!!, postId)
+
+    }
+
     private fun setupTabs(){
-        communityViewModel.getAllTimeLine(appPreferences.getAccessToken()!!)
+       // communityViewModel.getAllTimeLine(appPreferences.getAccessToken()!!)
+
+        val currentTab = when (communityViewModel.selectedTab.value) {
+            CommunityViewModel.CommunityTab.ALL -> 0
+            CommunityViewModel.CommunityTab.FOLLOWING -> 1
+            CommunityViewModel.CommunityTab.COUNTRY -> 2
+        }
+
+        when (communityViewModel.selectedTab.value) {
+            CommunityViewModel.CommunityTab.ALL ->
+                communityViewModel.getAllTimeLine(appPreferences.getAccessToken()!!)
+            CommunityViewModel.CommunityTab.FOLLOWING ->
+                communityViewModel.getFollowingTimeLine(appPreferences.getAccessToken()!!)
+            CommunityViewModel.CommunityTab.COUNTRY ->
+                communityViewModel.getNationTimeLine(appPreferences.getAccessToken()!!)
+        }
 
         binding.tlCommunity.apply {
             addTab(newTab().setText(getString(R.string.community_all)))
             addTab(newTab().setText(getString(R.string.community_following)))
             addTab(newTab().setText(getString(R.string.community_user_country)))
+            getTabAt(currentTab)?.select()  //  이전 탭 복원
         }
 
         applyTabMargins()
@@ -106,17 +159,26 @@ class CommunityFragment:Fragment(), OnTabReselectedListener {
         binding.tlCommunity.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 when (tab?.position) {
-                    0 -> communityViewModel.getAllTimeLine(appPreferences.getAccessToken()!!)
-                    1 -> communityViewModel.getFollowingTimeLine(appPreferences.getAccessToken()!!)
-                    2 -> communityViewModel.getNationTimeLine(appPreferences.getAccessToken()!!)
+                    0 -> {
+                        communityViewModel.getAllTimeLine(appPreferences.getAccessToken()!!)
+                        communityViewModel.selectTab(CommunityViewModel.CommunityTab.ALL)
+                    }
+                    1 -> {
+                        communityViewModel.getFollowingTimeLine(appPreferences.getAccessToken()!!)
+                        communityViewModel.selectTab(CommunityViewModel.CommunityTab.FOLLOWING)
+                    }
+                    2 -> {
+                        communityViewModel.getNationTimeLine(appPreferences.getAccessToken()!!)
+                        communityViewModel.selectTab(CommunityViewModel.CommunityTab.COUNTRY)
+                    }
                 }
-                binding.rvPosts.scrollToPosition(0)
+                //binding.rvPosts.scrollToPosition(0)
                 Timber.d("tab position: ${tab?.position}")
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab?) {}
             override fun onTabReselected(tab: TabLayout.Tab?) {
-                binding.rvPosts.scrollToPosition(0)
+                //if(communityViewModel.shouldScrollToTop) binding.rvPosts.scrollToPosition(0)
             }
         })
     }
@@ -158,6 +220,12 @@ class CommunityFragment:Fragment(), OnTabReselectedListener {
         }*/
     }
 
+    override fun onPause() {
+        super.onPause()
+        // 스크롤 위치 저장
+        communityViewModel.recyclerViewState = binding.rvPosts.layoutManager?.onSaveInstanceState()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding=null
@@ -165,6 +233,5 @@ class CommunityFragment:Fragment(), OnTabReselectedListener {
 
     override fun onTabReselected() {
         binding.rvPosts.smoothScrollToPosition(0)
-
     }
 }

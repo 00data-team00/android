@@ -45,6 +45,8 @@ class BaseDataSourceImpl @Inject constructor(
     override suspend fun getNationTimeLine(token: String): ResponseTimeLineDto = baseService.getNationTimeLine(token)
     override suspend fun getFollowingTimeLine(token: String): ResponseTimeLineDto = baseService.getFollowingTimeLine(token)
     override suspend fun getPostDetail(token: String, postId: Int): ResponsePostDetailDto = baseService.getPostDetail(token, postId)
+    override suspend fun likePost(token: String, postId: Int): Response<Unit> = baseService.likePost(token, postId)
+    override suspend fun unlikePost(token: String, postId: Int): Response<Unit> = baseService.unlikePost(token, postId)
     override suspend fun getUserProfile(token: String, userId: Int): ResponseProfileDto = baseService.getUserProfile(token, userId)
     override suspend fun writePost(
         token: String,

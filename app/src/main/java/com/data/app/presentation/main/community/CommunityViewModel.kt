@@ -1,5 +1,6 @@
 package com.data.app.presentation.main.community
 
+import android.os.Parcelable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.data.app.R
@@ -8,10 +9,12 @@ import com.data.app.domain.repository.BaseRepository
 import com.data.app.extension.community.GetAllTimeLineState
 import com.data.app.extension.community.GetFollowingTimeLineState
 import com.data.app.extension.community.GetNationTimeLineState
+import com.data.app.extension.community.LikePostState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.fold
 import kotlinx.coroutines.launch
 import okhttp3.ResponseBody
 import org.json.JSONObject
@@ -23,6 +26,15 @@ import javax.inject.Inject
 class CommunityViewModel @Inject constructor(
     private val baseRepository: BaseRepository
 ) : ViewModel() {
+    enum class CommunityTab {
+        ALL, FOLLOWING, COUNTRY
+    }
+
+    private val _selectedTab = MutableStateFlow(CommunityTab.ALL)
+    val selectedTab: StateFlow<CommunityTab> = _selectedTab
+
+    var recyclerViewState: Parcelable? = null
+
     private val _getAllTimeLineState =
         MutableStateFlow<GetAllTimeLineState>(GetAllTimeLineState.Loading)
     val getAllTimeLineState: StateFlow<GetAllTimeLineState> = _getAllTimeLineState.asStateFlow()
@@ -36,6 +48,13 @@ class CommunityViewModel @Inject constructor(
         MutableStateFlow<GetFollowingTimeLineState>(GetFollowingTimeLineState.Loading)
     val getFollowingTimeLineState: StateFlow<GetFollowingTimeLineState> =
         _getFollowingTimeLineState.asStateFlow()
+
+    private val _likePostState = MutableStateFlow<LikePostState>(LikePostState.Loading)
+    val likePostState: StateFlow<LikePostState> = _likePostState.asStateFlow()
+
+    fun selectTab(tab: CommunityTab) {
+        _selectedTab.value = tab
+    }
 
     fun getAllTimeLine(token: String) {
         viewModelScope.launch {
@@ -97,8 +116,52 @@ class CommunityViewModel @Inject constructor(
         }
     }
 
+    fun likePost(token: String, postId: Int){
+        viewModelScope.launch {
+            baseRepository.likePost(token, postId).onSuccess {
+                _likePostState.value=LikePostState.Success("좋아요 성공")
+            }.onFailure {
+                _likePostState.value=LikePostState.Error(it.message.toString())
+                if (it is HttpException) {
+                    try {
+                        val errorBody: ResponseBody? = it.response()?.errorBody()
+                        val errorBodyString = errorBody?.string() ?: ""
+                        httpError(errorBodyString)
+                    } catch (e: Exception) {
+                        // JSON 파싱 실패 시 로깅
+                        Timber.e("Error parsing error body: ${e}")
+                    }
+                }
+            }
+        }
+    }
+
+    fun unLikePost(token: String, postId: Int){
+        viewModelScope.launch {
+            baseRepository.unlikePost(token, postId).onSuccess {
+                _likePostState.value=LikePostState.Success("좋아요 취소 성공")
+            }.onFailure {
+                _likePostState.value=LikePostState.Error(it.message.toString())
+                if (it is HttpException) {
+                    try {
+                        val errorBody: ResponseBody? = it.response()?.errorBody()
+                        val errorBodyString = errorBody?.string() ?: ""
+                        httpError(errorBodyString)
+                    } catch (e: Exception) {
+                        // JSON 파싱 실패 시 로깅
+                        Timber.e("Error parsing error body: ${e}")
+                    }
+                }
+            }
+        }
+    }
+
     fun resetTimeLineState(){
         _getAllTimeLineState.value=GetAllTimeLineState.Loading
+    }
+
+    fun resetLikeState(){
+        _likePostState.value=LikePostState.Loading
     }
 
     private fun httpError(errorBody: String) {

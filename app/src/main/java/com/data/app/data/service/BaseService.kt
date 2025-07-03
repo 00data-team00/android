@@ -26,6 +26,7 @@ import com.data.app.data.response_dto.home.ResponseUserGameInfoDto
 import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Multipart
@@ -80,6 +81,18 @@ interface BaseService {
         @Header("Authorization") token:String,
         @Path("postId") postId:Int,
     ): ResponsePostDetailDto
+
+    @POST("api/me/posts/{postId}/like")
+    suspend fun likePost(
+        @Header("Authorization") token:String,
+        @Path("postId") postId:Int,
+    ):Response<Unit>
+
+    @DELETE("api/me/posts/{postId}/like")
+    suspend fun unlikePost(
+        @Header("Authorization") token:String,
+        @Path("postId") postId:Int,
+    ):Response<Unit>
 
     @GET("api/users/{userId}/profile")
     suspend fun getUserProfile(

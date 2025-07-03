@@ -127,18 +127,16 @@ class PostDetailAdapter(
         RecyclerView.ViewHolder(binding.root) {
         fun bind(comment: ResponsePostDetailDto.CommentDto){
             with(binding){
-                val profile = profileUrl?.let { BuildConfig.BASE_URL.removeSuffix("/") + it }
+                val profile = comment.commenterProfileImage?.let { BuildConfig.BASE_URL.removeSuffix("/") + it }
 
-                binding.ivProfile.load(profile) {
+                ivProfile.load(profile) {
                     transformations(CircleCropTransformation())
                     placeholder(R.drawable.ic_profile)
                     error(R.drawable.ic_profile)
                 }
                 tvId.text=comment.commenterName
                 tvContent.text=comment.content
-                tvLikeCount.text="1"
-
-
+                //tvLikeCount.text="1"
             }
 
             listOf(binding.ivProfile, binding.tvId).forEach {
@@ -147,10 +145,10 @@ class PostDetailAdapter(
                 }
             }
 
-            clickLike()
+            //clickLike()
         }
 
-        private fun clickLike(){
+       /* private fun clickLike(){
             with(binding){
                 btnLike.setOnClickListener {
                     btnLike.isSelected = !btnLike.isSelected
@@ -160,6 +158,6 @@ class PostDetailAdapter(
                             ).toString()
                 }
             }
-        }
+        }*/
     }
 }
