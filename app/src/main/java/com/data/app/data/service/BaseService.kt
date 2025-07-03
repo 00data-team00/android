@@ -94,6 +94,13 @@ interface BaseService {
         @Path("postId") postId:Int,
     ):Response<Unit>
 
+    @POST("api/me/posts/{postId}/comments")
+    suspend fun writeComment(
+        @Header("Authorization") token:String,
+        @Path("postId") postId:Int,
+        @Body content:String,
+    ): ResponsePostDetailDto.CommentDto
+
     @GET("api/users/{userId}/profile")
     suspend fun getUserProfile(
         @Header("Authorization") token:String,

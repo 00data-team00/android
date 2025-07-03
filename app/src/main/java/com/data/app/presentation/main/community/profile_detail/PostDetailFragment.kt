@@ -25,6 +25,7 @@ import com.data.app.data.shared_preferences.AppPreferences
 import com.data.app.databinding.FragmentPostDetailBinding
 import com.data.app.extension.community.LikePostState
 import com.data.app.extension.community.PostDetailState
+import com.data.app.extension.community.WriteCommentState
 import com.data.app.util.TimeAgoFormatter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -91,9 +92,10 @@ class PostDetailFragment : Fragment() {
          clickLike()*/
     }
 
-    private fun showPost(post: ResponsePostDetailDto){
-        with(binding){
-            val profile = post.authorProfileImage?.let { BuildConfig.BASE_URL.removeSuffix("/") + it }
+    private fun showPost(post: ResponsePostDetailDto) {
+        with(binding) {
+            val profile =
+                post.authorProfileImage?.let { BuildConfig.BASE_URL.removeSuffix("/") + it }
 
             binding.ivProfile.load(profile) {
                 transformations(CircleCropTransformation())
@@ -108,6 +110,8 @@ class PostDetailFragment : Fragment() {
             tvContent.text = post.content
             tvLikeCount.text = post.likeCount.toString()
             tvCommentCount.text = post.commentCount.toString()
+
+            if(post.isLiked) btnLike.isSelected = true
 
             //btnFollow.isSelected = post.
 
@@ -161,10 +165,10 @@ class PostDetailFragment : Fragment() {
 
     }
 
-    private fun showComments(profileUrl:String?, post: List<ResponsePostDetailDto.CommentDto>) {
+    private fun showComments(profileUrl: String?, post: List<ResponsePostDetailDto.CommentDto>) {
         postDetailAdapter = PostDetailAdapter(
-            addComment = { size ->
-                binding.tvCommentCount.text = size.toString()
+            addComment = { content ->
+                writeComment(postDetailFragmentArgs.postId.toInt(), content)
             },
             clickProfileOrId = { userId ->
                 clickProfileOrId(userId)
@@ -173,26 +177,50 @@ class PostDetailFragment : Fragment() {
         binding.rvComments.adapter = postDetailAdapter
         postDetailAdapter.getUser(profileUrl)
         postDetailAdapter.getList(post)
-    }
 
-    private fun clickProfileOrId(userId:Int) {
-        val action = PostDetailFragmentDirections.actionPostDetailFragmentToOtherProfileFragment(userId.toString())
-        findNavController().navigate(action)
-    }
+        lifecycleScope.launch {
+            postDetailViewModel.writeCommentState.collect { state ->
+                when (state) {
+                    is WriteCommentState.Success -> {
+                        val comment = state.response
+                        postDetailAdapter.updateComment(comment)
+                    }
 
-   /* private fun clickFollow() {
-        with(binding.btnFollow) {
-            setOnClickListener {
-                isSelected = !isSelected
-                text = context.getString(
-                    if (isSelected) R.string.community_follow
-                    else R.string.community_following
-                )
+                    is WriteCommentState.Loading -> {
+                        Timber.d("write comment state loading...")
+                    }
+
+                    is WriteCommentState.Error -> {
+                        Timber.d("write comment state error: ${state.message}")
+                    }
+                }
             }
         }
     }
-*/
-    private fun clickLike(postId:Int) {
+
+    private fun writeComment(postId: Int, content: String) {
+        postDetailViewModel.writeComment(appPreferences.getAccessToken()!!, postId, content)
+    }
+
+    private fun clickProfileOrId(userId: Int) {
+        val action =
+            PostDetailFragmentDirections.actionPostDetailFragmentToOtherProfileFragment(userId.toString())
+        findNavController().navigate(action)
+    }
+
+    /* private fun clickFollow() {
+         with(binding.btnFollow) {
+             setOnClickListener {
+                 isSelected = !isSelected
+                 text = context.getString(
+                     if (isSelected) R.string.community_follow
+                     else R.string.community_following
+                 )
+             }
+         }
+     }
+ */
+    private fun clickLike(postId: Int) {
         Timber.d("like count: ${binding.tvLikeCount.text}")
         with(binding) {
             btnLike.setOnClickListener {
@@ -207,21 +235,22 @@ class PostDetailFragment : Fragment() {
         }
     }
 
-    private fun setLike(postId:Int, isLike:Boolean){
+    private fun setLike(postId: Int, isLike: Boolean) {
         lifecycleScope.launch {
-            postDetailViewModel.likePostState.collect{state->
-                when(state){
+            postDetailViewModel.likePostState.collect { state ->
+                when (state) {
                     is LikePostState.Success -> {
                         Timber.d("like post state success!1")
                         postDetailViewModel.resetLikeState()
                     }
+
                     is LikePostState.Loading -> {}
                     is LikePostState.Error -> {}
                 }
             }
         }
 
-        if(isLike) postDetailViewModel.likePost(appPreferences.getAccessToken()!!, postId)
+        if (isLike) postDetailViewModel.likePost(appPreferences.getAccessToken()!!, postId)
         else postDetailViewModel.unLikePost(appPreferences.getAccessToken()!!, postId)
     }
 

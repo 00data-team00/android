@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.data.app.R
 import com.data.app.data.Post
 import com.data.app.domain.repository.BaseRepository
+import com.data.app.extension.community.LikePostState
+import com.data.app.extension.community.WriteCommentState
 import com.data.app.extension.my.EditProfileState
 import com.data.app.extension.my.MyPostState
 import com.data.app.extension.my.MyProfileState
@@ -39,6 +41,9 @@ class MyViewModel @Inject constructor(
 
     private val _editProfileState = MutableStateFlow<EditProfileState>(EditProfileState.Loading)
     val editProfileState:StateFlow<EditProfileState> = _editProfileState.asStateFlow()
+
+    private val _likePostState = MutableStateFlow<LikePostState>(LikePostState.Loading)
+    val likePostState: StateFlow<LikePostState> = _likePostState.asStateFlow()
 
     fun getProfile(token:String){
         viewModelScope.launch {
@@ -103,6 +108,51 @@ class MyViewModel @Inject constructor(
     fun resetPostState(){
         _myPostState.value = MyPostState.Loading
     }
+
+    fun likePost(token: String, postId: Int) {
+        viewModelScope.launch {
+            baseRepository.likePost(token, postId).onSuccess {
+                _likePostState.value = LikePostState.Success("좋아요 성공")
+            }.onFailure {
+                _likePostState.value = LikePostState.Error(it.message.toString())
+                if (it is HttpException) {
+                    try {
+                        val errorBody: ResponseBody? = it.response()?.errorBody()
+                        val errorBodyString = errorBody?.string() ?: ""
+                        httpError(errorBodyString)
+                    } catch (e: Exception) {
+                        // JSON 파싱 실패 시 로깅
+                        Timber.e("Error parsing error body: ${e}")
+                    }
+                }
+            }
+        }
+    }
+
+    fun unLikePost(token: String, postId: Int) {
+        viewModelScope.launch {
+            baseRepository.unlikePost(token, postId).onSuccess {
+                _likePostState.value = LikePostState.Success("좋아요 취소 성공")
+            }.onFailure {
+                _likePostState.value = LikePostState.Error(it.message.toString())
+                if (it is HttpException) {
+                    try {
+                        val errorBody: ResponseBody? = it.response()?.errorBody()
+                        val errorBodyString = errorBody?.string() ?: ""
+                        httpError(errorBodyString)
+                    } catch (e: Exception) {
+                        // JSON 파싱 실패 시 로깅
+                        Timber.e("Error parsing error body: ${e}")
+                    }
+                }
+            }
+        }
+    }
+
+    fun resetLikeState() {
+        _likePostState.value = LikePostState.Loading
+    }
+
 
     private fun httpError(errorBody: String) {
         // 전체 에러 바디를 로깅하여 디버깅

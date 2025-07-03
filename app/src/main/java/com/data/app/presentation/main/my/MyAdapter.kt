@@ -15,7 +15,7 @@ import com.data.app.databinding.ItemPostBinding
 import com.data.app.util.TimeAgoFormatter
 import timber.log.Timber
 
-class MyAdapter(val clickPost:(Int)->Unit):
+class MyAdapter(val clickPost:(Int)->Unit, val clickLike:(isLike:Boolean, postId:Int)->Unit):
 RecyclerView.Adapter<com.data.app.presentation.main.my.MyAdapter.MyViewHolder>(){
 
     private var userProfile:String?=null
@@ -32,7 +32,7 @@ RecyclerView.Adapter<com.data.app.presentation.main.my.MyAdapter.MyViewHolder>()
         holder.bind(postsList[position])
     }
 
-    fun getList(profile:String, list: List<ResponseMyPostDto.PostDto>) {
+    fun getList(profile:String?, list: List<ResponseMyPostDto.PostDto>) {
         userProfile=profile
         postsList.clear()
         postsList.addAll(list)
@@ -43,8 +43,15 @@ RecyclerView.Adapter<com.data.app.presentation.main.my.MyAdapter.MyViewHolder>()
         RecyclerView.ViewHolder(binding.root) {
         fun bind(data: ResponseMyPostDto.PostDto) {
             with(binding) {
-                ivProfile.load(userProfile) {
-                    transformations(CircleCropTransformation())
+                Timber.d("userProfile: $userProfile")
+                if(userProfile!=null) {
+                    ivProfile.load(userProfile) {
+                        transformations(CircleCropTransformation())
+                    }
+                }else{
+                    ivProfile.load(R.drawable.ic_profile){
+                        transformations(CircleCropTransformation())
+                    }
                 }
 
                 val lp = ivImage.layoutParams as ConstraintLayout.LayoutParams
@@ -75,6 +82,8 @@ RecyclerView.Adapter<com.data.app.presentation.main.my.MyAdapter.MyViewHolder>()
                 tvLikeCount.text = data.likeCount.toString()
                 tvCommentCount.text = data.commentCount.toString()
 
+                if(data.isLiked) btnLike.isSelected=true
+
                 //btnFollow.visibility=View.GONE
 
                 clickLike()
@@ -91,6 +100,8 @@ RecyclerView.Adapter<com.data.app.presentation.main.my.MyAdapter.MyViewHolder>()
                             if (btnLike.isSelected) tvLikeCount.text.toString().toInt() + 1
                             else tvLikeCount.text.toString().toInt() - 1
                             ).toString()
+
+                    clickLike(btnLike.isSelected, postsList[adapterPosition].id)
                 }
             }
         }

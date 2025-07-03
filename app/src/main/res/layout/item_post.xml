@@ -6,13 +6,14 @@
     android:paddingTop="10dp"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <ImageView
+    <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/iv_profile"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:src="@drawable/ic_profile"
         android:layout_marginTop="15dp"
         android:scaleType="centerCrop"
+        app:shapeAppearanceOverlay="@style/CircleImageView"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintWidth_percent="0.1"
         app:layout_constraintTop_toTopOf="parent"
@@ -38,6 +39,18 @@
         app:layout_constraintTop_toTopOf="@id/tv_id"
         app:layout_constraintBottom_toBottomOf="@id/tv_id"
         app:layout_constraintStart_toEndOf="@id/tv_id"/>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_menu"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/ic_menu_black_24"
+        android:visibility="gone"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintWidth_percent="0.06"
+        app:layout_constraintTop_toTopOf="@id/iv_profile"
+        app:layout_constraintBottom_toBottomOf="@id/iv_profile"
+        app:layout_constraintEnd_toEndOf="@id/btn_share"/>
 
     <!--<androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_follow"

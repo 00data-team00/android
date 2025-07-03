@@ -25,6 +25,8 @@ data class ResponseMyPostDto (
         @SerialName("commentCount")
         val commentCount: Int,
         @SerialName("createdAt")
-        val createdAt: String // "YYYY-MM-DDTHH:mm:ss.SSSZ" 형식의 날짜/시간 문자열
+        val createdAt: String, // "YYYY-MM-DDTHH:mm:ss.SSSZ" 형식의 날짜/시간 문자열
+        @SerialName("isLiked")
+        val isLiked: Boolean
     )
 }

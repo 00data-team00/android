@@ -30,6 +30,7 @@ import com.data.app.BuildConfig
 import com.data.app.R
 import com.data.app.data.shared_preferences.AppPreferences
 import com.data.app.databinding.FragmentMyBinding
+import com.data.app.extension.community.LikePostState
 import com.data.app.extension.my.EditProfileState
 import com.data.app.extension.my.MyPostState
 import com.data.app.extension.my.MyProfileState
@@ -111,7 +112,7 @@ class MyFragment : Fragment(), OnTabReselectedListener {
                         //mainViewModel.saveUserId(myProfileState.response.)
                         with(binding) {
                             val imageUrl =
-                                BuildConfig.BASE_URL.removeSuffix("/") + myProfileState.response.profileImage
+                                myProfileState.response.profileImage?.let { BuildConfig.BASE_URL.removeSuffix("/") + it }
                             // val resourceId = resources.getIdentifier("ic_profile", "drawable", requireContext().packageName)
                             ivProfile.load(imageUrl) {
                                 transformations(CircleCropTransformation())
@@ -147,7 +148,7 @@ class MyFragment : Fragment(), OnTabReselectedListener {
         myViewModel.getProfile(appPreferences.getAccessToken()!!)
     }
 
-    private fun showPosts(profile:String) {
+    private fun showPosts(profile:String?) {
         lifecycleScope.launch {
             myViewModel.myPostState.collect { myPostState ->
                 when (myPostState) {
@@ -157,7 +158,11 @@ class MyFragment : Fragment(), OnTabReselectedListener {
                                 val action =
                                     MyFragmentDirections.actionMyFragmentToMyPostDetailFragment(post.toString())
                                 findNavController().navigate(action)
-                            })
+                            },
+                                clickLike = { isLike, postId ->
+                                    if(isLike) myViewModel.likePost(appPreferences.getAccessToken()!!, postId)
+                                    else myViewModel.unLikePost(appPreferences.getAccessToken()!!, postId)
+                                })
                         binding.rvPosts.adapter = myAdapter
                         myAdapter.getList(profile, myPostState.response.posts)
                         myViewModel.resetPostState()
@@ -170,6 +175,7 @@ class MyFragment : Fragment(), OnTabReselectedListener {
 
         myViewModel.getMyPosts(appPreferences.getAccessToken()!!)
 
+        setLike()
         /* lifecycleScope.launch {
              myViewModel.myState.collect { myState ->
                  when (myState) {
@@ -200,6 +206,23 @@ class MyFragment : Fragment(), OnTabReselectedListener {
          binding.tvId.text = "kkuming"*/
     }
 
+    private fun setLike(){
+        lifecycleScope.launch {
+            myViewModel.likePostState.collect{
+                when(it){
+                    is LikePostState.Success -> {
+                        Timber.d("like post state success!")
+                        myViewModel.resetLikeState()
+                    }
+                    is LikePostState.Loading -> {}
+                    is LikePostState.Error -> {
+                        Timber.e("like post state error!")
+                    }
+                }
+
+            }
+        }
+    }
 
 
     private fun checkGalleryPermissionAndOpenPicker() {
