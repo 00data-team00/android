@@ -15,7 +15,7 @@ import com.data.app.data.response_dto.explore.ResponseAllProgramDto
 import com.data.app.data.response_dto.home.ai.ResponseChatAiMessageDto
 import com.data.app.data.response_dto.home.ai.ResponseChatStartDto
 import com.data.app.data.response_dto.explore.ResponseDeadlineDto
-import com.data.app.data.response_dto.community.ResponseFollowersDto
+import com.data.app.data.response_dto.community.ResponseFollowListDto
 import com.data.app.data.response_dto.login.ResponseLoginDto
 import com.data.app.data.response_dto.community.ResponseEditProfileDto
 import com.data.app.data.response_dto.community.ResponseFollowDto
@@ -61,6 +61,8 @@ class BaseDataSourceImpl @Inject constructor(
     override suspend fun deletePost(token: String, postId: Int): ResponseDeletePostDto = baseService.deletePost(token, postId)
     override suspend fun follow(token: String, userId: Int): ResponseFollowDto = baseService.follow(token, userId)
     override suspend fun unFollow(token: String, userId: Int): ResponseFollowDto = baseService.unFollow(token, userId)
+    override suspend fun getFollowerList(token: String): ResponseFollowListDto = baseService.getFollowerList(token)
+    override suspend fun getFollowingList(token: String): ResponseFollowListDto = baseService.getFollowingList(token)
 
     // home
     override suspend fun getUserGameInfo(token: String): ResponseUserGameInfoDto = baseService.getUserGameInfo(token)
@@ -96,10 +98,4 @@ class BaseDataSourceImpl @Inject constructor(
     override suspend fun getMyProfile(token: String): ResponseProfileDto = baseService.getProfile(token)
     override suspend fun getMyPosts(token: String): ResponseMyPostDto = baseService.getMyPost(token)
     override suspend fun editProfile(token: String, image: MultipartBody.Part): ResponseEditProfileDto = baseService.editProfile(token, image)
-
-    // followers
-    override suspend fun getFollowerList(token: String): ResponseFollowersDto = baseService.getFollowerList(token)
-    // following
-
-
 }

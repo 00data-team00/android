@@ -8,7 +8,7 @@ import com.data.app.data.response_dto.explore.ResponseAllProgramDto
 import com.data.app.data.response_dto.home.ai.ResponseChatAiMessageDto
 import com.data.app.data.response_dto.home.ai.ResponseChatStartDto
 import com.data.app.data.response_dto.explore.ResponseDeadlineDto
-import com.data.app.data.response_dto.community.ResponseFollowersDto
+import com.data.app.data.response_dto.community.ResponseFollowListDto
 import com.data.app.data.response_dto.login.ResponseLoginDto
 import com.data.app.data.response_dto.community.ResponseEditProfileDto
 import com.data.app.data.response_dto.community.ResponseFollowDto
@@ -111,6 +111,14 @@ interface BaseRepository {
         userId:Int,
     ):Result<ResponseFollowDto>
 
+    suspend fun getFollowerList(
+        token:String
+    ):Result<ResponseFollowListDto>
+
+    suspend fun getFollowingList(
+        token:String
+    ):Result<ResponseFollowListDto>
+
     // home
     suspend fun getUserGameInfo(
         token:String,
@@ -174,8 +182,4 @@ interface BaseRepository {
         image:MultipartBody.Part
     ):Result<ResponseEditProfileDto>
 
-    // followers
-    suspend fun getFollowerList(
-        token:String
-    ):Result<ResponseFollowersDto>
 }
