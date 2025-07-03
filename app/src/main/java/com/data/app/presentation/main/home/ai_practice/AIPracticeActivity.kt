@@ -46,10 +46,12 @@ class AIPracticeActivity : BaseActivity() {
     }
 
     private fun showList(token: String?) {
-        aiAdapter = AIPracticeAdapter(this, clickPractice = { id->
+        aiAdapter = AIPracticeAdapter(this, clickPractice = { item->
             val intent = Intent(this, AIChatActivity::class.java)
             intent.putExtra("accessToken", token)
-            intent.putExtra("topicId", id)
+            intent.putExtra("topicId", item.id)
+            intent.putExtra("topic", item.title)
+            intent.putExtra("topic_en", item.description)
             startActivity(intent)
             overridePendingTransition(R.anim.slide_in_right, R.anim.stay)
         }

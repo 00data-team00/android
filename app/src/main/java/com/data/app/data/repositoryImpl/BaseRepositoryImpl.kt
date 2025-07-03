@@ -6,6 +6,7 @@ import com.data.app.data.request_dto.RequestLoginDto
 import com.data.app.data.request_dto.RequestQuizDto
 import com.data.app.data.request_dto.RequestRegisterDto
 import com.data.app.data.request_dto.RequestSendMailDto
+import com.data.app.data.request_dto.RequestTranslateDto
 import com.data.app.data.request_dto.RequestVerifyMailDto
 import com.data.app.data.response_dto.community.ResponseDeletePostDto
 import com.data.app.data.response_dto.home.ai.ResponseAIPreviousChatMessagesDto
@@ -26,6 +27,7 @@ import com.data.app.data.response_dto.my.ResponseProfileDto
 import com.data.app.data.response_dto.home.quiz.ResponseQuizDto
 import com.data.app.data.response_dto.login.ResponseRegisterDto
 import com.data.app.data.response_dto.home.ResponseUserGameInfoDto
+import com.data.app.data.response_dto.home.ai.ResponseTranslateDto
 import com.data.app.domain.repository.BaseRepository
 import okhttp3.MultipartBody
 import retrofit2.Response
@@ -260,6 +262,19 @@ class BaseRepositoryImpl @Inject constructor(
             baseDataSource.getAIPreviousChatMessages(token, chatRoomId)
         }.onFailure {
             Timber.e("base repository get ai previous chat message fail: $it")
+        }
+    }
+
+    // translate
+    override suspend fun getTranslate(
+        token: String,
+        messageId: Int,
+        userLang: String
+    ): Result<ResponseTranslateDto> {
+        return runCatching {
+            baseDataSource.getTranslate(token, RequestTranslateDto(messageId, userLang))
+        }.onFailure {
+            Timber.e("base repository get translate message fail: $it")
         }
     }
 

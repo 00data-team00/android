@@ -1,6 +1,7 @@
 package com.data.app.presentation.main.home.ai_practice.ai_chat
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -18,12 +19,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 
 class AIChatAdapter(
     private val clickChat:(String)->Unit,
+    private val request:(Int)->Unit,
+    private val change:(Int)->Unit,
 ):RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     companion object {
         private const val TYPE_MY_CHAT = 0
@@ -60,6 +64,11 @@ class AIChatAdapter(
         }
     }
 
+    fun translatePosition(position: Int, translated: String){
+        chatList[position].text = translated
+        notifyItemChanged(position)
+    }
+
 
     override fun getItemCount(): Int = chatList.size
 
@@ -80,12 +89,21 @@ class AIChatAdapter(
             binding.tvChat.maxWidth = (screenWidth * 0.57).toInt()
 
             val originalText = binding.tvChat.text
+            val pos = bindingAdapterPosition
+            Timber.d("${content.messageId}, ${content.text}")
+
             setCustomTouchListener(
-                targetView = binding.itemChatMy,
-                onLongPress = {binding.tvChat.text = "This is translated chat text !!"},
-                onLongPressEnd = {binding.tvChat.text = originalText},
+                targetView = binding.tvChat,
+                onLongPress = {
+                    change(pos)
+                    request(content.messageId)},
+                onLongPressEnd = {
+                    Log.d("MYCHAT", chatList.toString())
+                    chatList[pos].text = originalText.toString()
+                    notifyItemChanged(pos)},
                 onClick = {clickChat(content.text)}
             )
+            //binding.tvChat.setOnClickListener{clickChat(content.text)}
         }
     }
 
@@ -110,12 +128,21 @@ class AIChatAdapter(
                 tvChat.layoutParams = layoutParams
 
                 val originalText = binding.tvChat.text
+                val pos = bindingAdapterPosition
+
                 setCustomTouchListener(
-                    targetView = binding.itemChatAi,
-                    onLongPress = {binding.tvChat.text = "This is translated chat text !!"},
-                    onLongPressEnd = {binding.tvChat.text = originalText},
+                    targetView = binding.tvChat,
+                    onLongPress = {
+                        change(pos)
+                        request(content.messageId)
+                    },
+                    onLongPressEnd = {
+                        Log.d("AICHAT", chatList.toString())
+                        chatList[pos].text = originalText.toString()
+                        notifyItemChanged(pos)},
                     onClick = {clickChat(content.text)}
                 )
+                //binding.tvChat.setOnClickListener{clickChat(content.text)}
             }
         }
         private fun dpToPx(dp: Int): Int {
@@ -181,13 +208,13 @@ class AIChatAdapter(
     }
 
     fun addAiMessage(message: ResponseChatAiMessageDto.Message){
-       chatList.add(message)
+        chatList.add(message)
         notifyItemInserted(chatList.size-1)
     }
 
     private fun formatToTimeOnly(isoString: String): String {
         return try {
-            val localDateTime = LocalDateTime.parse(isoString)
+            val localDateTime = LocalDateTime.parse(isoString).plusHours(8)
             localDateTime.format(DateTimeFormatter.ofPattern("HH:mm"))
         } catch (e: Exception) {
             "-"

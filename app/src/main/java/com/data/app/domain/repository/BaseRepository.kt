@@ -19,6 +19,7 @@ import com.data.app.data.response_dto.my.ResponseProfileDto
 import com.data.app.data.response_dto.home.quiz.ResponseQuizDto
 import com.data.app.data.response_dto.login.ResponseRegisterDto
 import com.data.app.data.response_dto.home.ResponseUserGameInfoDto
+import com.data.app.data.response_dto.home.ai.ResponseTranslateDto
 import okhttp3.MultipartBody
 import retrofit2.Response
 
@@ -146,6 +147,13 @@ interface BaseRepository {
         token:String,
         chatRoomId:Int,
     ):Result<ResponseAIPreviousChatMessagesDto>
+
+    // translate
+    suspend fun getTranslate(
+        token:String,
+        messageId:Int,
+        userLang:String
+    ):Result<ResponseTranslateDto>
 
     // quiz
     suspend fun getQuiz(
