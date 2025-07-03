@@ -18,6 +18,7 @@ import com.data.app.data.response_dto.explore.ResponseDeadlineDto
 import com.data.app.data.response_dto.community.ResponseFollowersDto
 import com.data.app.data.response_dto.login.ResponseLoginDto
 import com.data.app.data.response_dto.community.ResponseEditProfileDto
+import com.data.app.data.response_dto.community.ResponseFollowDto
 import com.data.app.data.response_dto.community.ResponsePostDetailDto
 import com.data.app.data.response_dto.community.ResponseTimeLineDto
 import com.data.app.data.response_dto.my.ResponseMyPostDto
@@ -170,6 +171,22 @@ class BaseRepositoryImpl @Inject constructor(
             baseDataSource.deletePost(token, postId)
         }.onFailure {
             Timber.e("base repository delete post fail!: $it")
+        }
+    }
+
+    override suspend fun follow(token: String, userId: Int): Result<ResponseFollowDto> {
+        return runCatching {
+            baseDataSource.follow(token, userId)
+        }.onFailure {
+            Timber.e("base repository follow fail!: $it")
+        }
+    }
+
+    override suspend fun unFollow(token: String, userId: Int): Result<ResponseFollowDto> {
+        return runCatching {
+            baseDataSource.unFollow(token, userId)
+        }.onFailure {
+            Timber.e("base repository unfollow fail!: $it")
         }
     }
 

@@ -1,6 +1,7 @@
 package com.data.app.presentation.main.community.write
 
 import android.Manifest
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -214,6 +215,7 @@ class WritePostActivity : BaseActivity() {
                 when (writePostState) {
                     is WritePostState.Success -> {
                         Timber.d("write post success")
+                        setResult(Activity.RESULT_OK)
                         finish()
                         overridePendingTransition(R.anim.stay, R.anim.slide_out_right)
                     }

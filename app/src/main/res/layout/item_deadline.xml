@@ -6,8 +6,9 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cv_deadline"
-        android:layout_width="260dp"
+        android:layout_width="255dp"
         android:layout_height="wrap_content"
+        android:minHeight="265dp"
         android:layout_marginStart="7dp"
         android:layout_marginEnd="7dp"
         android:layout_marginTop="3dp"
@@ -52,21 +53,28 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginStart="15dp"
                 android:gravity="start"
-                android:paddingEnd="15dp"
+                android:layout_marginEnd="15dp"
                 android:text="외국인 근로자 한글 교육 프로그램"
                 android:textSize="14sp"
                 android:textStyle="bold"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:breakStrategy="simple"
                 app:layout_constraintEnd_toEndOf="@id/iv_background"
                 app:layout_constraintTop_toTopOf="@id/iv_background"
                 app:layout_constraintStart_toStartOf="@id/iv_background"/>
 
             <TextView
                 android:id="@+id/tv_address"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="서초구"
                 android:textColor="@color/mock_ai_practice_title_gray"
                 android:textSize="12dp"
+                android:maxLines="2"
+                android:lines="2"
+                android:ellipsize="end"
+                android:breakStrategy="simple"
+                app:layout_constraintEnd_toEndOf="@id/tv_title"
                 app:layout_constraintTop_toBottomOf="@id/tv_title"
                 app:layout_constraintStart_toStartOf="@id/tv_title"/>
 

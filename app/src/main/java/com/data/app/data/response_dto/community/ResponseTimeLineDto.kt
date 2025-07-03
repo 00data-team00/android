@@ -41,6 +41,8 @@ data class ResponseTimeLineDto (
 
     @Serializable
     data class AuthorProfileData ( // 'authorProfile' 객체에 해당하는 데이터 클래스 (기존 AuthorProfileDto 와 내용 동일)
+        @SerialName("id")
+        val id:Int,
         @SerialName("name")
         val name: String,
         @SerialName("profileImage")
@@ -53,8 +55,6 @@ data class ResponseTimeLineDto (
         val followingCount: Int,
         @SerialName("isFollowing")
         val isFollowing: Boolean,
-        @SerialName("isLiked")
-        val isLiked: Boolean,
         @SerialName("nationName")
         val nationName: String,
         @SerialName("nationNameKo")
