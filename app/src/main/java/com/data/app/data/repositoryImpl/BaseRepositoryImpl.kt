@@ -108,6 +108,22 @@ class BaseRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun likePost(token: String, postId: Int): Result<Response<Unit>> {
+        return runCatching {
+            baseDataSource.likePost(token, postId)
+        }.onFailure {
+            Timber.e("base repository like post fail!: $it")
+        }
+    }
+
+    override suspend fun unlikePost(token: String, postId: Int): Result<Response<Unit>> {
+        return runCatching {
+            baseDataSource.unlikePost(token, postId)
+        }.onFailure {
+            Timber.e("base repository unlike post fail!: $it")
+        }
+    }
+
     override suspend fun getUserProfile(token: String, userId: Int): Result<ResponseProfileDto> {
         return runCatching {
             baseDataSource.getUserProfile(token, userId)

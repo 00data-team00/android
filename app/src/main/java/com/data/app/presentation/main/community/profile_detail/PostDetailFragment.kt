@@ -23,6 +23,7 @@ import com.data.app.data.Post
 import com.data.app.data.response_dto.community.ResponsePostDetailDto
 import com.data.app.data.shared_preferences.AppPreferences
 import com.data.app.databinding.FragmentPostDetailBinding
+import com.data.app.extension.community.LikePostState
 import com.data.app.extension.community.PostDetailState
 import com.data.app.util.TimeAgoFormatter
 import dagger.hilt.android.AndroidEntryPoint
@@ -117,6 +118,7 @@ class PostDetailFragment : Fragment() {
             }
         }
 
+        clickLike(post.id)
     }
 
     private fun showImages(post: ResponsePostDetailDto) {
@@ -190,7 +192,7 @@ class PostDetailFragment : Fragment() {
         }
     }
 */
-    private fun clickLike() {
+    private fun clickLike(postId:Int) {
         Timber.d("like count: ${binding.tvLikeCount.text}")
         with(binding) {
             btnLike.setOnClickListener {
@@ -199,8 +201,28 @@ class PostDetailFragment : Fragment() {
                         if (btnLike.isSelected) tvLikeCount.text.toString().toInt() + 1
                         else tvLikeCount.text.toString().toInt() - 1
                         ).toString()
+
+                setLike(postId, btnLike.isSelected)
             }
         }
+    }
+
+    private fun setLike(postId:Int, isLike:Boolean){
+        lifecycleScope.launch {
+            postDetailViewModel.likePostState.collect{state->
+                when(state){
+                    is LikePostState.Success -> {
+                        Timber.d("like post state success!1")
+                        postDetailViewModel.resetLikeState()
+                    }
+                    is LikePostState.Loading -> {}
+                    is LikePostState.Error -> {}
+                }
+            }
+        }
+
+        if(isLike) postDetailViewModel.likePost(appPreferences.getAccessToken()!!, postId)
+        else postDetailViewModel.unLikePost(appPreferences.getAccessToken()!!, postId)
     }
 
     private fun clickBackButton() {
