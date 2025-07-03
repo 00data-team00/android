@@ -18,6 +18,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.time.LocalDateTime
@@ -37,6 +38,7 @@ class AIChatAdapter(
 
     private val chatList = mutableListOf<ResponseChatAiMessageDto.Message>()
 
+    private var blinkingJob: Job? = null
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -112,6 +114,19 @@ class AIChatAdapter(
         fun bind(content: ResponseChatAiMessageDto.Message, isFirstOfType: Boolean) {
             with(binding) {
                 ivProfile.load(R.drawable.ic_basic_profile)
+                if (content.messageId == -1){
+                    blinkingJob = CoroutineScope(Dispatchers.Main).launch {
+                        while (isActive) {
+                            binding.ivLoad1.visibility = View.VISIBLE
+                            binding.ivLoad2.visibility = View.GONE
+                            delay(300)
+
+                            binding.ivLoad1.visibility = View.GONE
+                            binding.ivLoad2.visibility = View.VISIBLE
+                            delay(300)
+                        }
+                    }
+                }
                 tvName.text = "AI"
                 tvChat.text = content.text
                 tvTime.text = formatToTimeOnly(content.storedAt)
@@ -203,9 +218,23 @@ class AIChatAdapter(
     }
 
     fun startAiMessage(message:ResponseChatStartDto){
+        Timber.d(message.createdAt)
         val aiChat = ResponseChatAiMessageDto.Message(message.chatRoomId, message.message, false, message.createdAt)
         chatList.add(aiChat)
         notifyItemInserted(chatList.size-1)
+    }
+
+    fun loadAiMessage(time:String){
+        Timber.d(time)
+        val aiChat = ResponseChatAiMessageDto.Message(-1, "                       ", false, time)
+        chatList.add(aiChat)
+        notifyItemInserted(chatList.size-1)
+    }
+
+    fun deleteLoadMessage(){
+        blinkingJob?.cancel()
+        chatList.removeAt(chatList. lastIndex)
+        notifyItemRemoved(chatList.lastIndex)
     }
 
     fun addAiMessage(message: ResponseChatAiMessageDto.Message){

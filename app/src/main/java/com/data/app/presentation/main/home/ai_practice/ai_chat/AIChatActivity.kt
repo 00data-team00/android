@@ -42,6 +42,8 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import java.text.SimpleDateFormat
+import java.time.format.DateTimeFormatter
+import java.time.LocalDateTime
 import java.util.Date
 
 @AndroidEntryPoint
@@ -136,9 +138,10 @@ class AIChatActivity : BaseActivity() {
             change = { pos -> setTranslate(pos) })
         binding.rvChat.adapter = aiChatAdapter
         lifecycleScope.launch {
-            aiChatViewModel.startChatState.collect { state ->
-                when (state) {
-                    is StartChatState.Success -> {
+            aiChatViewModel.startChatState.collect{state->
+                when(state){
+                    is StartChatState.Success->{
+                        aiChatAdapter.deleteLoadMessage()
                         aiChatAdapter.startAiMessage(state.response)
                         binding.rvChat.scrollToPosition(aiChatAdapter.itemCount - 1)
                     }
@@ -151,6 +154,9 @@ class AIChatActivity : BaseActivity() {
             }
         }
 
+        val currentTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))
+        aiChatAdapter.loadAiMessage(currentTime)
+
         aiChatViewModel.startChat(topicId)
         getAiChat()
         //aiChatAdapter.getList(aiChatViewModel.mockAIChat.chatList)
@@ -158,9 +164,10 @@ class AIChatActivity : BaseActivity() {
 
     private fun getAiChat() {
         lifecycleScope.launch {
-            aiChatViewModel.aiChatState.collect { state ->
-                when (state) {
-                    is AiChatState.Success -> {
+            aiChatViewModel.aiChatState.collect{ state->
+                when(state){
+                    is AiChatState.Success->{
+                        aiChatAdapter.deleteLoadMessage()
                         aiChatAdapter.addAiMessage(state.response.aiMessage)
                         binding.rvChat.scrollToPosition(aiChatAdapter.itemCount - 1)
                     }
@@ -207,6 +214,9 @@ class AIChatActivity : BaseActivity() {
                 //aiChatViewModel.addchat(newchat)
                 aiChatAdapter.addUserMessage(newstring, currentTime)
                 binding.rvChat.scrollToPosition(aiChatAdapter.itemCount - 1)
+
+                val currentTime2 = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))
+                aiChatAdapter.loadAiMessage(currentTime2)
 
                 aiChatViewModel.getAiChat(newstring)
             }
