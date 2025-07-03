@@ -13,7 +13,7 @@ import com.data.app.data.response_dto.community.ResponseFollowersDto
 import com.data.app.databinding.ItemFollowBinding
 
 class FollowAdapter(
-    val clickProfile: (String, String) -> Unit,
+    val clickProfile: (Int) -> Unit,
 ) : ListAdapter<ResponseFollowersDto.Follower, FollowAdapter.FollowViewHolder>(FollowDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FollowViewHolder {
@@ -40,7 +40,7 @@ class FollowAdapter(
 
             buttonFollowColor()
             clickFollow()
-            clickother(data.profileImage, data.name)
+            clickother(data.userId)
         }
 
         private fun buttonFollowColor() {
@@ -69,7 +69,7 @@ class FollowAdapter(
             }
         }
 
-        private fun clickother(profile: String, name:String) {
+        private fun clickother(userId: Int) {
             with(binding){
                 listOf(
                     ivProfile,
@@ -78,7 +78,7 @@ class FollowAdapter(
                 ).forEach {
                         view ->
                     view.setOnClickListener{
-                        clickProfile(profile, name)
+                        clickProfile(userId)
                     }
                 }
             }

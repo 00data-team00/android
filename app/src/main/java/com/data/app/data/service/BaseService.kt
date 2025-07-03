@@ -16,6 +16,7 @@ import com.data.app.data.response_dto.explore.ResponseDeadlineDto
 import com.data.app.data.response_dto.community.ResponseFollowersDto
 import com.data.app.data.response_dto.login.ResponseLoginDto
 import com.data.app.data.response_dto.community.ResponseEditProfileDto
+import com.data.app.data.response_dto.community.ResponsePostDetailDto
 import com.data.app.data.response_dto.community.ResponseTimeLineDto
 import com.data.app.data.response_dto.my.ResponseMyPostDto
 import com.data.app.data.response_dto.my.ResponseProfileDto
@@ -73,6 +74,12 @@ interface BaseService {
     suspend fun getFollowingTimeLine(
         @Header("Authorization") token:String,
     ): ResponseTimeLineDto
+
+    @GET("api/posts/{postId}/detail")
+    suspend fun getPostDetail(
+        @Header("Authorization") token:String,
+        @Path("postId") postId:Int,
+    ): ResponsePostDetailDto
 
     @GET("api/users/{userId}/profile")
     suspend fun getUserProfile(

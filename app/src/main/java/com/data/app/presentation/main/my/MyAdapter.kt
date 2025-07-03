@@ -15,7 +15,7 @@ import com.data.app.databinding.ItemPostBinding
 import com.data.app.util.TimeAgoFormatter
 import timber.log.Timber
 
-class MyAdapter(val clickPost:(ResponseMyPostDto.PostDto)->Unit):
+class MyAdapter(val clickPost:(Int)->Unit):
 RecyclerView.Adapter<com.data.app.presentation.main.my.MyAdapter.MyViewHolder>(){
 
     private var userProfile:String?=null
@@ -75,7 +75,7 @@ RecyclerView.Adapter<com.data.app.presentation.main.my.MyAdapter.MyViewHolder>()
                 tvLikeCount.text = data.likeCount.toString()
                 tvCommentCount.text = data.commentCount.toString()
 
-                btnFollow.visibility=View.GONE
+                //btnFollow.visibility=View.GONE
 
                 clickLike()
 
@@ -97,7 +97,7 @@ RecyclerView.Adapter<com.data.app.presentation.main.my.MyAdapter.MyViewHolder>()
 
         private fun showDetail(data: ResponseMyPostDto.PostDto){
             listOf(binding.tvContent, binding.ivImage).forEach {
-                it.setOnClickListener { clickPost(data) }
+                it.setOnClickListener { clickPost(data.id) }
             }
         }
 

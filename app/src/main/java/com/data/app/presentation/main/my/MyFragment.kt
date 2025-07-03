@@ -20,6 +20,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentContainerView
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -33,6 +34,7 @@ import com.data.app.extension.my.EditProfileState
 import com.data.app.extension.my.MyPostState
 import com.data.app.extension.my.MyProfileState
 import com.data.app.presentation.login.LoginActivity
+import com.data.app.presentation.main.MainViewModel
 import com.data.app.presentation.main.OnTabReselectedListener
 import com.yalantis.ucrop.UCrop
 import dagger.hilt.android.AndroidEntryPoint
@@ -50,6 +52,7 @@ class MyFragment : Fragment(), OnTabReselectedListener {
     private val binding: FragmentMyBinding
         get() = requireNotNull(_binding) { "home fragment is null" }
     private val myViewModel: MyViewModel by viewModels()
+    private val mainViewModel: MainViewModel by activityViewModels()
     private lateinit var myAdapter: _root_ide_package_.com.data.app.presentation.main.my.MyAdapter
     private lateinit var galleryLauncher: ActivityResultLauncher<Intent>
 
@@ -105,6 +108,7 @@ class MyFragment : Fragment(), OnTabReselectedListener {
                 when (myProfileState) {
                     is MyProfileState.Success -> {
                         Timber.d("myProfileState is success")
+                        //mainViewModel.saveUserId(myProfileState.response.)
                         with(binding) {
                             val imageUrl =
                                 BuildConfig.BASE_URL.removeSuffix("/") + myProfileState.response.profileImage
@@ -150,9 +154,9 @@ class MyFragment : Fragment(), OnTabReselectedListener {
                     is MyPostState.Success -> {
                         myAdapter =
                             _root_ide_package_.com.data.app.presentation.main.my.MyAdapter(clickPost = { post ->
-                               /* val action =
-                                    MyFragmentDirections.actionMyFragmentToMyPostDetailFragment(post)
-                                findNavController().navigate(action)*/
+                                val action =
+                                    MyFragmentDirections.actionMyFragmentToMyPostDetailFragment(post.toString())
+                                findNavController().navigate(action)
                             })
                         binding.rvPosts.adapter = myAdapter
                         myAdapter.getList(profile, myPostState.response.posts)
