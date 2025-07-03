@@ -6,6 +6,7 @@ import com.data.app.data.request_dto.RequestLoginDto
 import com.data.app.data.request_dto.RequestQuizDto
 import com.data.app.data.request_dto.RequestRegisterDto
 import com.data.app.data.request_dto.RequestSendMailDto
+import com.data.app.data.request_dto.RequestTranslateDto
 import com.data.app.data.request_dto.RequestVerifyMailDto
 import com.data.app.data.response_dto.ResponseAIPreviousChatMessagesDto
 import com.data.app.data.response_dto.ResponseAIPreviousRecordsDto
@@ -21,6 +22,7 @@ import com.data.app.data.response_dto.ResponseMyPostDto
 import com.data.app.data.response_dto.ResponseProfileDto
 import com.data.app.data.response_dto.ResponseQuizDto
 import com.data.app.data.response_dto.ResponseRegisterDto
+import com.data.app.data.response_dto.ResponseTranslateDto
 import com.data.app.data.response_dto.ResponseUserGameInfoDto
 import com.data.app.data.service.BaseService
 import okhttp3.MultipartBody
@@ -56,6 +58,12 @@ class BaseDataSourceImpl @Inject constructor(
         token: String,
         chatRoomId: Int
     ): ResponseAIPreviousChatMessagesDto = baseService.getAIPreviousChatMessages(token, chatRoomId)
+
+    // translate
+    override suspend fun getTranslate(
+        token: String,
+        requestTranslateDto: RequestTranslateDto
+    ): ResponseTranslateDto = baseService.getTranslate(token,requestTranslateDto)
 
     // quiz
     override suspend fun getQuiz(token: String, requestQuizDto: RequestQuizDto): ResponseQuizDto = baseService.getQuiz(token, requestQuizDto)

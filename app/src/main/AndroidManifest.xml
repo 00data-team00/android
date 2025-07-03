@@ -52,7 +52,9 @@
             android:exported="false">
         </activity>
 
-        <activity android:name=".presentation.main.home.ai_practice.ai_chat.AIChatActivity"
+        <activity
+            android:name=".presentation.main.home.ai_practice.ai_chat.AIChatActivity"
+            android:screenOrientation="portrait"
             android:exported="false">
         </activity>
 

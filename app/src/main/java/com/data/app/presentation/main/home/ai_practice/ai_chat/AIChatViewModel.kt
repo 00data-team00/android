@@ -10,6 +10,7 @@ import com.data.app.data.PreviousPractice
 import com.data.app.domain.repository.BaseRepository
 import com.data.app.extension.AiChatState
 import com.data.app.extension.StartChatState
+import com.data.app.extension.TranslateState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -30,14 +31,27 @@ class AIChatViewModel @Inject constructor(
 
     private val _startChatState = MutableStateFlow<StartChatState>(StartChatState.Loading)
     private val _aiChatState = MutableStateFlow<AiChatState>(AiChatState.Loading)
+    private val _translateState = MutableStateFlow<TranslateState>(TranslateState.Loading)
 
     val startChatState: StateFlow<StartChatState> = _startChatState.asStateFlow()
     val aiChatState: StateFlow<AiChatState> = _aiChatState.asStateFlow()
+    val translateState: StateFlow<TranslateState> = _translateState.asStateFlow()
 
     private var chatRoomId:Int = 0
 
     fun saveToken(token: String) {
         _accessToken.value = token
+    }
+
+    fun getTranslate(messageId: Int, userLang: String){
+        viewModelScope.launch {
+            baseRepository.getTranslate(_accessToken.value!!, messageId, userLang).onSuccess { response ->
+                _translateState.value = TranslateState.Success(response)
+                Timber.d("translate success!")
+            }.onFailure {
+                _translateState.value = TranslateState.Error("get translate state erro!")
+            }
+        }
     }
 
     fun startChat(topicId: Int) {

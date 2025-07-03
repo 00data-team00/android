@@ -16,7 +16,7 @@ import timber.log.Timber
 
 class AIPracticeAdapter(
     private val context: Context,
-    private val clickPractice:(Int)->Unit
+    private val clickPractice:(ResponseAITopicsDto.TopicDto)->Unit
 ) : RecyclerView.Adapter<AIPracticeAdapter.AIPracticeViewHolder>() {
 
     private var category:String = "essential"
@@ -77,7 +77,7 @@ class AIPracticeAdapter(
                 }
 
                 ivBackground.setOnClickListener{
-                    clickPractice(item.id)
+                    clickPractice(item)
                 }
             }
         }
