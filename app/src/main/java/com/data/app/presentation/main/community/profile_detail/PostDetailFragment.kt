@@ -1,31 +1,36 @@
 package com.data.app.presentation.main.community.profile_detail
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
+import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
+import android.widget.PopupWindow
+import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
-import coil3.request.placeholder
-import coil3.request.transformations
 import coil.transform.CircleCropTransformation
 import com.data.app.BuildConfig
 import com.data.app.R
-import com.data.app.data.Post
 import com.data.app.data.response_dto.community.ResponsePostDetailDto
 import com.data.app.data.shared_preferences.AppPreferences
+import com.data.app.databinding.DialogConfirmDeleteBinding
 import com.data.app.databinding.FragmentPostDetailBinding
 import com.data.app.extension.community.LikePostState
 import com.data.app.extension.community.PostDetailState
 import com.data.app.extension.community.WriteCommentState
+import com.data.app.presentation.main.MainViewModel
 import com.data.app.util.TimeAgoFormatter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -40,6 +45,7 @@ class PostDetailFragment : Fragment() {
 
     private val postDetailFragmentArgs: PostDetailFragmentArgs by navArgs()
     private val postDetailViewModel: PostDetailViewModel by viewModels()
+    private val mainViewModel: MainViewModel by activityViewModels()
     private lateinit var postDetailAdapter: PostDetailAdapter
 
     @Inject
@@ -111,8 +117,14 @@ class PostDetailFragment : Fragment() {
             tvLikeCount.text = post.likeCount.toString()
             tvCommentCount.text = post.commentCount.toString()
 
-            if(post.isLiked) btnLike.isSelected = true
+            if (post.isLiked) btnLike.isSelected = true
 
+            if (mainViewModel.getUserId() == post.authorId) {
+                btnMenu.visibility = View.VISIBLE
+                binding.btnMenu.setOnClickListener {
+                    clickMenu(post.id)
+                }
+            }
             //btnFollow.isSelected = post.
 
             listOf(ivProfile, tvId).forEach {
@@ -124,6 +136,65 @@ class PostDetailFragment : Fragment() {
 
         clickLike(post.id)
     }
+
+    private fun clickMenu(postId: Int) {
+        val wrapper = ContextThemeWrapper(requireContext(), R.style.CustomPopupMenu)
+        val popupMenu = PopupMenu(wrapper, binding.btnMenu)
+
+        popupMenu.menuInflater.inflate(R.menu.menu_post, popupMenu.menu)
+        popupMenu.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.menu_delete -> {
+                    showDeleteDialog(postId)
+                    true
+                }
+                else -> false
+            }
+        }
+        popupMenu.show()
+    }
+
+    private fun showDeleteDialog(postId: Int) {
+        val dialogBinding = DialogConfirmDeleteBinding.inflate(layoutInflater)
+
+        val dialog = AlertDialog.Builder(requireContext())
+            .setView(dialogBinding.root)
+            .setCancelable(false)
+            .create()
+
+        dialog.setCancelable(true) // 시스템 뒤로가기 가능
+        dialog.setCanceledOnTouchOutside(true) // 바깥 클릭도 닫힘
+
+        dialogBinding.btnCancel.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialogBinding.btnConfirm.setOnClickListener {
+            dialog.dismiss()
+            // TODO: 삭제 로직 수행
+            findNavController().popBackStack() // 게시물 삭제 후 프래그먼트 종료
+        }
+
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.show()
+       /* AlertDialog.Builder(requireContext())
+            .setTitle("게시물 삭제")
+            .setMessage("게시물을 삭제하시겠습니까?")
+            .setPositiveButton("확인") { _, _ ->
+                deletePost(postId)
+            }
+            .setNegativeButton("취소", null)
+            .show()*/
+    }
+
+    private fun deletePost(postId: Int) {
+        // TODO: 삭제 API 호출
+        // 성공했을 때:
+        Toast.makeText(requireContext(), "게시물이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
+        findNavController().popBackStack() // 현재 Fragment 종료
+    }
+
+
 
     private fun showImages(post: ResponsePostDetailDto) {
         val lp = binding.vpImages.layoutParams as ConstraintLayout.LayoutParams
