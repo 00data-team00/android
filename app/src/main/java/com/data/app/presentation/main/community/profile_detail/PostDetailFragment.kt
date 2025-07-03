@@ -27,6 +27,7 @@ import com.data.app.data.response_dto.community.ResponsePostDetailDto
 import com.data.app.data.shared_preferences.AppPreferences
 import com.data.app.databinding.DialogConfirmDeleteBinding
 import com.data.app.databinding.FragmentPostDetailBinding
+import com.data.app.extension.community.DeletePostState
 import com.data.app.extension.community.LikePostState
 import com.data.app.extension.community.PostDetailState
 import com.data.app.extension.community.WriteCommentState
@@ -171,8 +172,24 @@ class PostDetailFragment : Fragment() {
 
         dialogBinding.btnConfirm.setOnClickListener {
             dialog.dismiss()
-            // TODO: 삭제 로직 수행
-            findNavController().popBackStack() // 게시물 삭제 후 프래그먼트 종료
+            lifecycleScope.launch {
+                postDetailViewModel.deletePostState.collect { state ->
+                    when(state){
+                        is DeletePostState.Success -> {
+                            Toast.makeText(requireContext(), "게시물이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
+                            findNavController().popBackStack() // 게시물 삭제 후 프래그먼트 종료
+                        }
+                        is DeletePostState.Loading -> {
+                            Timber.d("delete post state loading...")
+                        }
+                        is DeletePostState.Error -> {
+                            Timber.d("delete post state error: ${state.message}")
+                        }
+                    }
+                }
+            }
+            Timber.d("token: ${appPreferences.getAccessToken()!!}")
+            postDetailViewModel.deletePost(appPreferences.getAccessToken()!!, postId)
         }
 
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
@@ -186,15 +203,6 @@ class PostDetailFragment : Fragment() {
             .setNegativeButton("취소", null)
             .show()*/
     }
-
-    private fun deletePost(postId: Int) {
-        // TODO: 삭제 API 호출
-        // 성공했을 때:
-        Toast.makeText(requireContext(), "게시물이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
-        findNavController().popBackStack() // 현재 Fragment 종료
-    }
-
-
 
     private fun showImages(post: ResponsePostDetailDto) {
         val lp = binding.vpImages.layoutParams as ConstraintLayout.LayoutParams

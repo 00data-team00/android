@@ -6,6 +6,7 @@ import com.data.app.data.request_dto.RequestQuizDto
 import com.data.app.data.request_dto.RequestRegisterDto
 import com.data.app.data.request_dto.RequestSendMailDto
 import com.data.app.data.request_dto.RequestVerifyMailDto
+import com.data.app.data.response_dto.community.ResponseDeletePostDto
 import com.data.app.data.response_dto.home.ai.ResponseAIPreviousChatMessagesDto
 import com.data.app.data.response_dto.home.ai.ResponseAIPreviousRecordsDto
 import com.data.app.data.response_dto.home.ai.ResponseAITopicsDto
@@ -112,6 +113,12 @@ interface BaseService {
         @Header("Authorization") token:String,
         @Path("userId") userId:Int,
     ): ResponseTimeLineDto
+
+    @DELETE("api/me/posts/{postId}")
+    suspend fun deletePost(
+        @Header("Authorization") token:String,
+        @Path("postId") postId:Int,
+    ): ResponseDeletePostDto
 
     @Multipart
     @POST("api/me/posts")

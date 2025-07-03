@@ -6,6 +6,7 @@ import com.data.app.data.request_dto.RequestQuizDto
 import com.data.app.data.request_dto.RequestRegisterDto
 import com.data.app.data.request_dto.RequestSendMailDto
 import com.data.app.data.request_dto.RequestVerifyMailDto
+import com.data.app.data.response_dto.community.ResponseDeletePostDto
 import com.data.app.data.response_dto.home.ai.ResponseAIPreviousChatMessagesDto
 import com.data.app.data.response_dto.home.ai.ResponseAIPreviousRecordsDto
 import com.data.app.data.response_dto.home.ai.ResponseAITopicsDto
@@ -93,6 +94,11 @@ interface BaseDataSource {
         content:String,
         image:MultipartBody.Part?
     ): ResponseMyPostDto.PostDto
+
+    suspend fun deletePost(
+        token:String,
+        postId:Int,
+    ): ResponseDeletePostDto
 
     // home
     suspend fun getUserGameInfo(

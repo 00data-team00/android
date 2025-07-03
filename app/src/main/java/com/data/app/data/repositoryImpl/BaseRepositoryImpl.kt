@@ -7,6 +7,7 @@ import com.data.app.data.request_dto.RequestQuizDto
 import com.data.app.data.request_dto.RequestRegisterDto
 import com.data.app.data.request_dto.RequestSendMailDto
 import com.data.app.data.request_dto.RequestVerifyMailDto
+import com.data.app.data.response_dto.community.ResponseDeletePostDto
 import com.data.app.data.response_dto.home.ai.ResponseAIPreviousChatMessagesDto
 import com.data.app.data.response_dto.home.ai.ResponseAIPreviousRecordsDto
 import com.data.app.data.response_dto.home.ai.ResponseAITopicsDto
@@ -161,6 +162,14 @@ class BaseRepositoryImpl @Inject constructor(
             baseDataSource.writePost(token, content, image)
         }.onFailure {
             Timber.e("base repository write post fail!: $it")
+        }
+    }
+
+    override suspend fun deletePost(token: String, postId: Int): Result<ResponseDeletePostDto> {
+        return runCatching {
+            baseDataSource.deletePost(token, postId)
+        }.onFailure {
+            Timber.e("base repository delete post fail!: $it")
         }
     }
 
