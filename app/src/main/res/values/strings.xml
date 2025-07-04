@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">app</string>
+    <string name="app_name">바름</string>
 
     <!--login & signup-->
     <string name="service_name">바름</string>
