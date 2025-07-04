@@ -3,6 +3,7 @@ package com.data.app.presentation.main.my
 import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -287,6 +288,10 @@ class MyFragment : Fragment(), OnTabReselectedListener {
 
                     // 로그인 정보 삭제
                     appPreferences.clearAccessToken() // AppPreferences에 정의된 토큰 삭제 메서드 호출
+
+                    // 언어 설정 정보 초기화
+                    val prefs = requireContext().getSharedPreferences("app_settings", Context.MODE_PRIVATE)
+                    prefs.edit().remove("language_code").apply()
                     Timber.d("Access token cleared.")
 
                     // 화면 전환 (로그인 화면으로)

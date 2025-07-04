@@ -8,11 +8,11 @@ data class ResponseUserGameInfoDto (
     @SerialName("userName")
     val userName:String,
     @SerialName("totalQuizzesSolved")
-    val totalQuizSolved:Int,
+    val totalQuizSolved:Int?,
     @SerialName("quizzesSolvedToday")
-    val quizSolvedToday:Int,
+    val quizSolvedToday:Int?,
     @SerialName("chatRoomsCreated")
-    val chatRoomsCreated:Int,
+    val chatRoomsCreated:Int?,
     @SerialName("levelCompleted")
-    val levelCompleted:Int,
+    val levelCompleted:Int?,
 )

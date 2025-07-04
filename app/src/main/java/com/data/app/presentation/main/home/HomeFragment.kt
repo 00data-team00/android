@@ -31,25 +31,33 @@ import timber.log.Timber
 import androidx.core.content.edit
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import com.data.app.data.shared_preferences.AppPreferences
 import com.data.app.extension.home.UserGameInfoState
+import com.data.app.extension.my.MyProfileState
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
-class HomeFragment:Fragment(), OnTabReselectedListener {
-    private var _binding:FragmentHomeBinding?=null
-    private val binding:FragmentHomeBinding
-        get() = requireNotNull(_binding){"home fragment is null"}
+class HomeFragment : Fragment(), OnTabReselectedListener {
+    private var _binding: FragmentHomeBinding? = null
+    private val binding: FragmentHomeBinding
+        get() = requireNotNull(_binding) { "home fragment is null" }
 
 
-    private val mainViewModel:MainViewModel by activityViewModels()
+    private val mainViewModel: MainViewModel by activityViewModels()
     private val homeViewModel: HomeViewModel by viewModels()
+
+
+    @Inject
+    lateinit var appPreferences: AppPreferences
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding=FragmentHomeBinding.inflate(inflater, container, false)
+        _binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -58,8 +66,8 @@ class HomeFragment:Fragment(), OnTabReselectedListener {
         setting()
     }
 
-    private fun setting(){
-        mainViewModel.accessToken.observe(viewLifecycleOwner){token->
+    private fun setting() {
+        mainViewModel.accessToken.observe(viewLifecycleOwner) { token ->
             getInfo(token)
         }
         showImage()
@@ -67,17 +75,17 @@ class HomeFragment:Fragment(), OnTabReselectedListener {
         inputData()
     }
 
-    private fun showImage(){
+    private fun showImage() {
         val radiusPx = TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP, 20f, resources.displayMetrics
         )
 
-        binding.ivOnline.load(R.drawable.iv_online){
+        binding.ivOnline.load(R.drawable.iv_online) {
             transformations(
                 RoundedCornersTransformation(radiusPx)
             )
         }
-        binding.ivQuiz.load(R.drawable.iv_quiz){
+        binding.ivQuiz.load(R.drawable.iv_quiz) {
             transformations(
                 RoundedCornersTransformation(radiusPx)
             )
@@ -89,12 +97,8 @@ class HomeFragment:Fragment(), OnTabReselectedListener {
         }
     }
 
-    private fun inputData(){
-        with(binding){
-            tvTitleKor.text=getString(R.string.home_title, "구구")
-            tvSubtitleEng.text=getString(R.string.home_subtitle_eng, "GooGoo")
-            tvNotGiveUp.text=getString(R.string.home_not_give_up, "구구")
-            tvContinueStudy.text=getString(R.string.home_continue_study, 13)
+    private fun inputData() {
+        with(binding) {
 
             val prefs = requireContext().getSharedPreferences("settings", Context.MODE_PRIVATE)
             val lang = prefs.getString("lang", "ko")
@@ -112,7 +116,10 @@ class HomeFragment:Fragment(), OnTabReselectedListener {
 
             ivLanguage.load(flagRes) {
                 transformations(
-                    BorderTransformation(3f, ContextCompat.getColor(requireContext(), R.color.ic_language_stoke))
+                    BorderTransformation(
+                        3f,
+                        ContextCompat.getColor(requireContext(), R.color.ic_language_stoke)
+                    )
                 )
             }
 
@@ -121,21 +128,25 @@ class HomeFragment:Fragment(), OnTabReselectedListener {
     }
 
     private fun getInfo(token: String) {
+        getUserName()
+
         lifecycleScope.launchWhenResumed {
-            homeViewModel.userGameInfoState.collect { state->
-                when(state){
-                    is UserGameInfoState.Success->{
-                        with(binding){
-                            tvQuizCount1.text=state.response.totalQuizSolved.toString()
-                            tvQuizCount2.text=state.response.quizSolvedToday.toString()
-                            tvConversationCount.text=state.response.chatRoomsCreated.toString()
+            homeViewModel.userGameInfoState.collect { state ->
+                when (state) {
+                    is UserGameInfoState.Success -> {
+                        with(binding) {
+                            tvQuizCount1.text = (state.response.totalQuizSolved ?: 0).toString()
+                            tvQuizCount2.text = (state.response.quizSolvedToday ?: 0).toString()
+                            tvConversationCount.text =
+                                (state.response.chatRoomsCreated ?: 0).toString()
                         }
 
                         clickPractice(token)
-                        clickGame(token, state.response.levelCompleted)
+                        clickGame(token)
                     }
-                    is UserGameInfoState.Loading->{}
-                    is UserGameInfoState.Error->{}
+
+                    is UserGameInfoState.Loading -> {}
+                    is UserGameInfoState.Error -> {}
                 }
             }
         }
@@ -145,7 +156,30 @@ class HomeFragment:Fragment(), OnTabReselectedListener {
         homeViewModel.getUserGameInfo(token)
     }
 
-    private fun showLanguage(){
+    private fun getUserName() {
+        lifecycleScope.launch {
+            homeViewModel.myProfileState.collect { state ->
+                when (state) {
+                    is MyProfileState.Success -> {
+                        val name = state.response.name
+                        with(binding) {
+                            tvTitleKor.text = getString(R.string.home_title, name)
+                            tvSubtitleEng.text = getString(R.string.home_subtitle_eng, name)
+                            tvNotGiveUp.text = getString(R.string.home_not_give_up, name)
+                            tvContinueStudy.text = getString(R.string.home_continue_study, 13)
+                        }
+                    }
+
+                    is MyProfileState.Loading -> {}
+                    is MyProfileState.Error -> {}
+                }
+            }
+        }
+
+        homeViewModel.getProfile(appPreferences.getAccessToken()!!)
+    }
+
+    private fun showLanguage() {
         val prefs = requireContext().getSharedPreferences("settings", Context.MODE_PRIVATE)
         when (prefs.getString("lang", "ko")) {
             "ko" -> binding.ivLanguage.setImageResource(R.drawable.ic_korea)
@@ -163,7 +197,10 @@ class HomeFragment:Fragment(), OnTabReselectedListener {
             Timber.d("selected language: ${selectedLanguage.code}")
             binding.ivLanguage.load(selectedLanguage.iconRes) {
                 transformations(
-                    BorderTransformation(borderWidth = 3f, borderColor = resources.getColor(R.color.ic_language_stoke))
+                    BorderTransformation(
+                        borderWidth = 3f,
+                        borderColor = resources.getColor(R.color.ic_language_stoke)
+                    )
                 )
             }
             binding.cvLanguageList.slideUp()
@@ -173,11 +210,11 @@ class HomeFragment:Fragment(), OnTabReselectedListener {
         adapter.getList(
             listOf(
                 Language("ko", "Korean", R.drawable.ic_korea),
-                Language("en", "English",R.drawable.ic_america),
-                Language("zh", "Chinese",R.drawable.ic_china),
-                Language("ja", "Japanese",R.drawable.ic_japan),
-                Language("vi", "Vietnamese",R.drawable.ic_vietnam),
-                Language("th", "Thai",R.drawable.ic_thailand)
+                Language("en", "English", R.drawable.ic_america),
+                Language("zh", "Chinese", R.drawable.ic_china),
+                Language("ja", "Japanese", R.drawable.ic_japan),
+                Language("vi", "Vietnamese", R.drawable.ic_vietnam),
+                Language("th", "Thai", R.drawable.ic_thailand)
             )
         )
 
@@ -198,18 +235,18 @@ class HomeFragment:Fragment(), OnTabReselectedListener {
     }
 
     private fun clickPractice(token: String) {
-        binding.ivAiPractice.setOnClickListener{
+        binding.ivAiPractice.setOnClickListener {
             Timber.d("click study")
-            val intent= Intent(requireActivity(), AIPracticeActivity::class.java)
+            val intent = Intent(requireActivity(), AIPracticeActivity::class.java)
             intent.putExtra("accessToken", token)
             startActivity(intent)
             requireActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.stay)
         }
     }
 
-    private fun clickGame(token:String, levelComplete:Int){
-        binding.ivQuiz.setOnClickListener{
-            val intent= Intent(requireActivity(), GameTabActivity::class.java)
+    private fun clickGame(token: String) {
+        binding.ivQuiz.setOnClickListener {
+            val intent = Intent(requireActivity(), GameTabActivity::class.java)
             intent.putExtra("accessToken", token)
             startActivity(intent)
             requireActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.stay)
@@ -240,7 +277,7 @@ class HomeFragment:Fragment(), OnTabReselectedListener {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding=null
+        _binding = null
     }
 
     inner class BorderTransformation(
@@ -261,7 +298,8 @@ class HomeFragment:Fragment(), OnTabReselectedListener {
             val rect = RectF(0f, 0f, size.toFloat(), size.toFloat())
             canvas.drawOval(rect, paint)
 
-            paint.xfermode = android.graphics.PorterDuffXfermode(android.graphics.PorterDuff.Mode.SRC_IN)
+            paint.xfermode =
+                android.graphics.PorterDuffXfermode(android.graphics.PorterDuff.Mode.SRC_IN)
             canvas.drawBitmap(input, null, rect, paint)
 
             // 테두리 그리기
@@ -280,6 +318,6 @@ class HomeFragment:Fragment(), OnTabReselectedListener {
     }
 
     override fun onTabReselected() {
-        binding.nsvHome.smoothScrollTo(0,0)
+        binding.nsvHome.smoothScrollTo(0, 0)
     }
 }
