@@ -270,6 +270,7 @@ class PostDetailFragment : Fragment() {
         postDetailAdapter = PostDetailAdapter(
             addComment = { content ->
                 writeComment(postDetailFragmentArgs.postId.toInt(), content)
+                updateCommentCount()
             },
             clickProfileOrId = { userId ->
                 clickProfileOrId(userId)
@@ -284,6 +285,7 @@ class PostDetailFragment : Fragment() {
                 when (state) {
                     is WriteCommentState.Success -> {
                         val comment = state.response
+                        postDetailViewModel.getPostDetail(appPreferences.getAccessToken()!!, postDetailFragmentArgs.postId.toInt())
                         postDetailAdapter.updateComment(comment)
                     }
 
@@ -297,10 +299,28 @@ class PostDetailFragment : Fragment() {
                 }
             }
         }
+
+        updateCommentCount()
     }
 
     private fun writeComment(postId: Int, content: String) {
         postDetailViewModel.writeComment(appPreferences.getAccessToken()!!, postId, content)
+    }
+
+    private fun updateCommentCount(){
+        lifecycleScope.launch {
+           postDetailViewModel.postDetailState.collect { state ->
+                when (state) {
+                    is PostDetailState.Success -> {
+                        binding.tvCommentCount.text = state.response.commentCount.toString()
+                        postDetailViewModel.resetDetailState()
+                    }
+
+                    is PostDetailState.Loading -> {}
+                    is PostDetailState.Error -> {}
+                }
+            }
+        }
     }
 
     private fun clickProfileOrId(userId: Int) {

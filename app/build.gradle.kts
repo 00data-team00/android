@@ -29,6 +29,12 @@ android {
             "BASE_URL",
             gradleLocalProperties(rootDir, providers).getProperty("base.url")
         )
+
+        buildConfigField(
+            "String",
+            "SEJONG_URL",
+            gradleLocalProperties(rootDir, providers).getProperty("sejong.url")
+        )
     }
 
     buildTypes {

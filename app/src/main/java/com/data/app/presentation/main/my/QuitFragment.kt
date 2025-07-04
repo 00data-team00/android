@@ -23,6 +23,7 @@ import androidx.lifecycle.lifecycleScope
 import com.data.app.data.shared_preferences.AppPreferences
 import com.data.app.extension.my.QuitState
 import com.data.app.presentation.login.LoginActivity
+import com.data.app.util.security.resetToSystemLocale
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -127,6 +128,7 @@ class QuitFragment:Fragment() {
 
                         val prefs = requireContext().getSharedPreferences("app_settings", Context.MODE_PRIVATE)
                         prefs.edit().remove("language_code").apply()
+                        requireContext().resetToSystemLocale()
 
                         // 로그인 액티비티로 전환하는 코드
                         val intent = Intent(requireContext(), LoginActivity::class.java)

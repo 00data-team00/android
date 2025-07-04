@@ -99,6 +99,7 @@ class AIChatAdapter(
                 onLongPress = {
                     change(pos)
                     request(content.messageId)},
+
                 onLongPressEnd = {
                     Log.d("MYCHAT", chatList.toString())
                     chatList[pos].text = originalText.toString()
@@ -125,6 +126,10 @@ class AIChatAdapter(
                             binding.ivLoad2.visibility = View.VISIBLE
                             delay(300)
                         }
+
+                        binding.ivLoad1.visibility = View.GONE
+                        binding.ivLoad2.visibility = View.GONE
+
                     }
                 }
                 tvName.text = "AI"
@@ -151,6 +156,8 @@ class AIChatAdapter(
                         Timber.d("ai chat long pressing~")
                         change(pos)
                         request(content.messageId)
+                        binding.ivLoad1.visibility = View.GONE
+                        binding.ivLoad2.visibility = View.GONE
                     },
                     onLongPressEnd = {
                         Log.d("AICHAT", chatList.toString())
@@ -219,7 +226,7 @@ class AIChatAdapter(
 
     fun startAiMessage(message:ResponseChatStartDto){
         Timber.d(message.createdAt)
-        val aiChat = ResponseChatAiMessageDto.Message(message.chatRoomId, message.message, false, message.createdAt)
+        val aiChat = ResponseChatAiMessageDto.Message(message.messageId, message.message, false, message.createdAt)
         chatList.add(aiChat)
         notifyItemInserted(chatList.size-1)
     }
