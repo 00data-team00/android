@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.data.app.domain.repository.BaseRepository
 import com.data.app.extension.login.LoginState
 import com.data.app.extension.home.UserGameInfoState
+import com.data.app.extension.my.MyProfileState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -24,12 +25,35 @@ class HomeViewModel @Inject constructor(
     private var _userGameInfoState = MutableStateFlow<UserGameInfoState>(UserGameInfoState.Loading)
     val userGameInfoState: StateFlow<UserGameInfoState> = _userGameInfoState.asStateFlow()
 
+    private val _myProfileState = MutableStateFlow<MyProfileState>(MyProfileState.Loading)
+    val myProfileState: StateFlow<MyProfileState> = _myProfileState.asStateFlow()
+
     fun getUserGameInfo(token:String){
         viewModelScope.launch {
             baseRepository.getUserGameInfo(token).onSuccess { response->
                 _userGameInfoState.value= UserGameInfoState.Success(response)
             }.onFailure {
                 _userGameInfoState.value= UserGameInfoState.Error("user game info error!")
+                if (it is HttpException) {
+                    try {
+                        val errorBody: ResponseBody? = it.response()?.errorBody()
+                        val errorBodyString = errorBody?.string() ?: ""
+                        httpError(errorBodyString)
+                    } catch (e: Exception) {
+                        // JSON 파싱 실패 시 로깅
+                        Timber.e("Error parsing error body: ${e}")
+                    }
+                }
+            }
+        }
+    }
+
+    fun getProfile(token:String){
+        viewModelScope.launch {
+            baseRepository.getMyProfile(token).onSuccess { response->
+                _myProfileState.value=MyProfileState.Success(response)
+            }.onFailure {
+                _myProfileState.value = MyProfileState.Error(it.message.toString())
                 if (it is HttpException) {
                     try {
                         val errorBody: ResponseBody? = it.response()?.errorBody()

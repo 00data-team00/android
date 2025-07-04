@@ -96,22 +96,21 @@ class CryptoUtils @Inject constructor() {
             // 이 경우, 저장된 토큰을 삭제하고 사용자가 다시 로그인하도록 유도해야 할 수 있음
             throw e // 또는 null 반환 후 호출부에서 처리
         }
-
-        /**
-         * 특정 별칭의 키를 Keystore에서 삭제합니다. (예: 로그아웃 시)
-         */
-        fun deleteKey(alias: String) {
-            try {
-                val keyStore = KeyStore.getInstance(ANDROID_KEYSTORE)
-                keyStore.load(null)
-                if (keyStore.containsAlias(alias)) {
-                    keyStore.deleteEntry(alias)
-                    Timber.d("Keystore: Deleted key for alias: $alias")
-                }
-            } catch (e: Exception) {
-                Timber.e(e, "Failed to delete key for alias: $alias")
-            }
-        }
     }
 
+    /**
+     * 특정 별칭의 키를 Keystore에서 삭제합니다. (예: 로그아웃 시)
+     */
+    fun deleteKey(alias: String) {
+        try {
+            val keyStore = KeyStore.getInstance(ANDROID_KEYSTORE)
+            keyStore.load(null)
+            if (keyStore.containsAlias(alias)) {
+                keyStore.deleteEntry(alias)
+                Timber.d("Keystore: Deleted key for alias: $alias")
+            }
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to delete key for alias: $alias")
+        }
+    }
 }

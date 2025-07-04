@@ -1,5 +1,6 @@
 package com.data.app.presentation.main.my
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
@@ -123,6 +124,10 @@ class QuitFragment:Fragment() {
                     is QuitState.Success -> {
                         // 로그인 정보 삭제
                         appPreferences.clearAccessToken()
+
+                        val prefs = requireContext().getSharedPreferences("app_settings", Context.MODE_PRIVATE)
+                        prefs.edit().remove("language_code").apply()
+
                         // 로그인 액티비티로 전환하는 코드
                         val intent = Intent(requireContext(), LoginActivity::class.java)
                         startActivity(intent)

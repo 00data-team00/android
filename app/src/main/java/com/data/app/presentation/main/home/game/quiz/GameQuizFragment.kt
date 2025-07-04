@@ -16,12 +16,14 @@ import coil.load
 import com.data.app.BuildConfig
 import com.data.app.R
 import com.data.app.data.response_dto.home.quiz.ResponseQuizDto
+import com.data.app.data.shared_preferences.AppPreferences
 import com.data.app.databinding.FragmentGameQuizBinding
 import com.data.app.extension.home.quiz.QuizCompleteState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.Locale
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class GameQuizFragment : Fragment() {
@@ -41,7 +43,10 @@ class GameQuizFragment : Fragment() {
     private var textToSpeech: TextToSpeech? = null
     var isTTSReady = false // TTS 준비 상태 플래그
 
-    private var isCorrectAnswer:Boolean ?=null
+    private var isCorrectAnswer: Boolean? = null
+
+    @Inject
+    lateinit var appPreferences: AppPreferences
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -96,7 +101,7 @@ class GameQuizFragment : Fragment() {
     }
 
     private fun showQuestion() {
-        binding.sflIvQuestion.visibility=View.VISIBLE
+        binding.sflIvQuestion.visibility = View.VISIBLE
         binding.sflIvQuestion.startShimmer()
 
         val quiz = gameQuizViewModel.quiz.value!!
@@ -115,32 +120,32 @@ class GameQuizFragment : Fragment() {
 
         // category에 따라 보여줌
         with(binding) {
-            if(question.category=="그림/단어 매칭"){
+            if (question.category == "그림/단어 매칭") {
                 tvNum.text = getString(R.string.game_quiz_num, currentIndex + 1)
                 tvQuestion.text = getString(R.string.game_quiz_picture)
                 ivQuestion.visibility = View.VISIBLE
                 btnListening.visibility = View.GONE
-                ivQuestion.load("${BuildConfig.BASE_URL.trimEnd('/')}${question.image}"){
+                ivQuestion.load("${BuildConfig.BASE_URL.trimEnd('/')}${question.image}") {
                     listener(
                         onError = { request, throwable ->
                             Timber.e("Image loading failed: ${throwable.throwable.message}")
                         },
-                        onSuccess = {_,_,->
+                        onSuccess = { _, _ ->
                             sflIvQuestion.stopShimmer()
-                            sflIvQuestion.visibility=View.GONE
-                            ivQuestion.visibility=View.VISIBLE
+                            sflIvQuestion.visibility = View.GONE
+                            ivQuestion.visibility = View.VISIBLE
                         }
                     )
                 }
 
                 showAnswer(question)
                 rvLocation(anchorView = ivQuestion)
-            }else{
-                tvNum.text =  getString(R.string.game_quiz_num, currentIndex + 1)
+            } else {
+                tvNum.text = getString(R.string.game_quiz_num, currentIndex + 1)
                 tvQuestion.text = getString(R.string.game_quiz_voice)
 
                 sflIvQuestion.stopShimmer()
-                sflIvQuestion.visibility=View.GONE
+                sflIvQuestion.visibility = View.GONE
                 ivQuestion.visibility = View.GONE
                 btnListening.visibility = View.VISIBLE
 
@@ -159,30 +164,17 @@ class GameQuizFragment : Fragment() {
 
     private fun clickCompleteBtn(question: ResponseQuizDto.QuizDto) {
         binding.btnComplete.setOnClickListener {
+            if (textToSpeech?.isSpeaking == true) {
+                textToSpeech?.stop()
+            }
+
             Timber.d("isanswerselected: $isAnswerSelected")
             if (isAnswerSelected) {  // 선택했을 때만 넘어가게
                 // 선택한 답이 맞았는지 틀렸는지 activity로 전달
                 currentAnswerIsCorrect?.let { isCorrect ->
                     gameActivity?.onQuestionAnswered(isCorrect)
-                    if(isCorrect) {
+                    if (isCorrect) {
                         updateProgressBar()
-                        lifecycleScope.launch {
-                            gameQuizViewModel.quizCompleteState.collect { state->
-                                when(state){
-                                    is QuizCompleteState.Success->{
-                                        Timber.d("quiz complete!")
-                                    }
-                                    is QuizCompleteState.Loading->{}
-                                    is QuizCompleteState.Error->{
-                                        Timber.e("quiz complete state error!!!")
-                                    }
-                                }
-                            }
-                        }
-
-                        if(!gameQuizViewModel.accessToken.value.isNullOrEmpty()){
-                            gameQuizViewModel.completeQuiz(currentIndex+1)
-                        }
                     }
                 }
 
@@ -191,15 +183,37 @@ class GameQuizFragment : Fragment() {
                     gameActivity!!.finalResult(false)
                     Timber.d("Game is already finished by Activity. No need to show GameSuccessOrNotFragment.")
                     return@setOnClickListener
+                }else{
                 }
                 val fragment = isCorrectAnswer?.let { it ->
                     GameSuccessOrNotFragment.newInstance(it)
                 }
-                fragment?.setOnNextClickListener(object : GameSuccessOrNotFragment.OnNextClickListener {
+                fragment?.setOnNextClickListener(object :
+                    GameSuccessOrNotFragment.OnNextClickListener {
                     override fun onNextClicked(success: Boolean) {
                         if (success) {
                             updateProgressBar()
                             moveToNextQuestion()
+
+                            lifecycleScope.launch {
+                                gameQuizViewModel.quizCompleteState.collect { state ->
+                                    when (state) {
+                                        is QuizCompleteState.Success -> {
+                                            Timber.d("quiz complete!")
+                                        }
+
+                                        is QuizCompleteState.Loading -> {}
+                                        is QuizCompleteState.Error -> {
+                                            Timber.e("quiz complete state error!!!")
+                                        }
+                                    }
+                                }
+                            }
+
+                            gameQuizViewModel.completeQuiz(
+                                appPreferences.getAccessToken()!!,
+                                question.QuizId
+                            )
                         } /*else {
                             // 문제 다시 풀게 하기
 
@@ -223,10 +237,10 @@ class GameQuizFragment : Fragment() {
     }
 
     private fun updateProgressBar() {
-        (activity as? GameQuizActivity)?.updateProgress((currentIndex+1)*100/gameQuizViewModel.quiz.value!!.size)
+        (activity as? GameQuizActivity)?.updateProgress((currentIndex + 1) * 100 / gameQuizViewModel.quiz.value!!.size)
     }
 
-    private fun showAnswer(quiz:ResponseQuizDto.QuizDto) {
+    private fun showAnswer(quiz: ResponseQuizDto.QuizDto) {
         val answerAdapter = GameQuizAnswerAdapter(
             clickAnswer = { answerIndex ->
                 with(binding.btnComplete) {

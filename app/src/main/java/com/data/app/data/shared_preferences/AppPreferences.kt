@@ -22,22 +22,53 @@ class AppPreferences @Inject constructor(
 
     fun saveAccessToken(accessToken: String?) {
         val editor = sharedPreferences.edit()
+        val alias = cryptoUtils.getAliasForRefreshToken()
+
+
         if (accessToken != null) {
-            editor.putString(KEY_ACCESS_TOKEN, accessToken)
-            Timber.d("Access token saved.")
+            try {
+                val (encryptedToken, iv) = cryptoUtils.encryptData(alias, accessToken) ?: return
+                editor.putString(KEY_ACCESS_TOKEN, encryptedToken)
+                editor.putString("${KEY_ACCESS_TOKEN}_iv", iv)
+                Timber.d("Access token encrypted and saved.")
+            } catch (e: Exception) {
+                Timber.e(e, "Failed to encrypt access token.")
+            }
         } else {
-            editor.remove(KEY_ACCESS_TOKEN) // null이면 기존 값 삭제
+            editor.remove(KEY_ACCESS_TOKEN)
+            editor.remove("${KEY_ACCESS_TOKEN}_iv")
             Timber.d("Null access token received, cleared saved one.")
         }
+
         editor.apply()
     }
 
     fun getAccessToken(): String? {
-        return sharedPreferences.getString(KEY_ACCESS_TOKEN, null)
+        val alias = cryptoUtils.getAliasForRefreshToken()
+        val encryptedToken = sharedPreferences.getString(KEY_ACCESS_TOKEN, null)
+        val iv = sharedPreferences.getString("${KEY_ACCESS_TOKEN}_iv", null)
+
+        return try {
+            cryptoUtils.decryptData(alias, encryptedToken, iv)
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to decrypt access token.")
+            null
+        }
     }
 
     fun clearAccessToken() {
-        sharedPreferences.edit().remove(KEY_ACCESS_TOKEN).apply()
-        Timber.d("Access token cleared from preferences.")
+        sharedPreferences.edit()
+            .remove(KEY_ACCESS_TOKEN)
+            .remove("${KEY_ACCESS_TOKEN}_iv")
+            .apply()
+
+        // KeyStore에서도 제거
+        try {
+            cryptoUtils.deleteKey(cryptoUtils.getAliasForRefreshToken())
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to delete encryption key during logout.")
+        }
+
+        Timber.d("Access token cleared from preferences and keystore.")
     }
 }

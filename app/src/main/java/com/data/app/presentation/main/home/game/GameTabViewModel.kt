@@ -37,7 +37,7 @@ class GameTabViewModel @Inject constructor(
         viewModelScope.launch {
             baseRepository.getUserGameInfo(_accessToken.value!!).onSuccess { response->
                 _userGameInfoState.value= UserGameInfoState.Success(response)
-                updateList(response.levelCompleted)
+                updateList(response.levelCompleted?:0)
             }.onFailure {
                 _userGameInfoState.value= UserGameInfoState.Error("user game info error!")
                 if (it is HttpException) {
