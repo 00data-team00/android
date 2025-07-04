@@ -144,9 +144,12 @@ class AIChatActivity : BaseActivity() {
                         aiChatAdapter.deleteLoadMessage()
                         aiChatAdapter.startAiMessage(state.response)
                         binding.rvChat.scrollToPosition(aiChatAdapter.itemCount - 1)
+                        binding.btnMic.isEnabled=true
                     }
 
-                    is StartChatState.Loading -> {}
+                    is StartChatState.Loading -> {
+                        binding.btnMic.isEnabled=false
+                    }
                     is StartChatState.Error -> {
                         Timber.e("setChats start chat state is error!!")
                     }
@@ -164,6 +167,8 @@ class AIChatActivity : BaseActivity() {
     }
 
     private fun getAiChat() {
+        binding.btnMic.isEnabled=false
+
         lifecycleScope.launch {
             aiChatViewModel.aiChatState.collect{ state->
                 when(state){
@@ -171,6 +176,7 @@ class AIChatActivity : BaseActivity() {
                         aiChatAdapter.deleteLoadMessage()
                         aiChatAdapter.addAiMessage(state.response.aiMessage)
                         binding.rvChat.scrollToPosition(aiChatAdapter.itemCount - 1)
+                        binding.btnMic.isEnabled=true
                     }
 
                     is AiChatState.Loading -> {}

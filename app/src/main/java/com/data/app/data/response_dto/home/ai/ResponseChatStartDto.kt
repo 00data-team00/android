@@ -9,6 +9,8 @@ data class ResponseChatStartDto (
     val chatRoomId:Int,
     @SerialName("createdAt")
     val createdAt:String,
+    @SerialName("messageId")
+    val messageId:Int,
     @SerialName("message")
     val message:String,
 )

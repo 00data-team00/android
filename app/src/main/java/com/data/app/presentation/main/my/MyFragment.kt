@@ -38,6 +38,7 @@ import com.data.app.extension.my.MyProfileState
 import com.data.app.presentation.login.LoginActivity
 import com.data.app.presentation.main.MainViewModel
 import com.data.app.presentation.main.OnTabReselectedListener
+import com.data.app.util.security.resetToSystemLocale
 import com.yalantis.ucrop.UCrop
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -292,6 +293,7 @@ class MyFragment : Fragment(), OnTabReselectedListener {
                     // 언어 설정 정보 초기화
                     val prefs = requireContext().getSharedPreferences("app_settings", Context.MODE_PRIVATE)
                     prefs.edit().remove("language_code").apply()
+                    requireContext().resetToSystemLocale()
                     Timber.d("Access token cleared.")
 
                     // 화면 전환 (로그인 화면으로)

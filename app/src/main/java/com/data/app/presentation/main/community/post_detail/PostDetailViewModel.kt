@@ -162,6 +162,10 @@ class PostDetailViewModel @Inject constructor(
         _likePostState.value = LikePostState.Loading
     }
 
+    fun resetDetailState(){
+        _postDetailState.value=PostDetailState.Loading
+    }
+
     private fun httpError(errorBody: String) {
         // 전체 에러 바디를 로깅하여 디버깅
         Timber.e("Full error body: $errorBody")

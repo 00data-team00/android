@@ -38,7 +38,6 @@ class FollowAdapter(
         fun bind(data: ResponseFollowListDto.Follower) {
             with(binding) {
                 tvName.text = data.name
-                tvId.text = data.userId.toString()
                 btnFollow.isSelected = data.isFollowing
 
                 val profile =

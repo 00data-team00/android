@@ -1,10 +1,12 @@
 package com.data.app.presentation.main.home
 
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Paint
 import android.graphics.RectF
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
@@ -31,12 +33,15 @@ import timber.log.Timber
 import androidx.core.content.edit
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import com.data.app.BuildConfig
 import com.data.app.data.shared_preferences.AppPreferences
+import com.data.app.databinding.DialogExpiredBinding
 import com.data.app.extension.home.UserGameInfoState
 import com.data.app.extension.my.MyProfileState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import androidx.core.net.toUri
 
 @AndroidEntryPoint
 class HomeFragment : Fragment(), OnTabReselectedListener {
@@ -140,7 +145,7 @@ class HomeFragment : Fragment(), OnTabReselectedListener {
                             tvConversationCount.text =
                                 (state.response.chatRoomsCreated ?: 0).toString()
                         }
-
+                        clickOnline()
                         clickPractice(token)
                         clickGame(token)
                     }
@@ -232,6 +237,32 @@ class HomeFragment : Fragment(), OnTabReselectedListener {
         val prefs = requireContext().getSharedPreferences("settings", Context.MODE_PRIVATE)
         prefs.edit { putString("lang", languageCode) }
         requireActivity().recreate()
+    }
+
+    private fun clickOnline() {
+        binding.ivOnline.setOnClickListener {
+            val appLink = BuildConfig.SEJONG_URL
+            Timber.d("click online: $appLink")
+
+            if (appLink.isNullOrEmpty() || !appLink.startsWith("http")) {
+                // 유효하지 않은 링크 -> 만료 다이얼로그
+                val dialogBinding = DialogExpiredBinding.inflate(LayoutInflater.from(requireContext()))
+                val alertDialog = AlertDialog.Builder(requireContext())
+                    .setView(dialogBinding.root)
+                    .create()
+
+                dialogBinding.btnConfirm.setOnClickListener {
+                    alertDialog.dismiss()
+                }
+
+                alertDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+                alertDialog.show()
+            } else {
+                // 정상 링크 -> 브라우저로 이동
+                val intent = Intent(Intent.ACTION_VIEW, appLink.toUri())
+                startActivity(intent)
+            }
+        }
     }
 
     private fun clickPractice(token: String) {

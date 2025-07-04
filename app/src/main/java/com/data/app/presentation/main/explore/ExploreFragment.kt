@@ -153,6 +153,85 @@ class ExploreFragment : Fragment(), OnTabReselectedListener {
                 btnPaid.isSelected = false
                 btnPaid.setTextColor(getResources().getColor(R.color.mock_ai_practice_title_gray))
 
+                exploreViewModel.resetPage()
+                exploreViewModel.getAllPrograms(true, 10)
+              /*  if(!etSearch.text.isEmpty()){
+                    exploreViewModel.resetPage()
+                    exploreViewModel.getAllPrograms(true, 20)
+                    val currentState = exploreViewModel.allProgramsState.value
+                    var curList: List<ResponseAllProgramDto.ProgramDto> = emptyList()
+
+                    if (currentState is AllProgramsState.Success) {
+                        val response = currentState.response
+                        curList = response.content
+                    }
+
+                    val keyword = etSearch.text
+                    val filteredList = curList.filter {
+                        it.titleNm.contains(keyword, ignoreCase = true)
+                    }
+                    exploreProgramAdapter.updateList(filteredList)
+                }
+                else{
+                    exploreViewModel.resetPage()
+                    exploreViewModel.getAllPrograms(true, 10)
+                }
+*/
+            }
+            btnPaid.setOnClickListener {
+                btnFree.isSelected = false
+                btnFree.setTextColor(getResources().getColor(R.color.mock_ai_practice_title_gray))
+                btnPaid.isSelected = true
+                btnPaid.setTextColor(getResources().getColor(R.color.white))
+
+                exploreViewModel.resetPage()
+                exploreViewModel.getAllPrograms(false, 10)
+
+               /* if(!etSearch.text.isEmpty()){
+                    exploreViewModel.resetPage()
+                    exploreViewModel.getAllPrograms(false, 20)
+                    val currentState = exploreViewModel.allProgramsState.value
+                    var curList: List<ResponseAllProgramDto.ProgramDto> = emptyList()
+
+                    if (currentState is AllProgramsState.Success) {
+                        val response = currentState.response
+                        curList = response.content
+                    }
+
+                    val keyword = etSearch.text
+                    val filteredList = curList.filter {
+                        it.titleNm.contains(keyword, ignoreCase = true)
+                    }
+                    exploreProgramAdapter.updateList(filteredList)
+                }else{
+                    exploreViewModel.resetPage()
+                    exploreViewModel.getAllPrograms(false, 10)
+                }*/
+            }
+
+            nsvExplore.setOnScrollChangeListener { v: NestedScrollView, _, scrollY, _, oldScrollY ->
+                val view = v.getChildAt(v.childCount - 1)
+
+                if (scrollY >= (view.measuredHeight - v.measuredHeight)) {
+                    // 스크롤이 맨 아래 도달
+                    exploreViewModel.getAllPrograms(binding.btnFree.isSelected, 10)
+                }
+            }
+        }
+    }
+
+   /* private fun switchPrograms() {
+        with(binding) {
+            btnFree.isSelected = true
+            btnFree.setTextColor(getResources().getColor(R.color.white))
+            exploreViewModel.getAllPrograms(true, 10)
+
+            btnFree.setOnClickListener {
+                btnFree.isSelected = true
+                btnFree.setTextColor(getResources().getColor(R.color.white))
+                btnPaid.isSelected = false
+                btnPaid.setTextColor(getResources().getColor(R.color.mock_ai_practice_title_gray))
+
                 if(!etSearch.text.isEmpty()){
                     val currentState = exploreViewModel.allProgramsState.value
                     var curList: List<ResponseAllProgramDto.ProgramDto> = emptyList()
@@ -209,7 +288,7 @@ class ExploreFragment : Fragment(), OnTabReselectedListener {
                 }
             }
         }
-    }
+    }*/
 
     /*private fun clickPriceButton() {
         val programAdapter = ExploreProgramAdapter(clickProgram = {
@@ -240,7 +319,7 @@ class ExploreFragment : Fragment(), OnTabReselectedListener {
     }*/
 
     private fun searchList(followlist: List<ResponseAllProgramDto.ProgramDto>){
-        binding.etSearch.doOnTextChanged{ text, _, _, _ ->
+       /* binding.etSearch.doOnTextChanged{ text, _, _, _ ->
             val keyword = text.toString().trim()
 
 //            exploreViewModel.getAllPrograms(false, 100)
@@ -256,11 +335,11 @@ class ExploreFragment : Fragment(), OnTabReselectedListener {
                 }
                 exploreProgramAdapter.updateList(filteredList)
             }
-        }
+        }*/
     }
 
     private fun getText(){
-        binding.etSearch.addTextChangedListener(object : TextWatcher {
+       /* binding.etSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
 
@@ -274,7 +353,7 @@ class ExploreFragment : Fragment(), OnTabReselectedListener {
 
             override fun afterTextChanged(s: Editable?) {
             }
-        })
+        })*/
     }
 
     override fun onDestroyView() {
