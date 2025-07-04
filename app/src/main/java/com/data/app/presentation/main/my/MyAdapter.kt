@@ -15,25 +15,34 @@ import com.data.app.databinding.ItemPostBinding
 import com.data.app.util.TimeAgoFormatter
 import timber.log.Timber
 
-class MyAdapter(val clickPost:(Int)->Unit, val clickLike:(isLike:Boolean, postId:Int)->Unit):
-RecyclerView.Adapter<com.data.app.presentation.main.my.MyAdapter.MyViewHolder>(){
+class MyAdapter(
+    val clickPost: (Int) -> Unit,
+    val clickLike: (isLike: Boolean, postId: Int) -> Unit
+) :
+    RecyclerView.Adapter<com.data.app.presentation.main.my.MyAdapter.MyViewHolder>() {
 
-    private var userProfile:String?=null
+    private var userProfile: String? = null
     private val postsList = mutableListOf<ResponseMyPostDto.PostDto>()
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): _root_ide_package_.com.data.app.presentation.main.my.MyAdapter.MyViewHolder {
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): _root_ide_package_.com.data.app.presentation.main.my.MyAdapter.MyViewHolder {
         val binding = ItemPostBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return MyViewHolder(binding)
     }
 
     override fun getItemCount(): Int = postsList.size
 
-    override fun onBindViewHolder(holder: _root_ide_package_.com.data.app.presentation.main.my.MyAdapter.MyViewHolder, position: Int) {
+    override fun onBindViewHolder(
+        holder: _root_ide_package_.com.data.app.presentation.main.my.MyAdapter.MyViewHolder,
+        position: Int
+    ) {
         holder.bind(postsList[position])
     }
 
-    fun getList(profile:String?, list: List<ResponseMyPostDto.PostDto>) {
-        userProfile=profile
+    fun getList(profile: String?, list: List<ResponseMyPostDto.PostDto>) {
+        userProfile = profile
         postsList.clear()
         postsList.addAll(list)
         notifyDataSetChanged()
@@ -44,14 +53,10 @@ RecyclerView.Adapter<com.data.app.presentation.main.my.MyAdapter.MyViewHolder>()
         fun bind(data: ResponseMyPostDto.PostDto) {
             with(binding) {
                 Timber.d("userProfile: $userProfile")
-                if(userProfile!=null) {
-                    ivProfile.load(userProfile) {
-                        transformations(CircleCropTransformation())
-                    }
-                }else{
-                    ivProfile.load(R.drawable.ic_profile){
-                        transformations(CircleCropTransformation())
-                    }
+                ivProfile.load(userProfile) {
+                    transformations(CircleCropTransformation())
+                    placeholder(R.drawable.ic_profile)
+                    error(R.drawable.ic_profile)
                 }
 
                 val lp = ivImage.layoutParams as ConstraintLayout.LayoutParams
@@ -59,7 +64,7 @@ RecyclerView.Adapter<com.data.app.presentation.main.my.MyAdapter.MyViewHolder>()
                 if (!data.imageUrl.isNullOrEmpty()) {
                     ivImage.visibility = View.VISIBLE
                     val imageUrl =
-                        BuildConfig.BASE_URL.removeSuffix("/")+data.imageUrl
+                        BuildConfig.BASE_URL.removeSuffix("/") + data.imageUrl
                     ivImage.load(imageUrl) {
                         transformations(RoundedCornersTransformation(30f))
                     }
@@ -82,7 +87,7 @@ RecyclerView.Adapter<com.data.app.presentation.main.my.MyAdapter.MyViewHolder>()
                 tvLikeCount.text = data.likeCount.toString()
                 tvCommentCount.text = data.commentCount.toString()
 
-                if(data.isLiked) btnLike.isSelected=true
+                if (data.isLiked) btnLike.isSelected = true
 
                 //btnFollow.visibility=View.GONE
 
@@ -92,8 +97,8 @@ RecyclerView.Adapter<com.data.app.presentation.main.my.MyAdapter.MyViewHolder>()
             }
         }
 
-        private fun clickLike(){
-            with(binding){
+        private fun clickLike() {
+            with(binding) {
                 btnLike.setOnClickListener {
                     btnLike.isSelected = !btnLike.isSelected
                     tvLikeCount.text = (
@@ -106,7 +111,7 @@ RecyclerView.Adapter<com.data.app.presentation.main.my.MyAdapter.MyViewHolder>()
             }
         }
 
-        private fun showDetail(data: ResponseMyPostDto.PostDto){
+        private fun showDetail(data: ResponseMyPostDto.PostDto) {
             listOf(binding.tvContent, binding.ivImage).forEach {
                 it.setOnClickListener { clickPost(data.id) }
             }

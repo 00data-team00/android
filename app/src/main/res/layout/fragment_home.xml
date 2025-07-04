@@ -77,23 +77,26 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="11dp"
-                android:layout_marginBottom="2dp"
+                android:layout_marginTop="10dp"
                 android:text="@string/home_not_give_up"
                 android:textSize="11sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toTopOf="@id/tv_continue_study"
                 app:layout_constraintStart_toEndOf="@id/iv_hands"
-                app:layout_constraintTop_toTopOf="@id/iv_hands" />
+                app:layout_constraintTop_toTopOf="@id/cl_continuous" />
 
             <TextView
                 android:id="@+id/tv_continue_study"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="@string/home_continue_study"
                 android:textColor="@color/home_continuous_study"
                 android:textSize="12sp"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@id/iv_hands"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="@id/tv_not_give_up"
                 app:layout_constraintTop_toBottomOf="@id/tv_not_give_up" />
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -222,12 +225,14 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginTop="20dp"
+            android:layout_marginEnd="6dp"
             android:src="@drawable/iv_online"
             android:scaleType="centerCrop"
+            app:layout_constraintEnd_toStartOf="@id/iv_quiz"
             app:layout_constraintDimensionRatio="1.2:1"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_go_to_study_eng"
-            app:layout_constraintWidth_percent="0.45" />
+            />
 
         <ImageView
             android:id="@+id/iv_quiz"
@@ -236,17 +241,18 @@
             android:layout_marginTop="20dp"
             android:src="@drawable/iv_quiz"
             android:layout_marginEnd="30dp"
+            android:layout_marginStart="6dp"
             android:scaleType="centerCrop"
             app:layout_constraintDimensionRatio="1.2:1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_go_to_study_eng"
-            app:layout_constraintWidth_percent="0.45" />
+            app:layout_constraintStart_toEndOf="@id/iv_online"/>
 
         <ImageView
             android:id="@+id/iv_ai_practice"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="12dp"
             android:layout_marginBottom="20dp"
             android:layout_marginEnd="30dp"
             android:src="@drawable/iv_ai_practice"

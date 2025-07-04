@@ -1,11 +1,10 @@
-package com.data.app.presentation.main.community.profile_detail
+package com.data.app.presentation.main.community.post_detail
 
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
-import coil3.request.transformations
 import coil.transform.RoundedCornersTransformation
 import timber.log.Timber
 

@@ -76,7 +76,7 @@
     <string name="game_quiz_stop">Dừng lại</string>
     <string name="game_quiz_finalsucess">Thử thách thành công</string>
     <string name="game_quiz_finalfail">Thử thách thất bại</string>
-    <string name="game_quiz_commentsuccess">Tuyệt vời %s!\nCùng làm câu hỏi tiếp theo nhé!</string>
+    <string name="game_quiz_commentsuccess">Tuyệt vời!\nCùng làm câu hỏi tiếp theo nhé!</string>
     <string name="game_quiz_commentafail">Đừng bỏ cuộc\nThử lại nào!</string>
 
     <!-- explore -->

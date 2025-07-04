@@ -6,9 +6,11 @@ import android.graphics.Color
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.text.Editable
+import android.text.InputType
 import android.text.TextWatcher
 import android.view.View
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.data.app.databinding.ActivitySignupBinding
@@ -17,6 +19,7 @@ import androidx.core.widget.addTextChangedListener
 import com.data.app.presentation.main.MainActivity
 import androidx.core.graphics.toColorInt
 import androidx.lifecycle.lifecycleScope
+import com.data.app.extension.login.NationState
 import com.data.app.extension.login.RegisterState
 import com.data.app.extension.login.SendMailState
 import com.data.app.extension.login.VerifyMailState
@@ -37,6 +40,8 @@ class SignupActivity : AppCompatActivity() {
     private var pwFilled = false
     private var nationFilled = false
     private var verifyCode: String = ""
+
+    private lateinit var nationMap: Map<String, Int>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,10 +69,6 @@ class SignupActivity : AppCompatActivity() {
         val btn_privacy = binding.btnPrivacy
         val btn_signup = binding.btnSignup
 
-        val nationalityList = listOf("Korea", "Japan", "China", "Canada", "France", "United States")
-        val adapter = ArrayAdapter(this, R.layout.simple_dropdown_item_1line, nationalityList)
-        et_nation.setAdapter(adapter)
-
         et_email.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
@@ -82,11 +83,12 @@ class SignupActivity : AppCompatActivity() {
                     btn_send.visibility = View.VISIBLE
 
                     btn_send.setOnClickListener {
-                        verifyCode = "1234"
+                        // verifyCode = "1234"
                         signUpViewModel.sendMail(email)
                     }
 
                     btn_veri.setOnClickListener {
+                        Timber.d("code: ${et_code.text}")
                         val inputCode = et_code.text.toString()
                         signUpViewModel.verifyMail(inputCode)
                     }
@@ -115,12 +117,17 @@ class SignupActivity : AppCompatActivity() {
                 tv_pw.setTextColor("#aa1100".toColorInt())
             }
         }
+        // 키보드 입력 막음
+        et_nation.inputType= InputType.TYPE_NULL
+        et_nation.keyListener=null
+
         et_nation.setOnClickListener {
             et_nation.showDropDown()
         }
         et_nation.setOnItemClickListener { parent, view, position, id ->
-            val selected = parent.getItemAtPosition(position).toString()
-            signUpViewModel.nationality = selected
+            val selectedNameKo = parent.getItemAtPosition(position).toString()
+            val selectedCode = nationMap[selectedNameKo] ?: return@setOnItemClickListener
+            signUpViewModel.nationality = selectedCode // 이제 code 저장
             nationFilled = true
             updateSignupButtonVisibility()
         }
@@ -130,11 +137,47 @@ class SignupActivity : AppCompatActivity() {
         }
 
         btn_signup.setOnClickListener {
-            val name=et_name.text.toString()
-            val pw=et_pw.text.toString()
-            val nation=et_nation.text.toString()
-            signUpViewModel.register(name,pw, nation)
+            val name = et_name.text.toString()
+            val pw = et_pw.text.toString()
+            val nationId = signUpViewModel.nationality // 이미 setOnItemClickListener에서 선택된 코드
+
+            if (nationId==0) {
+                // 예외 처리: 나라 선택 안 한 경우
+                Toast.makeText(this, "국가를 선택해주세요.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            signUpViewModel.register(name, pw, nationId)
         }
+
+        getNation()
+    }
+
+    private fun getNation() {
+        lifecycleScope.launch {
+            signUpViewModel.nationState.collect { nationState ->
+                when (nationState) {
+                    is NationState.Success -> {
+                        Timber.d("get nation state success!")
+
+                        // ① nameKo -> code 맵으로 변환
+                        nationMap = nationState.response.nations.associate { it.nameKo to it.id }
+
+                        // ② UI에는 nameKo만 표시
+                        val nationalityList = nationMap.keys.toList()
+                        val adapter = ArrayAdapter(this@SignupActivity, android.R.layout.simple_dropdown_item_1line, nationalityList)
+                        binding.etNationality.setAdapter(adapter)
+                    }
+
+                    is NationState.Loading -> {}
+                    is NationState.Error -> {
+                        Timber.e("get nation state error!")
+                    }
+                }
+            }
+        }
+
+        signUpViewModel.getNation()
     }
 
     private fun showValid() {
@@ -164,6 +207,7 @@ class SignupActivity : AppCompatActivity() {
                             timer.start()
 
                             btnSend.visibility = View.GONE
+                            inputVerifyCode()
                         }
                     }
 
@@ -173,6 +217,35 @@ class SignupActivity : AppCompatActivity() {
                     }
                 }
             }
+        }
+    }
+
+    private fun inputVerifyCode(){
+        with(binding){
+            etVerifycode.addTextChangedListener(object : TextWatcher {
+                private var prevText = ""
+
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+                override fun afterTextChanged(s: Editable?) {
+                    val newText = s.toString()
+
+                    // 숫자 또는 영어만 필터링하고, 영어는 대문자로 변환
+                    val filtered = newText.filter {
+                        val isDigit = it.isDigit()
+                        val isEnglish = it in 'A'..'Z' || it in 'a'..'z'
+                        val isNotKorean = it !in '\uAC00'..'\uD7A3'
+                        (isDigit || isEnglish) && isNotKorean
+                    }.uppercase()
+
+                    if (filtered != newText) {
+                        etVerifycode.setText(filtered)
+                        etVerifycode.setSelection(filtered.length)
+                    }
+                }
+            })
         }
     }
 
@@ -207,38 +280,40 @@ class SignupActivity : AppCompatActivity() {
     private fun register() {
         val intent = Intent(this, LoginActivity::class.java)
         lifecycleScope.launch {
-            signUpViewModel.registerState.collect{ registerState ->
+            signUpViewModel.registerState.collect { registerState ->
                 when (registerState) {
                     is RegisterState.Success -> {
                         startActivity(intent)
                     }
-                    is RegisterState.Loading->{}
-                    is RegisterState.Error->{
+
+                    is RegisterState.Loading -> {}
+                    is RegisterState.Error -> {
                         Timber.e("get register state error!")
                     }
                 }
             }
         }
     }
-        private fun isValidEmail(email: String): Boolean {
-            return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
-        }
 
-        private fun isValidPW(password: String): Boolean {
-            val regex = Regex("^(?=.*[A-Z])(?=.*\\d)(?=.*[!@#\$%^&*()_+=\\-{}|:;\"'<>,.?/]).{8,}$")
-            return regex.matches(password)
-        }
+    private fun isValidEmail(email: String): Boolean {
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
+    }
 
-        private fun updateSignupButtonVisibility() {
-            binding.btnSignup.visibility =
-                if (nameFilled && pwFilled && nationFilled && binding.btnPrivacy.isChecked)
-                    View.VISIBLE else View.GONE
-        }
+    private fun isValidPW(password: String): Boolean {
+        val regex = Regex("^(?=.*[A-Z])(?=.*\\d)(?=.*[!@#\$%^&*()_+=\\-{}|:;\"'<>,.?/]).{8,}$")
+        return regex.matches(password)
+    }
 
-        private fun clickBackButton() {
-            binding.btnSignupBack.setOnClickListener {
-                val intent = Intent(this, LoginActivity::class.java)
-                startActivity(intent)
-            }
+    private fun updateSignupButtonVisibility() {
+        binding.btnSignup.visibility =
+            if (nameFilled && pwFilled && nationFilled && binding.btnPrivacy.isChecked)
+                View.VISIBLE else View.GONE
+    }
+
+    private fun clickBackButton() {
+        binding.btnSignupBack.setOnClickListener {
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
         }
     }
+}

@@ -28,6 +28,8 @@ import com.data.app.data.response_dto.home.quiz.ResponseQuizDto
 import com.data.app.data.response_dto.login.ResponseRegisterDto
 import com.data.app.data.response_dto.home.ResponseUserGameInfoDto
 import com.data.app.data.response_dto.home.ai.ResponseTranslateDto
+import com.data.app.data.response_dto.login.ResponseNationDto
+import com.data.app.data.response_dto.my.ResponseQuitDto
 import com.data.app.data.service.BaseService
 import okhttp3.MultipartBody
 import retrofit2.Response
@@ -40,6 +42,7 @@ class BaseDataSourceImpl @Inject constructor(
     override suspend fun sendMail(email: RequestSendMailDto): ResponseRegisterDto = baseService.sendMail(email)
     override suspend fun verifyMail(requestVerifyMailDto: RequestVerifyMailDto): ResponseRegisterDto = baseService.verifyMail(requestVerifyMailDto)
     override suspend fun register(requestRegisterDto: RequestRegisterDto): ResponseRegisterDto = baseService.register(requestRegisterDto)
+    override suspend fun getNation(): ResponseNationDto = baseService.getNation()
 
     // login
     override suspend fun login(requestLoginDto: RequestLoginDto): ResponseLoginDto = baseService.login(requestLoginDto)
@@ -106,4 +109,5 @@ class BaseDataSourceImpl @Inject constructor(
     override suspend fun getMyProfile(token: String): ResponseProfileDto = baseService.getProfile(token)
     override suspend fun getMyPosts(token: String): ResponseMyPostDto = baseService.getMyPost(token)
     override suspend fun editProfile(token: String, image: MultipartBody.Part): ResponseEditProfileDto = baseService.editProfile(token, image)
+    override suspend fun quit(token: String): ResponseQuitDto = baseService.quit(token)
 }

@@ -1,13 +1,13 @@
-package com.data.app.presentation.main.community.profile_detail
+package com.data.app.presentation.main.community.post_detail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.data.app.domain.repository.BaseRepository
 import com.data.app.extension.community.DeletePostState
-import com.data.app.extension.community.GetAllTimeLineState
 import com.data.app.extension.community.LikePostState
 import com.data.app.extension.community.PostDetailState
 import com.data.app.extension.community.WriteCommentState
+import com.data.app.extension.my.MyProfileState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -26,6 +26,9 @@ class PostDetailViewModel @Inject constructor(
     private val _postDetailState = MutableStateFlow<PostDetailState>(PostDetailState.Loading)
     val postDetailState: StateFlow<PostDetailState> = _postDetailState
 
+    private val _myProfileState = MutableStateFlow<MyProfileState>(MyProfileState.Loading)
+    val myProfileState: StateFlow<MyProfileState> = _myProfileState.asStateFlow()
+
     private val _likePostState = MutableStateFlow<LikePostState>(LikePostState.Loading)
     val likePostState: StateFlow<LikePostState> = _likePostState.asStateFlow()
 
@@ -41,6 +44,26 @@ class PostDetailViewModel @Inject constructor(
                 _postDetailState.value = PostDetailState.Success(it)
             }.onFailure {
                 _postDetailState.value = PostDetailState.Error(it.message.toString())
+                if (it is HttpException) {
+                    try {
+                        val errorBody: ResponseBody? = it.response()?.errorBody()
+                        val errorBodyString = errorBody?.string() ?: ""
+                        httpError(errorBodyString)
+                    } catch (e: Exception) {
+                        // JSON 파싱 실패 시 로깅
+                        Timber.e("Error parsing error body: ${e}")
+                    }
+                }
+            }
+        }
+    }
+
+    fun getProfile(token:String){
+        viewModelScope.launch {
+            baseRepository.getMyProfile(token).onSuccess { response->
+                _myProfileState.value=MyProfileState.Success(response)
+            }.onFailure {
+                _myProfileState.value = MyProfileState.Error(it.message.toString())
                 if (it is HttpException) {
                     try {
                         val errorBody: ResponseBody? = it.response()?.errorBody()

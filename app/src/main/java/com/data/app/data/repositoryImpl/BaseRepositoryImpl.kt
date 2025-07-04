@@ -28,6 +28,8 @@ import com.data.app.data.response_dto.home.quiz.ResponseQuizDto
 import com.data.app.data.response_dto.login.ResponseRegisterDto
 import com.data.app.data.response_dto.home.ResponseUserGameInfoDto
 import com.data.app.data.response_dto.home.ai.ResponseTranslateDto
+import com.data.app.data.response_dto.login.ResponseNationDto
+import com.data.app.data.response_dto.my.ResponseQuitDto
 import com.data.app.domain.repository.BaseRepository
 import okhttp3.MultipartBody
 import retrofit2.Response
@@ -36,7 +38,7 @@ import javax.inject.Inject
 
 class BaseRepositoryImpl @Inject constructor(
     private val baseDataSource: BaseDataSource
-):BaseRepository {
+) : BaseRepository {
     // sign up
     override suspend fun sendMail(email: String): Result<ResponseRegisterDto> {
         return runCatching {
@@ -67,6 +69,14 @@ class BaseRepositoryImpl @Inject constructor(
             baseDataSource.register(RequestRegisterDto(email, name, pw, nation))
         }.onFailure {
             Timber.e("base repository register fail: $it")
+        }
+    }
+
+    override suspend fun getNation(): Result<ResponseNationDto> {
+        return runCatching {
+            baseDataSource.getNation()
+        }.onFailure {
+            Timber.e("base repository get nation fail: $it")
         }
     }
 
@@ -131,8 +141,9 @@ class BaseRepositoryImpl @Inject constructor(
     override suspend fun writeComment(
         token: String,
         postId: Int,
-        content: String)
-    : Result<ResponsePostDetailDto.CommentDto> {
+        content: String
+    )
+            : Result<ResponsePostDetailDto.CommentDto> {
         return runCatching {
             baseDataSource.writeComment(token, postId, content)
         }.onFailure {
@@ -228,7 +239,7 @@ class BaseRepositoryImpl @Inject constructor(
 
     override suspend fun startChat(token: String, topicId: Int): Result<ResponseChatStartDto> {
         return runCatching {
-            baseDataSource.startChat(token,topicId)
+            baseDataSource.startChat(token, topicId)
         }.onFailure {
             Timber.e("base repository start chat fail: $it")
         }
@@ -337,7 +348,10 @@ class BaseRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun editProfile(token: String, image: MultipartBody.Part): Result<ResponseEditProfileDto> {
+    override suspend fun editProfile(
+        token: String,
+        image: MultipartBody.Part
+    ): Result<ResponseEditProfileDto> {
         return runCatching {
             baseDataSource.editProfile(token, image)
         }.onFailure {
@@ -345,4 +359,11 @@ class BaseRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun quit(token: String): Result<ResponseQuitDto> {
+        return runCatching {
+            baseDataSource.quit(token)
+        }.onFailure {
+            Timber.e("base repository quit fail: $it")
+        }
+    }
 }

@@ -20,6 +20,8 @@ import com.data.app.data.response_dto.home.quiz.ResponseQuizDto
 import com.data.app.data.response_dto.login.ResponseRegisterDto
 import com.data.app.data.response_dto.home.ResponseUserGameInfoDto
 import com.data.app.data.response_dto.home.ai.ResponseTranslateDto
+import com.data.app.data.response_dto.login.ResponseNationDto
+import com.data.app.data.response_dto.my.ResponseQuitDto
 import okhttp3.MultipartBody
 import retrofit2.Response
 
@@ -40,6 +42,8 @@ interface BaseRepository {
         pw:String,
         nation:Int,
     ):Result<ResponseRegisterDto>
+
+    suspend fun getNation():Result<ResponseNationDto>
 
     // login
     suspend fun login(
@@ -189,5 +193,9 @@ interface BaseRepository {
         token:String,
         image:MultipartBody.Part
     ):Result<ResponseEditProfileDto>
+
+    suspend fun quit(
+        token:String,
+    ):Result<ResponseQuitDto>
 
 }

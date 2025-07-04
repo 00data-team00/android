@@ -19,7 +19,7 @@ data class ResponseQuizDto (
         @SerialName("choices")
         val choices: List<ChoiceDto>,
         @SerialName("image")
-        val image: String,
+        val image: String?,
         @SerialName("voice")
         val voice: String?,
         @SerialName("answer")
@@ -27,7 +27,7 @@ data class ResponseQuizDto (
         @SerialName("wordScript")
         val wordScript: String,
         @SerialName("answerScript")
-        val answerScript: String
+        val answerScript: String?
     ): java.io.Serializable{
         @Serializable
         data class ChoiceDto(

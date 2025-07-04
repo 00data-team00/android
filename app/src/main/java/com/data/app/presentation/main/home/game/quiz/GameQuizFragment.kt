@@ -137,7 +137,7 @@ class GameQuizFragment : Fragment() {
                 rvLocation(anchorView = ivQuestion)
             }else{
                 tvNum.text =  getString(R.string.game_quiz_num, currentIndex + 1)
-                tvQuestion.text = getString(R.string.game_quiz_picture)
+                tvQuestion.text = getString(R.string.game_quiz_voice)
 
                 sflIvQuestion.stopShimmer()
                 sflIvQuestion.visibility=View.GONE

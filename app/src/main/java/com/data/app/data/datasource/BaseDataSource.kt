@@ -27,6 +27,8 @@ import com.data.app.data.response_dto.home.quiz.ResponseQuizDto
 import com.data.app.data.response_dto.login.ResponseRegisterDto
 import com.data.app.data.response_dto.home.ResponseUserGameInfoDto
 import com.data.app.data.response_dto.home.ai.ResponseTranslateDto
+import com.data.app.data.response_dto.login.ResponseNationDto
+import com.data.app.data.response_dto.my.ResponseQuitDto
 import okhttp3.MultipartBody
 import retrofit2.Response
 
@@ -43,6 +45,8 @@ interface BaseDataSource {
     suspend fun register(
         requestRegisterDto: RequestRegisterDto
     ):ResponseRegisterDto
+
+    suspend fun getNation(): ResponseNationDto
 
     // login
     suspend fun login(
@@ -192,6 +196,8 @@ interface BaseDataSource {
         image: MultipartBody.Part
     ): ResponseEditProfileDto
 
-
+    suspend fun quit(
+        token:String
+    ): ResponseQuitDto
 
 }

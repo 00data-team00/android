@@ -76,7 +76,7 @@
     <string name="game_quiz_stop">停止</string>
     <string name="game_quiz_finalsucess">挑战成功</string>
     <string name="game_quiz_finalfail">挑战失败</string>
-    <string name="game_quiz_commentsuccess">太棒了，%s！\n我们来做下一题吧！</string>
+    <string name="game_quiz_commentsuccess">太棒了！\n我们来做下一题吧！</string>
     <string name="game_quiz_commentafail">别放弃，\n再试一次！</string>
 
     <!-- explore -->
