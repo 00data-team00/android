@@ -38,13 +38,13 @@ class ExploreViewModel @Inject constructor(
         isLastPage = false
     }
 
-    fun getAllPrograms(isFree:Boolean){
+    fun getAllPrograms(isFree:Boolean, count:Int){
         if (isLoading || isLastPage) return
         isLoading = true
         viewModelScope.launch {
             _allProgramsState.value = AllProgramsState.Loading
 
-            baseRepository.getAllPrograms(isFree, currentPage, 10).onSuccess { response->
+            baseRepository.getAllPrograms(isFree, currentPage, count).onSuccess { response->
                 Timber.d("currentpage: $currentPage")
                 if (currentPage == 0) {
                     _allProgramsState.value = AllProgramsState.Success(response, isAppend = false)

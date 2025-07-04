@@ -145,7 +145,7 @@ class ExploreFragment : Fragment(), OnTabReselectedListener {
         with(binding) {
             btnFree.isSelected = true
             btnFree.setTextColor(getResources().getColor(R.color.white))
-            exploreViewModel.getAllPrograms(true)
+            exploreViewModel.getAllPrograms(true, 10)
 
             btnFree.setOnClickListener {
                 btnFree.isSelected = true
@@ -153,8 +153,26 @@ class ExploreFragment : Fragment(), OnTabReselectedListener {
                 btnPaid.isSelected = false
                 btnPaid.setTextColor(getResources().getColor(R.color.mock_ai_practice_title_gray))
 
-                exploreViewModel.resetPage()
-                exploreViewModel.getAllPrograms(true)
+                if(!etSearch.text.isEmpty()){
+                    val currentState = exploreViewModel.allProgramsState.value
+                    var curList: List<ResponseAllProgramDto.ProgramDto> = emptyList()
+
+                    if (currentState is AllProgramsState.Success) {
+                        val response = currentState.response
+                        curList = response.content
+                    }
+
+                    val keyword = etSearch.text
+                    val filteredList = curList.filter {
+                        it.titleNm.contains(keyword, ignoreCase = true)
+                    }
+                    exploreProgramAdapter.updateList(filteredList)
+                }
+                else{
+                    exploreViewModel.resetPage()
+                    exploreViewModel.getAllPrograms(true, 10)
+                }
+
             }
             btnPaid.setOnClickListener {
                 btnFree.isSelected = false
@@ -162,8 +180,24 @@ class ExploreFragment : Fragment(), OnTabReselectedListener {
                 btnPaid.isSelected = true
                 btnPaid.setTextColor(getResources().getColor(R.color.white))
 
-                exploreViewModel.resetPage()
-                exploreViewModel.getAllPrograms(false)
+                if(!etSearch.text.isEmpty()){
+                    val currentState = exploreViewModel.allProgramsState.value
+                    var curList: List<ResponseAllProgramDto.ProgramDto> = emptyList()
+
+                    if (currentState is AllProgramsState.Success) {
+                        val response = currentState.response
+                        curList = response.content
+                    }
+
+                    val keyword = etSearch.text
+                    val filteredList = curList.filter {
+                        it.titleNm.contains(keyword, ignoreCase = true)
+                    }
+                    exploreProgramAdapter.updateList(filteredList)
+                }else{
+                    exploreViewModel.resetPage()
+                    exploreViewModel.getAllPrograms(false, 10)
+                }
             }
 
             nsvExplore.setOnScrollChangeListener { v: NestedScrollView, _, scrollY, _, oldScrollY ->
@@ -171,7 +205,7 @@ class ExploreFragment : Fragment(), OnTabReselectedListener {
 
                 if (scrollY >= (view.measuredHeight - v.measuredHeight)) {
                     // 스크롤이 맨 아래 도달
-                    exploreViewModel.getAllPrograms(binding.btnFree.isSelected)
+                    exploreViewModel.getAllPrograms(binding.btnFree.isSelected, 10)
                 }
             }
         }
@@ -208,6 +242,9 @@ class ExploreFragment : Fragment(), OnTabReselectedListener {
     private fun searchList(followlist: List<ResponseAllProgramDto.ProgramDto>){
         binding.etSearch.doOnTextChanged{ text, _, _, _ ->
             val keyword = text.toString().trim()
+
+//            exploreViewModel.getAllPrograms(false, 100)
+//            exploreViewModel.getAllPrograms(true, 100)
 
             Timber.d("keyword: $keyword")
 
@@ -251,7 +288,7 @@ class ExploreFragment : Fragment(), OnTabReselectedListener {
         exploreViewModel.resetPaging()
 
         // 데이터 새로 fetch
-        exploreViewModel.getAllPrograms(isFree = binding.btnFree.isSelected)  // 혹은 현재 선택된 필터값
+        exploreViewModel.getAllPrograms(isFree = binding.btnFree.isSelected, 10)  // 혹은 현재 선택된 필터값
         exploreViewModel.getDeadLinePrograms()
     }
 }
