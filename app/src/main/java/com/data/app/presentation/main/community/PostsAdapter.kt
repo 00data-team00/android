@@ -12,6 +12,7 @@ import coil.transform.RoundedCornersTransformation
 import com.data.app.BuildConfig
 import com.data.app.R
 import com.data.app.data.response_dto.community.ResponseTimeLineDto
+import com.data.app.data.response_dto.explore.ResponseAllProgramDto
 import com.data.app.databinding.ItemPostBinding
 import com.data.app.presentation.main.community.other.OtherProfileAdapter
 import com.data.app.util.TimeAgoFormatter
@@ -27,7 +28,7 @@ class PostsAdapter(
         private const val VIEW_TYPE_SHIMMER = 0
         private const val VIEW_TYPE_NORMAL = 1
     }
-    private val postsList = mutableListOf<ResponseTimeLineDto.TimelinePostItem>()
+    private var postsList = mutableListOf<ResponseTimeLineDto.TimelinePostItem>()
     private var isLoading = true
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -39,6 +40,11 @@ class PostsAdapter(
             val binding = ItemPostBinding.inflate(LayoutInflater.from(parent.context), parent, false)
             FeedsViewHolder(binding)
         }
+    }
+
+    fun updateList(list: List<ResponseTimeLineDto.TimelinePostItem>) {
+        postsList = list.toMutableList()
+        notifyDataSetChanged()
     }
 
     override fun getItemCount(): Int =if (isLoading) 5 else postsList.size

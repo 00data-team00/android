@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.data.app.R
 import com.data.app.data.response_dto.explore.ResponseAllProgramDto
+import com.data.app.data.response_dto.home.ai.ResponseAIPreviousRecordsDto
 import com.data.app.databinding.ItemAllProgramBinding
 import timber.log.Timber
 import java.text.SimpleDateFormat
@@ -17,7 +18,7 @@ import java.util.Locale
 class ExploreProgramAdapter(
     val clickProgram:(String)->Unit,
 ):RecyclerView.Adapter<ExploreProgramAdapter.ExploreProgramViewHolder>() {
-    private val programList = mutableListOf<ResponseAllProgramDto.ProgramDto>()
+    private var programList = mutableListOf<ResponseAllProgramDto.ProgramDto>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ExploreProgramViewHolder {
         val binding=ItemAllProgramBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -29,6 +30,12 @@ class ExploreProgramAdapter(
     override fun onBindViewHolder(holder: ExploreProgramViewHolder, position: Int) {
         holder.bind(programList[position])
     }
+
+    fun updateList(list: List<ResponseAllProgramDto.ProgramDto>) {
+        programList = list.toMutableList()
+        notifyDataSetChanged()
+    }
+
 
     fun addPrograms(newList: List<ResponseAllProgramDto.ProgramDto>) {
         val startPos = programList.size

@@ -3,12 +3,16 @@ package com.data.app.presentation.main.home.ai_practice.previous_practice
 import android.content.Context
 import android.os.Bundle
 import android.speech.tts.TextToSpeech
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.addCallback
 import androidx.activity.viewModels
+import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
 import com.data.app.R
+import com.data.app.data.response_dto.home.ai.ResponseAIPreviousRecordsDto
 import com.data.app.databinding.ActivityPreviousPracticeBinding
 import com.data.app.extension.home.aichat.AIPreviousChatMessageState
 import com.data.app.extension.home.aichat.AIPreviousPracticeState
@@ -92,6 +96,7 @@ class PreviousPracticeActivity: BaseActivity() {
                 when(state){
                     is AIPreviousPracticeState.Success->{
                         previousPracticeAdapter.getRecordsList(state.response.chatRooms)
+                        searchList(state.response.chatRooms)
                     }
                     is AIPreviousPracticeState.Loading->{}
                     is AIPreviousPracticeState.Error->{
@@ -133,6 +138,7 @@ class PreviousPracticeActivity: BaseActivity() {
     }
 
     private fun clickBack() {
+        tts.stop()
         binding.btnBack.setOnClickListener {
             finish()
             overridePendingTransition(R.anim.stay, R.anim.slide_out_right)
@@ -142,5 +148,30 @@ class PreviousPracticeActivity: BaseActivity() {
             finish()
             overridePendingTransition(R.anim.stay, R.anim.slide_out_right)
         }
+    }
+
+    private fun searchList(followlist: List<ResponseAIPreviousRecordsDto.ChatRoom>){
+        binding.etSearch.doOnTextChanged{ text, _, _, _ ->
+            val keyword = text.toString().trim()
+
+            Timber.d("keyword: $keyword")
+
+            if (keyword.isEmpty()) {
+                previousPracticeAdapter.updateList(followlist)
+            } else {
+                val filteredList = followlist.filter {
+                    it.title.contains(keyword, ignoreCase = true) ||
+                    it.description.contains(keyword, ignoreCase = true)
+                }
+                previousPracticeAdapter.updateList(filteredList)
+            }
+        }
+    }
+
+    @Override
+    override fun onDestroy() {
+        super.onDestroy()
+        tts.stop()
+        finish()
     }
 }
