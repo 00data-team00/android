@@ -244,7 +244,7 @@ class AIChatAdapter(
 
     private fun formatToTimeOnly(isoString: String): String {
         return try {
-            val localDateTime = LocalDateTime.parse(isoString).plusHours(8)
+            val localDateTime = LocalDateTime.parse(isoString)
             localDateTime.format(DateTimeFormatter.ofPattern("HH:mm"))
         } catch (e: Exception) {
             "-"
