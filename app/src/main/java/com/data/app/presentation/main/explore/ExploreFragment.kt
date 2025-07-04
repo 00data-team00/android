@@ -155,13 +155,14 @@ class ExploreFragment : Fragment(), OnTabReselectedListener {
 
                 if(!etSearch.text.isEmpty()){
                     val currentState = exploreViewModel.allProgramsState.value
+                    var curList: List<ResponseAllProgramDto.ProgramDto> = emptyList()
 
                     if (currentState is AllProgramsState.Success) {
                         val response = currentState.response
-                        val curList = response.
-                        exploreProgramAdapter.updateList(dataList)
+                        curList = response.content
                     }
 
+                    val keyword = etSearch.text
                     val filteredList = curList.filter {
                         it.titleNm.contains(keyword, ignoreCase = true)
                     }
@@ -179,8 +180,24 @@ class ExploreFragment : Fragment(), OnTabReselectedListener {
                 btnPaid.isSelected = true
                 btnPaid.setTextColor(getResources().getColor(R.color.white))
 
-                exploreViewModel.resetPage()
-                exploreViewModel.getAllPrograms(false, 10)
+                if(!etSearch.text.isEmpty()){
+                    val currentState = exploreViewModel.allProgramsState.value
+                    var curList: List<ResponseAllProgramDto.ProgramDto> = emptyList()
+
+                    if (currentState is AllProgramsState.Success) {
+                        val response = currentState.response
+                        curList = response.content
+                    }
+
+                    val keyword = etSearch.text
+                    val filteredList = curList.filter {
+                        it.titleNm.contains(keyword, ignoreCase = true)
+                    }
+                    exploreProgramAdapter.updateList(filteredList)
+                }else{
+                    exploreViewModel.resetPage()
+                    exploreViewModel.getAllPrograms(false, 10)
+                }
             }
 
             nsvExplore.setOnScrollChangeListener { v: NestedScrollView, _, scrollY, _, oldScrollY ->
