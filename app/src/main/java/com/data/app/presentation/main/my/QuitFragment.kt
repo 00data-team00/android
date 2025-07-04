@@ -17,14 +17,28 @@ import com.data.app.R
 import com.data.app.databinding.FragmentMyBinding
 import com.data.app.databinding.FragmentQuitBinding
 import androidx.core.graphics.toColorInt
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import com.data.app.data.shared_preferences.AppPreferences
+import com.data.app.extension.my.QuitState
 import com.data.app.presentation.login.LoginActivity
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import timber.log.Timber
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class QuitFragment:Fragment() {
     private var selectedButton: Button? = null
 
     private var _binding: FragmentQuitBinding? = null
     private val binding: FragmentQuitBinding
         get() = requireNotNull(_binding) { "home fragment is null" }
+
+    private val quitViewModel: QuitViewModel by viewModels()
+
+    @Inject
+    lateinit var appPreferences: AppPreferences
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -47,30 +61,6 @@ class QuitFragment:Fragment() {
 
         clickCancel()
         clickDecide()
-    }
-
-    private fun clickDecide() {
-        binding.btnDecide.setOnClickListener {
-            // 서버로 사용자 정보 전송하는 코드
-
-            // 로그인 액티비티로 전환하는 코드
-            val intent = Intent(requireContext(), LoginActivity::class.java)
-            startActivity(intent)
-            Toast.makeText(context, "회원탈퇴 되었습니다.", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun clickCancel() {
-        binding.btnCancel.setOnClickListener {
-            parentFragmentManager.popBackStack()
-        }
-    }
-
-    private fun clickQuit() {
-        binding.btnQuit.setOnClickListener {
-            binding.clQuit.visibility = View.GONE
-            binding.clQuitagain.visibility = View.VISIBLE
-        }
     }
 
     private fun clickButtons() {
@@ -119,4 +109,44 @@ class QuitFragment:Fragment() {
         }
     }
 
+    private fun clickQuit() {
+        binding.btnQuit.setOnClickListener {
+            binding.clQuit.visibility = View.GONE
+            binding.clQuitagain.visibility = View.VISIBLE
+        }
+    }
+
+    private fun clickDecide() {
+        lifecycleScope.launch {
+            quitViewModel.quitState.collect { quitState ->
+                when (quitState) {
+                    is QuitState.Success -> {
+                        // 로그인 정보 삭제
+                        appPreferences.clearAccessToken()
+                        // 로그인 액티비티로 전환하는 코드
+                        val intent = Intent(requireContext(), LoginActivity::class.java)
+                        startActivity(intent)
+                        Toast.makeText(context, "회원탈퇴 되었습니다.", Toast.LENGTH_SHORT).show()
+                    }
+                    is QuitState.Loading -> {
+                        Timber.d("quitState is loading")
+                    }
+                    is QuitState.Error -> {
+                        Timber.d("quitState is error")
+                    }
+                }
+            }
+        }
+
+        binding.btnDecide.setOnClickListener {
+            // 서버로 사용자 정보 전송하는 코드
+            quitViewModel.quit(appPreferences.getAccessToken()!!)
+        }
+    }
+
+    private fun clickCancel() {
+        binding.btnCancel.setOnClickListener {
+            parentFragmentManager.popBackStack()
+        }
+    }
 }

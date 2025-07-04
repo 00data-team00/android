@@ -1,4 +1,4 @@
-package com.data.app.presentation.main.community.profile_detail
+package com.data.app.presentation.main.community.post_detail
 
 import android.app.AlertDialog
 import android.content.Intent
@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
-import android.widget.PopupWindow
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -31,6 +30,7 @@ import com.data.app.extension.community.DeletePostState
 import com.data.app.extension.community.LikePostState
 import com.data.app.extension.community.PostDetailState
 import com.data.app.extension.community.WriteCommentState
+import com.data.app.extension.my.MyProfileState
 import com.data.app.presentation.main.MainViewModel
 import com.data.app.util.TimeAgoFormatter
 import dagger.hilt.android.AndroidEntryPoint
@@ -82,7 +82,9 @@ class PostDetailFragment : Fragment() {
                         //binding.btnFollow.isSelected = post.isFollowing
                         showPost(post)
                         showImages(post)
-                        showComments(post.authorProfileImage, post.comments)
+
+
+                        getUserProfile(postState.response.comments)
                     }
 
                     is PostDetailState.Loading -> {}
@@ -97,6 +99,26 @@ class PostDetailFragment : Fragment() {
          showImages(post)
          clickFollow()
          clickLike()*/
+    }
+
+    private fun getUserProfile(comments:List<ResponsePostDetailDto.CommentDto>){
+        lifecycleScope.launch {
+            postDetailViewModel.myProfileState.collect{state->
+                when(state){
+                    is MyProfileState.Success -> {
+                        showComments(state.response.profileImage, comments)
+                    }
+                    is MyProfileState.Loading -> {
+                        Timber.d("my profile state loading...")
+                    }
+                    is MyProfileState.Error -> {
+                        Timber.d("my profile state error: ${state.message}")
+                    }
+                }
+            }
+        }
+
+        postDetailViewModel.getProfile(appPreferences.getAccessToken()!!)
     }
 
     private fun showPost(post: ResponsePostDetailDto) {

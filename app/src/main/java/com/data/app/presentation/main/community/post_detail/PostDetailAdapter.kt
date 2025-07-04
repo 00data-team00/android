@@ -1,4 +1,4 @@
-package com.data.app.presentation.main.community.profile_detail
+package com.data.app.presentation.main.community.post_detail
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -46,7 +46,7 @@ class PostDetailAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is CommentWriteViewHolder) {
-            holder.bind(profileUrl)
+            holder.bind()
         } else if (holder is CommentViewHolder) {
             holder.bind(commentsList[position - 1])
         }
@@ -73,7 +73,7 @@ class PostDetailAdapter(
 
     inner class CommentWriteViewHolder(private val binding:ItemCommentWriteBinding):
         RecyclerView.ViewHolder(binding.root){
-        fun bind(profileUrl: String?){
+        fun bind(){
             val profile = profileUrl?.takeIf { it.isNotBlank() && it != "null" }?.let {
                 BuildConfig.BASE_URL.removeSuffix("/") + it
             }

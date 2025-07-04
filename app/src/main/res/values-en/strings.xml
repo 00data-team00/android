@@ -74,7 +74,7 @@
     <string name="game_quiz_stop">Stop</string>
     <string name="game_quiz_finalsucess">Challenge Success</string>
     <string name="game_quiz_finalfail">Challenge Failed</string>
-    <string name="game_quiz_commentsuccess">Awesome %s!\nReady for the next quiz?</string>
+    <string name="game_quiz_commentsuccess">Awesome!\nReady for the next quiz?</string>
     <string name="game_quiz_commentafail">Don\'t give up!\nTry again!</string>
 
     <!--explore-->

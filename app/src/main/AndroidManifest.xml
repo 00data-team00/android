@@ -89,7 +89,7 @@
         </activity>
 
         <activity
-            android:name=".presentation.main.community.profile_detail.ImagePopupActivity"
+            android:name=".presentation.main.community.post_detail.ImagePopupActivity"
             android:screenOrientation="portrait"
             android:exported="false">
         </activity>

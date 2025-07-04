@@ -1,4 +1,4 @@
-package com.data.app.presentation.main.community.profile_detail
+package com.data.app.presentation.main.community.post_detail
 
 import android.content.Context
 import android.graphics.Rect

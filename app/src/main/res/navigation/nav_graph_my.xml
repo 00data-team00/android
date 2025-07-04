@@ -84,7 +84,7 @@
 
     <fragment
         android:id="@+id/postDetailFragment"
-        android:name="com.data.app.presentation.main.community.profile_detail.PostDetailFragment"
+        android:name="com.data.app.presentation.main.community.post_detail.PostDetailFragment"
         android:label="post_detail">
         <argument
             android:name="postId"

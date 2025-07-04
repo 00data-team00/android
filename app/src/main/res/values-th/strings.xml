@@ -75,7 +75,7 @@
     <string name="game_quiz_stop">หยุด</string>
     <string name="game_quiz_finalsucess">สำเร็จในการท้าทาย</string>
     <string name="game_quiz_finalfail">ท้าทายล้มเหลว</string>
-    <string name="game_quiz_commentsuccess">เยี่ยมมาก %s!\nไปทำแบบทดสอบถัดไปกันเถอะ!</string>
+    <string name="game_quiz_commentsuccess">เยี่ยมมาก!\nไปทำแบบทดสอบถัดไปกันเถอะ!</string>
     <string name="game_quiz_commentafail">อย่าหยุดนะ\nลองอีกครั้ง!</string>
 
     <!-- explore -->
