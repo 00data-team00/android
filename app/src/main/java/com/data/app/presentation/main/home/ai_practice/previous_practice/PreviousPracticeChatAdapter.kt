@@ -17,15 +17,23 @@ class PreviousPracticeChatAdapter(
     private val clickChat:(String)->Unit,
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     companion object {
-        private const val TYPE_MY_CHAT = 0
-        private const val TYPE_AI_CHAT = 1
+        private const val TYPE_SHIMMER = 0
+        private const val TYPE_MY_CHAT = 1
+        private const val TYPE_AI_CHAT = 2
+
     }
 
+    private var isChatLoading = true
     private val chatList = mutableListOf<ResponseAIPreviousChatMessagesDto.Message>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         return when (viewType) {
+            TYPE_SHIMMER->{
+                val view = LayoutInflater.from(parent.context).inflate(R.layout.item_chat_shimmer, parent, false)
+                ShimmerViewHolder(view)
+            }
+
             TYPE_MY_CHAT -> {
                 val binding = ItemChatMyBinding.inflate(inflater, parent, false)
                 ChatMyViewHolder(binding)
@@ -40,13 +48,15 @@ class PreviousPracticeChatAdapter(
         }
     }
 
-    override fun getItemCount(): Int = chatList.size
+    override fun getItemCount(): Int = if(isChatLoading) 3 else chatList.size
 
     override fun getItemViewType(position: Int): Int {
-        return if (chatList[position].isUser) TYPE_MY_CHAT else TYPE_AI_CHAT
+        return if (isChatLoading) TYPE_SHIMMER else if(chatList[position].isUser) TYPE_MY_CHAT else TYPE_AI_CHAT
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        if (isChatLoading || position >= chatList.size) return
+
         val currentItem = chatList[position]
         val isFirstOfType = position == 0 || currentItem.isUser != chatList[position - 1].isUser
 
@@ -56,11 +66,18 @@ class PreviousPracticeChatAdapter(
         }
     }
 
+    fun setChatLoading(){
+        isChatLoading=false
+        notifyDataSetChanged()
+    }
+
     fun getList(list: List<ResponseAIPreviousChatMessagesDto.Message>) {
         chatList.clear()
         chatList.addAll(list)
         notifyDataSetChanged()
     }
+
+    inner class ShimmerViewHolder(view: View) : RecyclerView.ViewHolder(view)
 
     inner class ChatMyViewHolder(private val binding: ItemChatMyBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -109,6 +126,7 @@ class PreviousPracticeChatAdapter(
             return (dp * scale + 0.5f).toInt()
         }
     }
+
 
     private fun formatToTimeOnly(isoString: String): String {
         return try {
