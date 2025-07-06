@@ -111,7 +111,6 @@ class MyFragment : Fragment(), OnTabReselectedListener {
         showProfile()
 
         makeList()
-        clickFollow()
         clickQuit()
     }
 
@@ -143,6 +142,7 @@ class MyFragment : Fragment(), OnTabReselectedListener {
                             }
 
                             showPosts(profile)
+                            clickFollow(myProfileState.response.userId)
                         }
                     }
 
@@ -338,13 +338,13 @@ class MyFragment : Fragment(), OnTabReselectedListener {
         }
     }
 
-    private fun clickFollow() {
+    private fun clickFollow(userId:Int) {
         listOf(
             binding.vFollower to "follower",
             binding.vFollowing to "following"
         ).forEach { (view, title) ->
             view.setOnClickListener {
-                val action = MyFragmentDirections.actionMyFragmentToFollowFragment(title)
+                val action = MyFragmentDirections.actionMyFragmentToFollowFragment(title, userId.toString())
                 findNavController().navigate(action)
             }
         }

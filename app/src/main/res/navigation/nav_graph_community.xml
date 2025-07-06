@@ -80,6 +80,10 @@
             android:name="title"
             app:argType="string"/>
 
+        <argument
+            android:name="userId"
+            app:argType="string"/>
+
         <action
             android:id="@+id/action_followFragment_to_otherProfileFragment"
             app:destination="@id/otherProfileFragment"

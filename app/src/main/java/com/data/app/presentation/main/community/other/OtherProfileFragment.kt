@@ -122,14 +122,13 @@ class OtherProfileFragment : Fragment() {
                                 userProfileState.response.followerCount.toString()
                             tvFollowingCount.text =
                                 userProfileState.response.followingCount.toString()
+                            clickFollow(userId)
 
                             with(btnFollow) {
                                 if (mainViewModel.getUserId() == userProfileState.response.userId) {
                                     setBackgroundResource(R.drawable.btn_profile_share)
                                     setTextColor(resources.getColor(R.color.bnv_unclicked_black))
                                     text = getString(R.string.my_profile_edit)
-
-                                    clickFollow()
                                     clickEditButton()
                                 } else {
                                     setBackgroundResource(R.drawable.btn_follow)
@@ -260,7 +259,6 @@ class OtherProfileFragment : Fragment() {
                     is FollowState.Success -> {
                         Timber.d("followState is success")
                       //  isRequesting = false
-
                         otherProfileViewModel.getUserProfile(appPreferences.getAccessToken()!!, userId)
                         otherProfileViewModel.resetFollowState()
                     }
@@ -315,14 +313,14 @@ class OtherProfileFragment : Fragment() {
         }
     }
 
-    private fun clickFollow() {
+    private fun clickFollow(userId:Int) {
         listOf(
             binding.vFollower to "follower",
             binding.vFollowing to "following"
         ).forEach { (view, title) ->
             view.setOnClickListener {
                 val action =
-                    OtherProfileFragmentDirections.actionOtherProfileFragmentToFollowFragment(title)
+                    OtherProfileFragmentDirections.actionOtherProfileFragmentToFollowFragment(title, userId.toString())
                 findNavController().navigate(action)
             }
         }

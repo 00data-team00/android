@@ -203,7 +203,7 @@ class BaseRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getFollowerList(token: String): Result<ResponseFollowListDto> {
+   /* override suspend fun getFollowerList(token: String): Result<ResponseFollowListDto> {
         return runCatching {
             baseDataSource.getFollowerList(token)
         }.onFailure {
@@ -217,8 +217,29 @@ class BaseRepositoryImpl @Inject constructor(
         }.onFailure {
             Timber.e("base repository get following list fail: $it")
         }
+    }*/
+
+    override suspend fun getFollowerList(
+        token: String,
+        userId: Int
+    ): Result<ResponseFollowListDto> {
+        return runCatching {
+            baseDataSource.getFollowerList(token, userId)
+        }.onFailure {
+            Timber.e("base repository get follower list fail: $it")
+        }
     }
 
+    override suspend fun getFollowingList(
+        token: String,
+        userId: Int
+    ): Result<ResponseFollowListDto> {
+        return runCatching {
+            baseDataSource.getFollowingList(token, userId)
+        }.onFailure {
+            Timber.e("base repository get following list fail: $it")
+        }
+    }
     // home
     override suspend fun getUserGameInfo(token: String): Result<ResponseUserGameInfoDto> {
         return runCatching {

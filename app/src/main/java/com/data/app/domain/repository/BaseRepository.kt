@@ -116,12 +116,22 @@ interface BaseRepository {
         userId:Int,
     ):Result<ResponseFollowDto>
 
-    suspend fun getFollowerList(
+    /*suspend fun getFollowerList(
         token:String
     ):Result<ResponseFollowListDto>
 
     suspend fun getFollowingList(
         token:String
+    ):Result<ResponseFollowListDto>*/
+
+    suspend fun getFollowerList(
+        token:String,
+        userId:Int
+    ): Result<ResponseFollowListDto>
+
+    suspend fun getFollowingList(
+        token:String,
+        userId:Int
     ):Result<ResponseFollowListDto>
 
     // home

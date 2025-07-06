@@ -117,13 +117,23 @@ interface BaseDataSource {
         userId:Int,
     ):ResponseFollowDto
 
-    suspend fun getFollowerList(
+    /*suspend fun getFollowerList(
         token: String
     ):ResponseFollowListDto
 
     suspend fun getFollowingList(
         token: String
-    ):ResponseFollowListDto
+    ):ResponseFollowListDto*/
+
+    suspend fun getFollowerList(
+        token:String,
+        userId:Int
+    ): ResponseFollowListDto
+
+    suspend fun getFollowingList(
+        token:String,
+        userId:Int
+    ): ResponseFollowListDto
 
 
     // home

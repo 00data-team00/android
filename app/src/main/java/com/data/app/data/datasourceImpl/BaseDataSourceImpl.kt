@@ -65,9 +65,11 @@ class BaseDataSourceImpl @Inject constructor(
 
     override suspend fun deletePost(token: String, postId: Int): ResponseDeletePostDto = baseService.deletePost(token, postId)
     override suspend fun follow(token: String, userId: Int): ResponseFollowDto = baseService.follow(token, userId)
-    override suspend fun unFollow(token: String, userId: Int): ResponseFollowDto = baseService.unFollow(token, userId)
+    override suspend fun unFollow(token: String, userId: Int): ResponseFollowDto = baseService.unFollow(token, userId)/*
     override suspend fun getFollowerList(token: String): ResponseFollowListDto = baseService.getFollowerList(token)
-    override suspend fun getFollowingList(token: String): ResponseFollowListDto = baseService.getFollowingList(token)
+    override suspend fun getFollowingList(token: String): ResponseFollowListDto = baseService.getFollowingList(token)*/
+    override suspend fun getFollowerList(token: String, userId: Int): ResponseFollowListDto = baseService.getFollowerList(token, userId)
+    override suspend fun getFollowingList(token: String, userId: Int): ResponseFollowListDto = baseService.getFollowingList(token, userId)
 
     // home
     override suspend fun getUserGameInfo(token: String): ResponseUserGameInfoDto = baseService.getUserGameInfo(token)

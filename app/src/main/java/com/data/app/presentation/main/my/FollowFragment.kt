@@ -14,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.data.app.R
 import com.data.app.data.response_dto.community.ResponseFollowListDto
+import com.data.app.data.shared_preferences.AppPreferences
 import com.data.app.databinding.FragmentFollowBinding
 import com.data.app.extension.community.FollowListState
 import com.data.app.extension.community.FollowState
@@ -21,6 +22,7 @@ import com.data.app.presentation.main.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class FollowFragment : Fragment() {
@@ -32,6 +34,9 @@ class FollowFragment : Fragment() {
     private val followViewModel: FollowViewModel by viewModels()
     private val mainViewModel : MainViewModel by activityViewModels()
     private lateinit var followAdapter: FollowAdapter
+
+    @Inject
+    lateinit var appPreferences: AppPreferences
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -48,11 +53,11 @@ class FollowFragment : Fragment() {
     }
 
     private fun setting() {
-        val token=mainViewModel.accessToken.value
+       /* val token=mainViewModel.accessToken.value
         if (token != null) {
             followViewModel.saveToken(token)
             Timber.d("token: $token")
-        }
+        }*/
 
         setFollow()
 
@@ -65,8 +70,8 @@ class FollowFragment : Fragment() {
             findNavController().navigate(action)
         },
             clickFollow = {isFollow, userId ->
-                if(isFollow) followViewModel.follow(token!!, userId)
-                else followViewModel.unFollow(token!!, userId)
+                if(isFollow) followViewModel.follow(appPreferences.getAccessToken()!!, userId)
+                else followViewModel.unFollow(appPreferences.getAccessToken()!!, userId)
         })
         binding.rvFollowList.adapter = followAdapter
         binding.rvFollowList.itemAnimator = null
@@ -93,8 +98,9 @@ class FollowFragment : Fragment() {
             }
         }
 
-        if(title=="follower") followViewModel.getFollowers()
-        else followViewModel.getFollowing()
+        val userId = followFragmentArgs.userId.toInt()
+        if(title=="follower") followViewModel.getFollowers(appPreferences.getAccessToken()!!, userId)
+        else if(title=="following") followViewModel.getFollowing(appPreferences.getAccessToken()!!, userId)
         clickBackButton()
     }
 
