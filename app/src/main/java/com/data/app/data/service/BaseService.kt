@@ -148,7 +148,7 @@ interface BaseService {
         @Path("userId") userId:Int,
     ): ResponseFollowDto
 
-    @GET("api/me/followers")
+   /* @GET("api/me/followers")
     suspend fun getFollowerList(
         @Header("Authorization") token:String
     ):ResponseFollowListDto
@@ -156,7 +156,20 @@ interface BaseService {
     @GET("/api/me/following")
     suspend fun getFollowingList(
         @Header("Authorization") token:String
+    ): ResponseFollowListDto*/
+
+    @GET("api/users/{userId}/followers")
+    suspend fun getFollowerList(
+        @Header("Authorization") token:String,
+        @Path("userId") userId:Int
     ): ResponseFollowListDto
+
+    @GET("api/users/{userId}/following")
+    suspend fun getFollowingList(
+        @Header("Authorization") token:String,
+        @Path("userId") userId:Int
+    ): ResponseFollowListDto
+
 
     // home
     @GET("api/me/user-game-info")
