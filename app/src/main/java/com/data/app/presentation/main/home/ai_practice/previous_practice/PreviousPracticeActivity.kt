@@ -97,6 +97,7 @@ class PreviousPracticeActivity: BaseActivity() {
                     is AIPreviousPracticeState.Success->{
                         previousPracticeAdapter.getRecordsList(state.response.chatRooms)
                         searchList(state.response.chatRooms)
+                        previousPracticeAdapter.setListLoading(false)
                     }
                     is AIPreviousPracticeState.Loading->{}
                     is AIPreviousPracticeState.Error->{

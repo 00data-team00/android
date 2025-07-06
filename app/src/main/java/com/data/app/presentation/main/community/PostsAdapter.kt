@@ -71,7 +71,6 @@ class PostsAdapter(
     }
 
     inner class ShimmerViewHolder(view: View) : RecyclerView.ViewHolder(view)
-
     inner class FeedsViewHolder(private val binding: ItemPostBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(data: ResponseTimeLineDto.TimelinePostItem) {
