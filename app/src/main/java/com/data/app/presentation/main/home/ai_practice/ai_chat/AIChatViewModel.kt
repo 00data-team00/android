@@ -50,6 +50,7 @@ class AIChatViewModel @Inject constructor(
                 _translateState.value = TranslateState.Success(response)
                 Timber.d("translate success!")
             }.onFailure {
+                Timber.d("translate failure!")
                 _translateState.value = TranslateState.Error("get translate state erro!")
                 if (it is HttpException) {
                     try {
