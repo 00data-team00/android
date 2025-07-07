@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -37,6 +38,8 @@ class ExploreFragment : Fragment(), OnTabReselectedListener {
     private val exploreViewModel: ExploreViewModel by viewModels()
     private lateinit var exploreProgramAdapter: ExploreProgramAdapter
 
+    private var searchTextWatcher: TextWatcher? = null
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -52,6 +55,7 @@ class ExploreFragment : Fragment(), OnTabReselectedListener {
     }
 
     private fun setting() {
+        searchList_()
         getDeadLineList()
         getProgramList()
         switchPrograms()
@@ -125,10 +129,11 @@ class ExploreFragment : Fragment(), OnTabReselectedListener {
             exploreViewModel.allProgramsState.collect { allProgramsState ->
                 when (allProgramsState) {
                     is AllProgramsState.Success -> {
-                        searchList(allProgramsState.response.content)
+//                        searchList(allProgramsState.response.content)
                         if (allProgramsState.isAppend)
                             exploreProgramAdapter.addPrograms(allProgramsState.response.content)
                         else exploreProgramAdapter.replacePrograms(allProgramsState.response.content)
+                        reflectFreePaid(allProgramsState.response.content)
                     }
 
                     is AllProgramsState.Loading -> {}
@@ -154,29 +159,35 @@ class ExploreFragment : Fragment(), OnTabReselectedListener {
                 btnPaid.setTextColor(getResources().getColor(R.color.mock_ai_practice_title_gray))
 
                 exploreViewModel.resetPage()
-                exploreViewModel.getAllPrograms(true, 10)
-              /*  if(!etSearch.text.isEmpty()){
-                    exploreViewModel.resetPage()
-                    exploreViewModel.getAllPrograms(true, 20)
-                    val currentState = exploreViewModel.allProgramsState.value
-                    var curList: List<ResponseAllProgramDto.ProgramDto> = emptyList()
-
-                    if (currentState is AllProgramsState.Success) {
-                        val response = currentState.response
-                        curList = response.content
-                    }
-
-                    val keyword = etSearch.text
-                    val filteredList = curList.filter {
-                        it.titleNm.contains(keyword, ignoreCase = true)
-                    }
-                    exploreProgramAdapter.updateList(filteredList)
-                }
-                else{
-                    exploreViewModel.resetPage()
+                if (binding.etSearch.text.isEmpty()){
                     exploreViewModel.getAllPrograms(true, 10)
-                }
-*/
+                } else {exploreViewModel.getAllPrograms(true, 100)}
+
+
+//                if(!etSearch.text.isEmpty()){
+//                    exploreViewModel.resetPage()
+//                    exploreViewModel.getAllPrograms(true, 10)
+//                    val currentState = exploreViewModel.allProgramsState.value
+//                    var curList: List<ResponseAllProgramDto.ProgramDto> = emptyList()
+//
+//                    if (currentState is AllProgramsState.Success) {
+//                        val response = currentState.response
+//                        curList = response.content
+//                        Timber.d(curList.toString())
+//                    }
+//
+//                    val keyword = etSearch.text
+//                    val filteredList = curList.filter {
+//                        it.titleNm.contains(keyword, ignoreCase = true)
+//                    }
+//                    Timber.d(filteredList.toString())
+//                    exploreProgramAdapter.updateList(filteredList)
+//                }
+//                else{
+//                    exploreViewModel.resetPage()
+//                    exploreViewModel.getAllPrograms(true, 10)
+//                }
+
             }
             btnPaid.setOnClickListener {
                 btnFree.isSelected = false
@@ -185,28 +196,32 @@ class ExploreFragment : Fragment(), OnTabReselectedListener {
                 btnPaid.setTextColor(getResources().getColor(R.color.white))
 
                 exploreViewModel.resetPage()
-                exploreViewModel.getAllPrograms(false, 10)
-
-               /* if(!etSearch.text.isEmpty()){
-                    exploreViewModel.resetPage()
-                    exploreViewModel.getAllPrograms(false, 20)
-                    val currentState = exploreViewModel.allProgramsState.value
-                    var curList: List<ResponseAllProgramDto.ProgramDto> = emptyList()
-
-                    if (currentState is AllProgramsState.Success) {
-                        val response = currentState.response
-                        curList = response.content
-                    }
-
-                    val keyword = etSearch.text
-                    val filteredList = curList.filter {
-                        it.titleNm.contains(keyword, ignoreCase = true)
-                    }
-                    exploreProgramAdapter.updateList(filteredList)
-                }else{
-                    exploreViewModel.resetPage()
+                if (binding.etSearch.text.isEmpty()){
                     exploreViewModel.getAllPrograms(false, 10)
-                }*/
+                } else {exploreViewModel.getAllPrograms(false, 100)}
+
+//               if(!etSearch.text.isEmpty()){
+//                    exploreViewModel.resetPage()
+//                    exploreViewModel.getAllPrograms(false, 10)
+//                    val currentState = exploreViewModel.allProgramsState.value
+//                    var curList: List<ResponseAllProgramDto.ProgramDto> = emptyList()
+//
+//                    if (currentState is AllProgramsState.Success) {
+//                        val response = currentState.response
+//                        curList = response.content
+//                        Log.d("HIHIHIHI", curList.toString())
+//                    }
+//
+//                    val keyword = etSearch.text
+//                    val filteredList = curList.filter {
+//                        it.titleNm.contains(keyword, ignoreCase = true)
+//                    }
+//                    Log.d("HIHIHIHI", filteredList.toString())
+//                    exploreProgramAdapter.updateList(filteredList)
+//               }else{
+//                    exploreViewModel.resetPage()
+//                    exploreViewModel.getAllPrograms(false, 10)
+//               }
             }
 
             nsvExplore.setOnScrollChangeListener { v: NestedScrollView, _, scrollY, _, oldScrollY ->
@@ -214,7 +229,9 @@ class ExploreFragment : Fragment(), OnTabReselectedListener {
 
                 if (scrollY >= (view.measuredHeight - v.measuredHeight)) {
                     // 스크롤이 맨 아래 도달
-                    exploreViewModel.getAllPrograms(binding.btnFree.isSelected, 10)
+                    if (binding.etSearch.text.isEmpty()){
+                        exploreViewModel.getAllPrograms(binding.btnFree.isSelected, 10)
+                    }
                 }
             }
         }
@@ -318,28 +335,51 @@ class ExploreFragment : Fragment(), OnTabReselectedListener {
         }
     }*/
 
-    private fun searchList(followlist: List<ResponseAllProgramDto.ProgramDto>){
-       /* binding.etSearch.doOnTextChanged{ text, _, _, _ ->
-            val keyword = text.toString().trim()
+    private fun reflectFreePaid(followlist: List<ResponseAllProgramDto.ProgramDto>){
+        val keyword = binding.etSearch.text.toString().trim()
+        val filteredList = followlist.filter {
+            it.titleNm.contains(keyword, ignoreCase = true)
+        }
 
-//            exploreViewModel.getAllPrograms(false, 100)
-//            exploreViewModel.getAllPrograms(true, 100)
-
-            Timber.d("keyword: $keyword")
-
-            if (keyword.isEmpty()) {
-                exploreProgramAdapter.updateList(followlist)
-            } else {
-                val filteredList = followlist.filter {
-                    it.titleNm.contains(keyword, ignoreCase = true)
-                }
-                exploreProgramAdapter.updateList(filteredList)
-            }
-        }*/
+        if (keyword.isNotEmpty()) {
+            exploreProgramAdapter.updateList(filteredList)
+        }
     }
 
+    private fun searchList_(){
+        binding.etSearch.doOnTextChanged{ text, _, _, _ ->
+            val keyword = text.toString().trim()
+            if (keyword.isEmpty()) {
+                exploreViewModel.resetPage()
+                exploreViewModel.getAllPrograms(binding.btnFree.isSelected, 10)
+            } else {
+                exploreViewModel.resetPage()
+                exploreViewModel.getAllPrograms(binding.btnFree.isSelected, 100)
+            }
+        }
+    }
+
+//    private fun searchList(followlist: List<ResponseAllProgramDto.ProgramDto>){
+//        searchTextWatcher?.let { binding.etSearch.removeTextChangedListener(it) }
+//
+//       binding.etSearch.doOnTextChanged{ text, _, _, _ ->
+//           val keyword_ = text.toString().trim()
+//           val filteredList_ = followlist.filter {
+//               it.titleNm.contains(keyword_, ignoreCase = true)
+//           }
+//
+//            Timber.d("keyword: $keyword_")
+//
+//            if (keyword_.isEmpty()) {
+//                exploreProgramAdapter.updateList(followlist)
+//            } else {
+//                exploreProgramAdapter.updateList(filteredList_)
+//            }
+//        }
+//    }
+
     private fun getText(){
-       /* binding.etSearch.addTextChangedListener(object : TextWatcher {
+       binding.etSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
 
@@ -353,7 +393,7 @@ class ExploreFragment : Fragment(), OnTabReselectedListener {
 
             override fun afterTextChanged(s: Editable?) {
             }
-        })*/
+        })
     }
 
     override fun onDestroyView() {
@@ -363,6 +403,7 @@ class ExploreFragment : Fragment(), OnTabReselectedListener {
 
     override fun onTabReselected() {
         binding.nsvExplore.smoothScrollTo(0, 0)
+        binding.etSearch.text = null
 
         exploreViewModel.resetPaging()
 

@@ -132,6 +132,10 @@ class AIChatAdapter(
 
                     }
                 }
+                else{
+                    binding.ivLoad1.visibility = View.GONE
+                    binding.ivLoad2.visibility = View.GONE
+                }
                 tvName.text = "AI"
                 tvChat.text = content.text
                 tvTime.text = formatToTimeOnly(content.storedAt)
