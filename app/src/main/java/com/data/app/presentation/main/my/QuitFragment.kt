@@ -63,6 +63,14 @@ class QuitFragment:Fragment() {
 
         clickCancel()
         clickDecide()
+
+        binding.clBg.setOnClickListener{
+            parentFragmentManager.popBackStack()
+        }
+
+        // 클릭 이벤트만 소비 (소비하지 않을 시, 클릭이벤트가 background 로 이동되어 위 함수가 실행됨)
+        binding.clQuit.setOnClickListener{}
+        binding.clQuitagain.setOnClickListener{}
     }
 
     private fun clickButtons() {
