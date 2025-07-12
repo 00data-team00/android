@@ -273,6 +273,7 @@ class MyFragment : Fragment(), OnTabReselectedListener {
                 true
             )
 
+            popupWindow.elevation = 15f
             popupWindow.showAsDropDown(binding.btnMenu, -175, 10)
 
             popupView.findViewById<TextView>(R.id.tv_logout).setOnClickListener {
