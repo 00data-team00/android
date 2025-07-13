@@ -1,5 +1,6 @@
 package com.data.app.presentation.main.home.ai_practice.previous_practice
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,7 +16,10 @@ import java.time.format.DateTimeFormatter
 
 class PreviousPracticeAdapter(
     private val showChatMessages: (Int) -> Unit,
-    private val clickChat: (String) -> Unit
+    private val stopChat: () -> Unit,
+    private val clickChat: (String) -> Unit,
+    private val request:(Int)->Unit,
+    private val change:(Int, Int)->Unit,
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
@@ -30,6 +34,8 @@ class PreviousPracticeAdapter(
     private val practiceChatMessagesMap =
         mutableMapOf<Int, List<ResponseAIPreviousChatMessagesDto.Message>>()
 
+    private val childAdapterMap = mutableMapOf<Int, PreviousPracticeChatAdapter>() // key: 상위 아이템 ID
+    private val messageToChatRoomMap = mutableMapOf<Int, Int>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return if(viewType==VIEW_TYPE_SHIMMER){
@@ -72,6 +78,9 @@ class PreviousPracticeAdapter(
 
     fun getMessages(chatRoomId: Int, list: List<ResponseAIPreviousChatMessagesDto.Message>) {
         practiceChatMessagesMap[chatRoomId] = list
+        list.forEach { message ->
+            messageToChatRoomMap[message.messageId] = chatRoomId
+        }
 
         // chatRoomId에 해당하는 position 찾기
         val pos = practiceRecordsList.indexOfFirst { it.chatRoomId == chatRoomId }
@@ -97,9 +106,11 @@ class PreviousPracticeAdapter(
                 tvDate.text = formatToDateOnly(data.createdAt)
                 tvType.text = "일상/대화"
 
-                val chatAdapter = PreviousPracticeChatAdapter { chat ->
-                    clickChat(chat)
-                }
+                val chatAdapter = PreviousPracticeChatAdapter (
+                    clickChat = { chat -> clickChat(chat) },
+                    request = { id -> request(id) },
+                    change = { pos, id -> change(pos, id) }
+                )
                 rvChat.adapter = chatAdapter
 
                 // chatRoomId로 메시지 있는지 확인
@@ -119,6 +130,8 @@ class PreviousPracticeAdapter(
                     clChatContent.visibility = View.GONE
                     btnArrow.isSelected = false
                 }
+
+                childAdapterMap[data.chatRoomId] = chatAdapter
 
                 /* val chatAdapter=PreviousPracticeChatAdapter{
                      chat->clickChat(chat)
@@ -163,6 +176,7 @@ class PreviousPracticeAdapter(
                                 clChatContent.visibility = View.GONE
                             }
                             .start()
+                        stopChat()
                     }
                 }
             }
@@ -176,5 +190,11 @@ class PreviousPracticeAdapter(
                 "-"
             }
         }
+    }
+
+    fun translateChildChat(messageId: Int, position: Int, translated: String) {
+        val childAdapter = childAdapterMap[messageToChatRoomMap[messageId]]
+        Log.d("TRANSLATE", childAdapterMap[messageToChatRoomMap[messageId]].toString())
+        childAdapter?.translatePosition(position, translated)
     }
 }

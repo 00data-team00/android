@@ -1,6 +1,9 @@
 package com.data.app.presentation.main.home.ai_practice.previous_practice
 
+import android.annotation.SuppressLint
+import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -10,11 +13,19 @@ import com.data.app.R
 import com.data.app.data.response_dto.home.ai.ResponseAIPreviousChatMessagesDto
 import com.data.app.databinding.ItemChatAiBinding
 import com.data.app.databinding.ItemChatMyBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 class PreviousPracticeChatAdapter(
     private val clickChat:(String)->Unit,
+    private val request:(Int)->Unit,
+    private val change:(Int, Int)->Unit,
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     companion object {
         private const val TYPE_SHIMMER = 0
@@ -25,6 +36,9 @@ class PreviousPracticeChatAdapter(
 
     private var isChatLoading = true
     private val chatList = mutableListOf<ResponseAIPreviousChatMessagesDto.Message>()
+
+    private val originalTextMap: MutableMap<Int, String> = mutableMapOf()
+    private val longPressCheck = mutableListOf<Int>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -77,6 +91,12 @@ class PreviousPracticeChatAdapter(
         notifyDataSetChanged()
     }
 
+    fun translatePosition(position: Int, translated: String){
+        Log.d("TRANSLATE", "translating position $position with $translated")
+        chatList[position].text = translated
+        notifyItemChanged(position)
+    }
+
     inner class ShimmerViewHolder(view: View) : RecyclerView.ViewHolder(view)
 
     inner class ChatMyViewHolder(private val binding: ItemChatMyBinding) :
@@ -115,9 +135,30 @@ class PreviousPracticeChatAdapter(
                 layoutParams.topMargin = if (isFirstOfType) 0 else dpToPx(8)
                 tvChat.layoutParams = layoutParams
 
-                binding.itemChatAi.setOnClickListener{
-                    clickChat(content.text)
+                if (content.messageId !in longPressCheck){
+                    originalTextMap[content.messageId] = binding.tvChat.text.toString()
                 }
+
+                val pos = bindingAdapterPosition
+
+                setCustomTouchListener(
+                    targetView = binding.itemChatAi,
+                    onLongPress = {
+                        Timber.d("ai chat long pressing~")
+                        if (content.messageId !in longPressCheck) {
+                            longPressCheck.add(content.messageId)
+                            change(pos, content.messageId)
+                            request(content.messageId)
+                        }
+                    },
+                    onLongPressEnd = {
+                        Log.d("AICHAT", chatList.toString())
+                        longPressCheck.remove(content.messageId)
+                        chatList[pos].text = originalTextMap[content.messageId].toString()
+                        notifyItemChanged(pos)
+                    },
+                    onClick = {clickChat(originalTextMap[content.messageId].toString())}
+                )
             }
         }
 
@@ -136,4 +177,43 @@ class PreviousPracticeChatAdapter(
             "-"
         }
     }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun setCustomTouchListener(
+        targetView: View,
+        longPressTime: Long = 1000L, // 1초
+        holdDuration: Long = 5000L,  // 5초
+        onLongPress: () -> Unit,
+        onLongPressEnd: () -> Unit,
+        onClick: () -> Unit
+    ){
+        var job: Job? = null
+        var isLongPressed = false
+
+        targetView.setOnTouchListener { _, event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    isLongPressed = false
+                    job = CoroutineScope(Dispatchers.Main).launch {
+                        delay(longPressTime)
+                        isLongPressed = true
+                        onLongPress()                   // 1초 이상 눌렀을 때 실행
+
+                        delay(holdDuration)
+                        onLongPressEnd()                // 5초 후 원래로 복구
+                    }
+                    true
+                }
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                    if (!isLongPressed) {
+                        job?.cancel()                   // 짧게 눌렀으면 취소
+                        onClick()                       // 클릭 동작 실행
+                    }
+                    true
+                }
+                else -> false
+            }
+        }
+    }
+
 }

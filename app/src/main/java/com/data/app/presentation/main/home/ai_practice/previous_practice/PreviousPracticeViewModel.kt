@@ -9,6 +9,7 @@ import com.data.app.data.PreviousPractice
 import com.data.app.domain.repository.BaseRepository
 import com.data.app.extension.home.aichat.AIPreviousChatMessageState
 import com.data.app.extension.home.aichat.AIPreviousPracticeState
+import com.data.app.extension.home.aichat.TranslateState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -29,9 +30,11 @@ class PreviousPracticeViewModel @Inject constructor(
 
     private val _aiPreviousRecordsState = MutableStateFlow<AIPreviousPracticeState>(AIPreviousPracticeState.Loading)
     private val _aiPreviousChatMessagesState = MutableStateFlow<AIPreviousChatMessageState>(AIPreviousChatMessageState.Loading)
+    private val _translateState = MutableStateFlow<TranslateState>(TranslateState.Loading)
 
     val aiPreviousRecordsState:StateFlow<AIPreviousPracticeState> = _aiPreviousRecordsState.asStateFlow()
     val aiPreviousChatMessagesState:StateFlow<AIPreviousChatMessageState> = _aiPreviousChatMessagesState.asStateFlow()
+    val translateState: StateFlow<TranslateState> = _translateState.asStateFlow()
 
     fun saveToken(token:String){
         _accessToken.value=token
@@ -81,6 +84,32 @@ class PreviousPracticeViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun getTranslate(messageId: Int, userLang: String){
+        // _translateState.value = TranslateState.Loading
+        viewModelScope.launch {
+            baseRepository.getTranslate(_accessToken.value!!, messageId, userLang).onSuccess { response ->
+                _translateState.value = TranslateState.Success(response)
+                Timber.d("translate success!")
+            }.onFailure {
+                Timber.d("translate failure!")
+                _translateState.value = TranslateState.Error("get translate state erro!")
+                if (it is HttpException) {
+                    try {
+                        val errorBody: ResponseBody? = it.response()?.errorBody()
+                        val errorBodyString = errorBody?.string() ?: ""
+                        httpError(errorBodyString)
+                    } catch (e: Exception) {
+                        // JSON 파싱 실패 시 로깅
+                        Timber.e("Error parsing error body: ${e}")
+                    }
+                }
+            }
+        }
+    }
+    fun resetTranslateState() {
+        _translateState.value = TranslateState.Idle
     }
 
     private fun httpError(errorBody: String) {
