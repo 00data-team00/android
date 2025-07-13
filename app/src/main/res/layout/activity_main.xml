@@ -12,7 +12,7 @@
         android:layout_height="match_parent"
         tools:context=".presentation.main.MainActivity">
 
-        <androidx.fragment.app.FragmentContainerView
+        <!--<androidx.fragment.app.FragmentContainerView
             android:id="@+id/fcv_community"
             android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="match_parent"
@@ -22,20 +22,17 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:navGraph="@navigation/nav_graph_community"
-            app:defaultNavHost="true"/>
+            app:defaultNavHost="true"/>-->
 
         <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/fcv_home"
-            android:name="androidx.navigation.fragment.NavHostFragment"
+            android:id="@+id/fcv_main"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             app:layout_constraintBottom_toTopOf="@id/bnv_main"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:navGraph="@navigation/nav_graph_home"
-            app:defaultNavHost="true"/>
+            app:layout_constraintTop_toTopOf="parent"/>
 
-        <androidx.fragment.app.FragmentContainerView
+        <!--<androidx.fragment.app.FragmentContainerView
             android:id="@+id/fcv_explore"
             android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="match_parent"
@@ -57,7 +54,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:navGraph="@navigation/nav_graph_my"
-            app:defaultNavHost="true"/>
+            app:defaultNavHost="true"/>-->
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bnv_main"
