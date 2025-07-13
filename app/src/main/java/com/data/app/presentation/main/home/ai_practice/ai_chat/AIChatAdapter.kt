@@ -38,6 +38,9 @@ class AIChatAdapter(
 
     private val chatList = mutableListOf<ResponseChatAiMessageDto.Message>()
 
+    private val originalTextMap: MutableMap<Int, String> = mutableMapOf()
+    private val longPressCheck = mutableListOf<Int>()
+
     private var blinkingJob: Job? = null
 
 
@@ -96,14 +99,8 @@ class AIChatAdapter(
 
             setCustomTouchListener(
                 targetView = binding.tvChat,
-                onLongPress = {
-                    change(pos)
-                    request(content.messageId)},
-
-                onLongPressEnd = {
-                    Log.d("MYCHAT", chatList.toString())
-                    chatList[pos].text = originalText.toString()
-                    notifyItemChanged(pos)},
+                onLongPress = {},
+                onLongPressEnd = {},
                 onClick = {clickChat(content.text)}
             )
             //binding.tvChat.setOnClickListener{clickChat(content.text)}
@@ -151,23 +148,32 @@ class AIChatAdapter(
                 layoutParams.topMargin = if (isFirstOfType) 0 else dpToPx(8)
                 tvChat.layoutParams = layoutParams
 
-                val originalText = binding.tvChat.text
+                if (content.messageId !in longPressCheck){
+                    originalTextMap[content.messageId] = binding.tvChat.text.toString()
+                }
+
                 val pos = bindingAdapterPosition
 
                 setCustomTouchListener(
                     targetView = binding.tvChat,
                     onLongPress = {
                         Timber.d("ai chat long pressing~")
-                        change(pos)
-                        request(content.messageId)
-                        binding.ivLoad1.visibility = View.GONE
-                        binding.ivLoad2.visibility = View.GONE
+                        if (content.messageId !in longPressCheck){
+                            longPressCheck.add(content.messageId)
+                            change(pos)
+                            request(content.messageId)
+                            binding.ivLoad1.visibility = View.GONE
+                            binding.ivLoad2.visibility = View.GONE
+                        }
+
                     },
                     onLongPressEnd = {
                         Log.d("AICHAT", chatList.toString())
-                        chatList[pos].text = originalText.toString()
-                        notifyItemChanged(pos)},
-                    onClick = {clickChat(content.text)}
+                        longPressCheck.remove(content.messageId)
+                        chatList[pos].text = originalTextMap[content.messageId].toString()
+                        notifyItemChanged(pos)
+                    },
+                    onClick = {clickChat(originalTextMap[content.messageId].toString())}
                 )
                 //binding.tvChat.setOnClickListener{clickChat(content.text)}
             }

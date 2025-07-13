@@ -13,7 +13,7 @@ data class ResponseAIPreviousChatMessagesDto (
         @SerialName("messageId")
         val messageId:Int,
         @SerialName("text")
-        val text:String,
+        var text:String,
         @SerialName("isUser")
         val isUser:Boolean,
         @SerialName("storedAt")

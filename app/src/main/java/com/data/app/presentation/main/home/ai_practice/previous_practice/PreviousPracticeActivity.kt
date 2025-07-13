@@ -1,6 +1,7 @@
 package com.data.app.presentation.main.home.ai_practice.previous_practice
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.speech.tts.TextToSpeech
 import android.text.Editable
@@ -16,8 +17,11 @@ import com.data.app.data.response_dto.home.ai.ResponseAIPreviousRecordsDto
 import com.data.app.databinding.ActivityPreviousPracticeBinding
 import com.data.app.extension.home.aichat.AIPreviousChatMessageState
 import com.data.app.extension.home.aichat.AIPreviousPracticeState
+import com.data.app.extension.home.aichat.TranslateState
 import com.data.app.presentation.main.BaseActivity
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.Locale
@@ -32,10 +36,15 @@ class PreviousPracticeActivity: BaseActivity() {
 
     private lateinit var tts: TextToSpeech
 
+    lateinit var pref: SharedPreferences
+    var lang: String = ""
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initBinds()
         setting()
+        pref = this.getSharedPreferences("settings", Context.MODE_PRIVATE)
+        lang = pref.getString("lang", "ko")!!
     }
 
     private fun initBinds() {
@@ -87,7 +96,10 @@ class PreviousPracticeActivity: BaseActivity() {
                 Timber.d("click chat: $id")
                 previousPracticeViewModel.getMessages(id)
             },
-            clickChat = {chat->speakOut(chat)}
+            stopChat = {speakStop()},
+            clickChat = {chat->speakOut(chat)},
+            request = { id -> getTranslate(id) },
+            change = { pos, id2 -> setTranslate(pos, id2) }
         )
         binding.rvPracticeRecords.adapter = previousPracticeAdapter
 
@@ -122,6 +134,42 @@ class PreviousPracticeActivity: BaseActivity() {
         }
     }
 
+    private fun getTranslate(messageId: Int) {
+        Timber.d("get translate msgId: ${messageId}")
+        if (lang != "ko") {
+            if (lang == "en") lang = "en-us"
+            previousPracticeViewModel.getTranslate(messageId, lang)
+        }
+    }
+
+    private fun setTranslate(position: Int, messageId: Int) {
+        Timber.d("set translate")
+
+        previousPracticeViewModel.resetTranslateState()
+
+        lifecycleScope.launchWhenStarted {
+            previousPracticeViewModel.translateState.collectLatest { state ->
+                when (state) {
+                    is TranslateState.Success -> {
+                        Timber.d("translate success: ${state.response.text}")
+                        previousPracticeAdapter.translateChildChat(messageId, position, state.response.text)
+                        previousPracticeViewModel.resetTranslateState() // collect 종료 유도
+                        cancel() // 이 collect 종료
+                    }
+
+                    is TranslateState.Loading -> Timber.d("translate loading...")
+                    is TranslateState.Error -> {
+                        Timber.e("translate error: ${state.message}")
+                        previousPracticeViewModel.resetTranslateState()
+                        cancel()
+                    }
+
+                    else -> Unit
+                }
+            }
+        }
+    }
+
     private fun resetTTS() {
         tts = TextToSpeech(this) { status ->
             if (status == TextToSpeech.SUCCESS) {
@@ -136,6 +184,10 @@ class PreviousPracticeActivity: BaseActivity() {
         if (text.isNotBlank()) {
             tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, null)
         }
+    }
+
+    private fun speakStop() {
+        tts.stop()
     }
 
     private fun clickBack() {
