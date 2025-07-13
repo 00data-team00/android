@@ -50,8 +50,7 @@
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintWidth_percent="0.06"
         app:layout_constraintTop_toTopOf="@id/iv_profile"
-        app:layout_constraintBottom_toBottomOf="@id/iv_profile"
-        app:layout_constraintEnd_toEndOf="@id/btn_share"/>
+        app:layout_constraintBottom_toBottomOf="@id/iv_profile"/>
 
     <!--<androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_follow"

@@ -123,7 +123,7 @@ class MyFragment : Fragment(), OnTabReselectedListener {
                         mainViewModel.saveUserId(myProfileState.response.userId)
                         with(binding) {
                             val profile =
-                                myProfileState.response.profileImage?.let { BuildConfig.BASE_URL.removeSuffix("/") + it }
+                                myProfileState.response.profileImage
                             // val resourceId = resources.getIdentifier("ic_profile", "drawable", requireContext().packageName)
                             ivProfile.load(profile) {
                                 transformations(CircleCropTransformation())
@@ -400,6 +400,7 @@ class MyFragment : Fragment(), OnTabReselectedListener {
                 }
 
                 myViewModel.editProfile(appPreferences.getAccessToken()!!, createImagePart(it))
+                myViewModel.getMyPosts(appPreferences.getAccessToken()!!)
             }
         } else if (requestCode == UCrop.REQUEST_CROP && resultCode == UCrop.RESULT_ERROR) {
             val error = UCrop.getError(data!!)

@@ -48,6 +48,7 @@ class PostDetailFragment : Fragment() {
     private val postDetailViewModel: PostDetailViewModel by viewModels()
     private val mainViewModel: MainViewModel by activityViewModels()
     private lateinit var postDetailAdapter: PostDetailAdapter
+    private var isFirstLoading=false
 
     @Inject
     lateinit var appPreferences: AppPreferences
@@ -80,9 +81,13 @@ class PostDetailFragment : Fragment() {
                         val post = postState.response
 
                         //binding.btnFollow.isSelected = post.isFollowing
-                        showPost(post)
-                        showImages(post)
-
+                        if(isFirstLoading){
+                            binding.tvCommentCount.text = post.commentCount.toString()
+                        } else{
+                            showPost(post)
+                            showImages(post)
+                            isFirstLoading=true
+                        }
 
                         getUserProfile(postState.response.comments)
 
@@ -125,8 +130,7 @@ class PostDetailFragment : Fragment() {
     private fun showPost(post: ResponsePostDetailDto) {
         with(binding) {
             val profile =
-                post.authorProfileImage?.let { BuildConfig.BASE_URL.removeSuffix("/") + it }
-
+                post.authorProfileImage
             binding.ivProfile.load(profile) {
                 transformations(CircleCropTransformation())
                 placeholder(R.drawable.ic_profile)
@@ -230,7 +234,7 @@ class PostDetailFragment : Fragment() {
     private fun showImages(post: ResponsePostDetailDto) {
         val lp = binding.vpImages.layoutParams as ConstraintLayout.LayoutParams
         val imageUrl =
-            post.imageUrl?.let { BuildConfig.BASE_URL.removeSuffix("/") + it }
+            post.imageUrl
 
         if (!imageUrl.isNullOrEmpty()) {
             val postDetailImageAdapter = PostDetailImageAdapter(clickImage = { position ->
@@ -285,7 +289,7 @@ class PostDetailFragment : Fragment() {
             postDetailViewModel.writeCommentState.collect { state ->
                 when (state) {
                     is WriteCommentState.Success -> {
-                        val comment = state.response
+                        //val comment = state.response
                         postDetailViewModel.getPostDetail(appPreferences.getAccessToken()!!, postDetailFragmentArgs.postId.toInt())
                         // postDetailAdapter.updateComment(comment)
                     }
@@ -308,40 +312,12 @@ class PostDetailFragment : Fragment() {
         postDetailViewModel.writeComment(appPreferences.getAccessToken()!!, postId, content)
     }
 
-    /*private fun updateCommentCount(){
-        lifecycleScope.launch {
-           postDetailViewModel.postDetailState.collect { state ->
-                when (state) {
-                    is PostDetailState.Success -> {
-                        binding.tvCommentCount.text = state.response.commentCount.toString()
-                        postDetailViewModel.resetDetailState()
-                    }
-
-                    is PostDetailState.Loading -> {}
-                    is PostDetailState.Error -> {}
-                }
-            }
-        }
-    }*/
-
     private fun clickProfileOrId(userId: Int) {
         val action =
             PostDetailFragmentDirections.actionPostDetailFragmentToOtherProfileFragment(userId.toString())
         findNavController().navigate(action)
     }
 
-    /* private fun clickFollow() {
-         with(binding.btnFollow) {
-             setOnClickListener {
-                 isSelected = !isSelected
-                 text = context.getString(
-                     if (isSelected) R.string.community_follow
-                     else R.string.community_following
-                 )
-             }
-         }
-     }
- */
     private fun clickLike(postId: Int) {
         Timber.d("like count: ${binding.tvLikeCount.text}")
         with(binding) {
