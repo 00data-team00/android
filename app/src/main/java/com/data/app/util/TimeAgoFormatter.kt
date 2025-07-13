@@ -5,6 +5,9 @@ import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeFormatterBuilder
+import java.time.format.DateTimeParseException
+import java.time.temporal.ChronoField
 import java.time.temporal.ChronoUnit
 
 object TimeAgoFormatter {
@@ -20,32 +23,28 @@ object TimeAgoFormatter {
      *         파싱 실패 시 원본 문자열 반환
      */
     fun formatTimeAgo(isoDateTimeString: String): String {
-        val patterns = listOf(
-            "yyyy-MM-dd'T'HH:mm:ss.SSSSSS",  // 마이크로초 포함
-            "yyyy-MM-dd'T'HH:mm:ss.SSS",     // 밀리초 포함
-            "yyyy-MM-dd'T'HH:mm:ss"          // 초 단위까지
-        )
+        val formatter = DateTimeFormatterBuilder()
+            .appendPattern("yyyy-MM-dd'T'HH:mm:ss")
+            .optionalStart()
+            .appendFraction(ChronoField.NANO_OF_SECOND, 1, 9, true)
+            .optionalEnd()
+            .toFormatter()
 
-        for (pattern in patterns) {
-            try {
-                val formatter = DateTimeFormatter.ofPattern(pattern)
-                val localDateTime = LocalDateTime.parse(isoDateTimeString, formatter)
-                val instant = localDateTime.atZone(ZoneId.systemDefault()).toInstant()
-                val now = Instant.now()
-                val duration = Duration.between(instant, now)
+        return try {
+            val localDateTime = LocalDateTime.parse(isoDateTimeString, formatter)
+            val instant = localDateTime.atZone(ZoneId.systemDefault()).toInstant()
+            val now = Instant.now()
+            val duration = Duration.between(instant, now)
 
-                return when {
-                    duration.isNegative -> "방금 전"
-                    duration.toMinutes() < 120 -> "1시간 전"
-                    duration.toHours() < 24 -> "${duration.toHours()}시간 전"
-                    else -> "${duration.toDays()}일 전"
-                }
-            } catch (e: Exception) {
-                continue // 다음 패턴으로 넘어감
+            when {
+                duration.isNegative -> "방금 전"
+                duration.toMinutes() < 120 -> "1시간 전"
+                duration.toHours() < 24 -> "${duration.toHours()}시간 전"
+                else -> "${duration.toDays()}일 전"
             }
+        } catch (e: DateTimeParseException) {
+            isoDateTimeString
         }
-
-        return isoDateTimeString // 모두 실패 시 원본 반환
     }
 
 }

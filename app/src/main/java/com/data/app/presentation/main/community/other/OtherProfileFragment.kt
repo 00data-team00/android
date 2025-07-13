@@ -105,11 +105,7 @@ class OtherProfileFragment : Fragment() {
                         Timber.d("userProfileState is success")
                         with(binding) {
                             val profile =
-                                userProfileState.response.profileImage?.let {
-                                    BuildConfig.BASE_URL.removeSuffix(
-                                        "/"
-                                    ) + it
-                                }
+                                userProfileState.response.profileImage
                             ivProfile.load(profile) {
                                 transformations(CircleCropTransformation())
                                 placeholder(R.drawable.ic_profile)

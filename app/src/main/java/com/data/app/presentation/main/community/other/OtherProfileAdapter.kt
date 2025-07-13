@@ -46,7 +46,7 @@ RecyclerView.Adapter<OtherProfileAdapter.OtherProfileViewHolder>(){
         fun bind(data: ResponseTimeLineDto.TimelinePostItem) {
             with(binding) {
                 val profile =
-                    data.authorProfile.profileImage?.let { BuildConfig.BASE_URL.removeSuffix("/") + it }
+                    data.authorProfile.profileImage
                 Timber.d("profile is $profile")
                 binding.ivProfile.load(profile){
                     transformations(CircleCropTransformation())
@@ -59,7 +59,7 @@ RecyclerView.Adapter<OtherProfileAdapter.OtherProfileViewHolder>(){
                 val post = data.post
                 Timber.d("imageUrl: ${post.imageUrl}")
                 if (!post.imageUrl.isNullOrEmpty()) {
-                    val imageUrl = post.imageUrl.let { BuildConfig.BASE_URL.removeSuffix("/") + it }
+                    val imageUrl = post.imageUrl
                     binding.ivImage.visibility = View.VISIBLE
                     binding.ivImage.load(imageUrl) {
                         transformations(RoundedCornersTransformation(30f))

@@ -63,8 +63,7 @@ class MyAdapter(
 
                 if (!data.imageUrl.isNullOrEmpty()) {
                     ivImage.visibility = View.VISIBLE
-                    val imageUrl =
-                        BuildConfig.BASE_URL.removeSuffix("/") + data.imageUrl
+                    val imageUrl = data.imageUrl
                     ivImage.load(imageUrl) {
                         transformations(RoundedCornersTransformation(30f))
                     }

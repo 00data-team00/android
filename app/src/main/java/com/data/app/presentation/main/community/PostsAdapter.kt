@@ -28,6 +28,7 @@ class PostsAdapter(
         private const val VIEW_TYPE_SHIMMER = 0
         private const val VIEW_TYPE_NORMAL = 1
     }
+
     private var postsList = mutableListOf<ResponseTimeLineDto.TimelinePostItem>()
     private var isLoading = true
 
@@ -37,7 +38,8 @@ class PostsAdapter(
                 .inflate(R.layout.item_post_shimmer, parent, false)
             ShimmerViewHolder(view)
         } else {
-            val binding = ItemPostBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            val binding =
+                ItemPostBinding.inflate(LayoutInflater.from(parent.context), parent, false)
             FeedsViewHolder(binding)
         }
     }
@@ -47,7 +49,7 @@ class PostsAdapter(
         notifyDataSetChanged()
     }
 
-    override fun getItemCount(): Int =if (isLoading) 5 else postsList.size
+    override fun getItemCount(): Int = if (isLoading) 5 else postsList.size
 
     override fun getItemViewType(position: Int): Int {
         return if (isLoading) VIEW_TYPE_SHIMMER else VIEW_TYPE_NORMAL
@@ -75,8 +77,7 @@ class PostsAdapter(
         RecyclerView.ViewHolder(binding.root) {
         fun bind(data: ResponseTimeLineDto.TimelinePostItem) {
             with(binding) {
-                val profile =
-                    data.authorProfile.profileImage?.let { BuildConfig.BASE_URL.removeSuffix("/") + it }
+                val profile = data.authorProfile.profileImage
                 ivProfile.load(profile) {
                     transformations(CircleCropTransformation())
                     placeholder(R.drawable.ic_profile)
@@ -88,8 +89,7 @@ class PostsAdapter(
                 if (!data.post.imageUrl.isNullOrEmpty()) {
                     ivImage.visibility = View.VISIBLE
 
-                    val imageUrl =
-                        data.post.imageUrl?.let { BuildConfig.BASE_URL.removeSuffix("/") + it }
+                    val imageUrl = data.post.imageUrl
                     Timber.d("imageUrl: $imageUrl")
 
                     ivImage.load(imageUrl) {

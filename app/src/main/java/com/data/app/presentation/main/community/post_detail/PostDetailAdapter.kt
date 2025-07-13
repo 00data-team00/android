@@ -12,6 +12,7 @@ import com.data.app.R
 import com.data.app.data.response_dto.community.ResponsePostDetailDto
 import com.data.app.databinding.ItemCommentBinding
 import com.data.app.databinding.ItemCommentWriteBinding
+import com.data.app.util.TimeAgoFormatter
 import timber.log.Timber
 
 class PostDetailAdapter(
@@ -74,9 +75,7 @@ class PostDetailAdapter(
     inner class CommentWriteViewHolder(private val binding:ItemCommentWriteBinding):
         RecyclerView.ViewHolder(binding.root){
         fun bind(){
-            val profile = profileUrl?.takeIf { it.isNotBlank() && it != "null" }?.let {
-                BuildConfig.BASE_URL.removeSuffix("/") + it
-            }
+            val profile = profileUrl?.takeIf { it.isNotBlank() && it != "null" }
             Timber.e("ic_profile: $profile")
 
             binding.ivProfile.post {
@@ -107,7 +106,6 @@ class PostDetailAdapter(
                 )
             }
 
-
            clickWrite()
         }
 
@@ -126,7 +124,7 @@ class PostDetailAdapter(
         RecyclerView.ViewHolder(binding.root) {
         fun bind(comment: ResponsePostDetailDto.CommentDto){
             with(binding){
-                val profile = comment.commenterProfileImage?.let { BuildConfig.BASE_URL.removeSuffix("/") + it }
+                val profile = comment.commenterProfileImage
 
                 ivProfile.load(profile) {
                     transformations(CircleCropTransformation())
@@ -135,6 +133,8 @@ class PostDetailAdapter(
                 }
                 tvId.text=comment.commenterName
                 tvContent.text=comment.content
+                val timeAgo = TimeAgoFormatter.formatTimeAgo(comment.createdAt)
+                tvTime.text=root.context.getString(R.string.community_time, timeAgo)
                 //tvLikeCount.text="1"
             }
 
