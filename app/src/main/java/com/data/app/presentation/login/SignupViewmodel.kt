@@ -32,7 +32,7 @@ class SignupViewmodel @Inject constructor(
     val registerState:StateFlow<RegisterState> = _registerState.asStateFlow()
     val nationState: StateFlow<NationState> = _nationState.asStateFlow()
 
-    private lateinit var email:String
+    lateinit var email:String
     lateinit var username: String
     var nationality: Int = 0
     lateinit var password: String

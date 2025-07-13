@@ -18,8 +18,8 @@ class PreviousPracticeAdapter(
     private val showChatMessages: (Int) -> Unit,
     private val stopChat: () -> Unit,
     private val clickChat: (String) -> Unit,
-    private val request:(Int)->Unit,
-    private val change:(Int, Int)->Unit,
+    private val request: (Int) -> Unit,
+    private val change: (Int, Int) -> Unit,
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
@@ -38,28 +38,33 @@ class PreviousPracticeAdapter(
     private val messageToChatRoomMap = mutableMapOf<Int, Int>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return if(viewType==VIEW_TYPE_SHIMMER){
-            val view = LayoutInflater.from(parent.context).inflate(R.layout.item_previous_practice_shimmer, parent, false)
+        return if (viewType == VIEW_TYPE_SHIMMER) {
+            val view = LayoutInflater.from(parent.context)
+                .inflate(R.layout.item_previous_practice_shimmer, parent, false)
             ShimmerViewHolder(view)
-        }else{
-            val binding = ItemPreviousPracticeBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        } else {
+            val binding = ItemPreviousPracticeBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
             PreviousPracticeViewHolder(binding)
         }
     }
 
-    override fun getItemCount(): Int = if(isListLoading) 5 else practiceRecordsList.size
+    override fun getItemCount(): Int = if (isListLoading) 5 else practiceRecordsList.size
 
     override fun getItemViewType(position: Int): Int {
         return if (isListLoading) VIEW_TYPE_SHIMMER else VIEW_TYPE_NORMAL
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if(holder is PreviousPracticeViewHolder){
+        if (holder is PreviousPracticeViewHolder) {
             holder.bind(practiceRecordsList[position])
         }
     }
 
-    fun setListLoading(loading:Boolean){
+    fun setListLoading(loading: Boolean) {
         isListLoading = loading
         notifyDataSetChanged()
     }
@@ -106,7 +111,7 @@ class PreviousPracticeAdapter(
                 tvDate.text = formatToDateOnly(data.createdAt)
                 tvType.text = "일상/대화"
 
-                val chatAdapter = PreviousPracticeChatAdapter (
+                val chatAdapter = PreviousPracticeChatAdapter(
                     clickChat = { chat -> clickChat(chat) },
                     request = { id -> request(id) },
                     change = { pos, id -> change(pos, id) }
@@ -117,47 +122,14 @@ class PreviousPracticeAdapter(
                 val messageList = practiceChatMessagesMap[data.chatRoomId]
                 if (messageList != null) {
                     chatAdapter.getList(messageList)
-                    if(messageList.isNotEmpty()) chatAdapter.setChatLoading()
-                    clChatContent.visibility = View.VISIBLE
-                    clChatContent.alpha = 0f
-                    clChatContent.translationY = -30f
-                    clChatContent.animate()
-                        .alpha(1f)
-                        .translationY(0f)
-                        .setDuration(300)
-                        .start()
-                } else {
-                    clChatContent.visibility = View.GONE
-                    btnArrow.isSelected = false
+                    if (messageList.isNotEmpty()) chatAdapter.setChatLoading()
                 }
 
-                childAdapterMap[data.chatRoomId] = chatAdapter
-
-                /* val chatAdapter=PreviousPracticeChatAdapter{
-                     chat->clickChat(chat)
-                 }
-                 rvChat.adapter=chatAdapter
-                 chatAdapter.getList(data.chatList)
-
-                 clChatContent.visibility = View.GONE
-                 btnArrow.isSelected = false*/
-            }
-
-            showChats(data.chatRoomId)
-        }
-
-        private fun showChats(chatRoomId: Int) {
-            binding.itemPreviousPractice.setOnClickListener {
-                val isExpanding = !binding.btnArrow.isSelected
-                binding.btnArrow.isSelected = isExpanding
-
-                with(binding) {
-                    if (isExpanding) {
-                        selectedPosition = bindingAdapterPosition // 현재 position 저장
-                        Timber.d("chatRoomid: $chatRoomId")
-                        showChatMessages(chatRoomId) // ViewModel에게 요청
-
-                        // 아래로 슬라이드 (보이게)
+                btnArrow.isSelected = data.isExpanded
+                /*if (messageList != null) {
+                    chatAdapter.getList(messageList)
+                    if (messageList.isNotEmpty()) chatAdapter.setChatLoading()
+                    if(data.isExpanded){
                         clChatContent.visibility = View.VISIBLE
                         clChatContent.alpha = 0f
                         clChatContent.translationY = -30f
@@ -166,18 +138,55 @@ class PreviousPracticeAdapter(
                             .translationY(0f)
                             .setDuration(300)
                             .start()
-                    } else {
-                        // 위로 슬라이드 (사라지게)
-                        clChatContent.animate()
-                            .alpha(0f)
-                            .translationY(-30f)
-                            .setDuration(300)
-                            .withEndAction {
-                                clChatContent.visibility = View.GONE
-                            }
-                            .start()
-                        stopChat()
                     }
+                }*/
+
+                childAdapterMap[data.chatRoomId] = chatAdapter
+            }
+            showChats(data.chatRoomId, data.isExpanded)
+
+            binding.itemPreviousPractice.setOnClickListener {
+                data.isExpanded = !data.isExpanded
+                notifyItemChanged(adapterPosition)
+                //binding.btnArrow.isSelected = data.isExpanded
+            }
+
+            //showChats(data.chatRoomId)
+        }
+
+        private fun showChats(chatRoomId: Int, isExpanding: Boolean) {
+            Timber.d("isExpanding: ${isExpanding}")
+            with(binding) {
+                if (isExpanding) {
+                    Timber.d("나타남")
+                    selectedPosition = bindingAdapterPosition // 현재 position 저장
+                    Timber.d("chatRoomid: $chatRoomId")
+                    showChatMessages(chatRoomId) // ViewModel에게 요청
+
+                    // 아래로 슬라이드 (보이게)
+                    clChatContent.visibility = View.VISIBLE
+                    clChatContent.alpha = 0f
+                    clChatContent.translationY = -30f
+                    clChatContent.animate()
+                        .alpha(1f)
+                        .translationY(0f)
+                        .setDuration(300)
+                        .start()
+                    Timber.d("clchatcontent visibility: ${clChatContent.visibility}")
+                } else {
+                    // 위로 슬라이드 (사라지게)
+                    Timber.d("사라짐")
+                    clChatContent.animate().cancel()
+                    clChatContent.animate()
+                        .alpha(0f)
+                        .translationY(-30f)
+                        .setDuration(300)
+                        .withEndAction {
+                            clChatContent.visibility = View.GONE
+                        }
+                        .start()
+                    stopChat()
+                    Timber.d("clchatcontent visibility: ${clChatContent.visibility}")
                 }
             }
         }

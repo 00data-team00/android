@@ -137,6 +137,7 @@ class SignupActivity : AppCompatActivity() {
         }
 
         btn_signup.setOnClickListener {
+            val email = et_email.text.toString()
             val name = et_name.text.toString()
             val pw = et_pw.text.toString()
             val nationId = signUpViewModel.nationality // 이미 setOnItemClickListener에서 선택된 코드
@@ -144,6 +145,9 @@ class SignupActivity : AppCompatActivity() {
             if (nationId==0) {
                 // 예외 처리: 나라 선택 안 한 경우
                 Toast.makeText(this, "국가를 선택해주세요.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }else if(email!=signUpViewModel.email){
+                Toast.makeText(this, "이메일을 다시 확인해주세요.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
@@ -293,6 +297,11 @@ class SignupActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun setLanguage(){
+        val selectedCountry = signUpViewModel.nationality
+
     }
 
     private fun isValidEmail(email: String): Boolean {

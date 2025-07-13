@@ -38,13 +38,6 @@ class LandingActivity:AppCompatActivity() {
 
 
         observeLoginStateAndNavigate()
-        /*Handler(Looper.getMainLooper()).postDelayed({
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
-            overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out)
-        }, 2000)*/
-
-
     }
 
     private fun observeLoginStateAndNavigate() {
