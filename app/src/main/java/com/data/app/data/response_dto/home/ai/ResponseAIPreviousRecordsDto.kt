@@ -20,5 +20,6 @@ data class ResponseAIPreviousRecordsDto (
         val isFinished:Boolean,
         @SerialName("description")
         val description:String,
+        var isExpanded:Boolean = false              // 클라이언트 전용 ui 상태
     )
 }
