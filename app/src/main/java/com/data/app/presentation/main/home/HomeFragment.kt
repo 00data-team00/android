@@ -68,6 +68,7 @@ class HomeFragment : Fragment(), OnTabReselectedListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Timber.d("HomeFragment started!")
         setting()
     }
 
@@ -349,6 +350,10 @@ class HomeFragment : Fragment(), OnTabReselectedListener {
     }
 
     override fun onTabReselected() {
-        binding.nsvHome.smoothScrollTo(0, 0)
+        _binding?.let { binding ->
+            binding.nsvHome.smoothScrollTo(0, 0)
+        } ?: Timber.w("❗ binding is not ready yet. Skip onTabReselected.")
+
+        // binding.nsvHome.smoothScrollTo(0, 0)
     }
 }

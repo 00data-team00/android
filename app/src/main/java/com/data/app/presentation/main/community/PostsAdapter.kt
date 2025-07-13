@@ -110,35 +110,18 @@ class PostsAdapter(
                 Timber.d("createdAt: ${data.post.createdAt}, formatted: $timeAgo")
                 tvTime.text = root.context.getString(R.string.community_time, timeAgo)
 
-                /* btnFollow.isSelected = data.authorProfile.isFollowing
-                 if (data.authorProfile.isFollowing) btnFollow.text =
-                     root.context.getString(R.string.community_follow)*/
                 tvContent.text = data.post.content
                 tvLikeCount.text = data.post.likeCount.toString()
                 tvCommentCount.text = data.post.commentCount.toString()
 
-                if (data.post.isLiked) btnLike.isSelected = true
+                btnLike.isSelected=data.post.isLiked
 
-                //clickFollow()
                 clickLike(data.post.id)
                 clickProfileOrId(data)
 
                 showDetail(data)
             }
         }
-
-        /* private fun clickFollow(){
-             with(binding){
-                 btnFollow.setOnClickListener {
-                     btnFollow.isSelected = !btnFollow.isSelected
-                     btnFollow.text = root.context.getString(
-                         if (btnFollow.isSelected) R.string.community_follow
-                         else R.string.community_following
-                     )
-                     Timber.d("btn is select?${btnFollow.isSelected}")
-                 }
-             }
-         }*/
 
         private fun clickLike(postId: Int) {
             with(binding) {
