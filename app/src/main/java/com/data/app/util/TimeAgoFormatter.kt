@@ -37,8 +37,8 @@ object TimeAgoFormatter {
             val duration = Duration.between(instant, now)
 
             when {
-                duration.isNegative -> "방금 전"
-                duration.toMinutes() < 120 -> "1시간 전"
+                duration.isNegative || duration.toMinutes() < 1 -> "방금 전"
+                duration.toMinutes() < 60 -> "${duration.toMinutes()}분 전"
                 duration.toHours() < 24 -> "${duration.toHours()}시간 전"
                 else -> "${duration.toDays()}일 전"
             }

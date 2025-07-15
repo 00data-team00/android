@@ -19,8 +19,8 @@ import com.data.app.databinding.ItemPostBinding
 import com.data.app.util.TimeAgoFormatter
 import timber.log.Timber
 
-class OtherProfileAdapter(val clickPost:(Int)->Unit, val clickLike:(Int, Boolean)->Unit):
-RecyclerView.Adapter<OtherProfileAdapter.OtherProfileViewHolder>(){
+class OtherProfileAdapter(val clickPost: (Int) -> Unit, val clickLike: (Int, Boolean) -> Unit) :
+    RecyclerView.Adapter<OtherProfileAdapter.OtherProfileViewHolder>() {
 
     private val postsList = mutableListOf<ResponseTimeLineDto.TimelinePostItem>()
 
@@ -48,7 +48,7 @@ RecyclerView.Adapter<OtherProfileAdapter.OtherProfileViewHolder>(){
                 val profile =
                     data.authorProfile.profileImage
                 Timber.d("profile is $profile")
-                binding.ivProfile.load(profile){
+                binding.ivProfile.load(profile) {
                     transformations(CircleCropTransformation())
                     placeholder(R.drawable.ic_profile)
                     error(R.drawable.ic_profile)
@@ -82,14 +82,14 @@ RecyclerView.Adapter<OtherProfileAdapter.OtherProfileViewHolder>(){
                 val timeAgo = TimeAgoFormatter.formatTimeAgo(post.createdAt)
                 tvTime.text = root.context.getString(R.string.community_time, timeAgo)
 
-              /*  btnFollow.isSelected = data.isFollowing
-                if (data.isFollowing) btnFollow.text =
-                    root.context.getString(R.string.community_follow)*/
-                tvContent.text = post.content
+                /*  btnFollow.isSelected = data.isFollowing
+                  if (data.isFollowing) btnFollow.text =
+                      root.context.getString(R.string.community_follow)*/
+                tvContent.text = post.content.removeSurrounding("\"").replace("\\n", "\n")   // 맨 앞뒤 " 제거
                 tvLikeCount.text = post.likeCount.toString()
                 tvCommentCount.text = post.commentCount.toString()
 
-               // clickFollow()
+                // clickFollow()
                 clickLike(post.id)
                 showDetail(post.authorId)
             }
@@ -108,8 +108,8 @@ RecyclerView.Adapter<OtherProfileAdapter.OtherProfileViewHolder>(){
             }
         }*/
 
-        private fun clickLike(postId:Int){
-            with(binding){
+        private fun clickLike(postId: Int) {
+            with(binding) {
                 btnLike.setOnClickListener {
                     btnLike.isSelected = !btnLike.isSelected
                     tvLikeCount.text = (
@@ -122,7 +122,7 @@ RecyclerView.Adapter<OtherProfileAdapter.OtherProfileViewHolder>(){
             }
         }
 
-        private fun showDetail(userId:Int){
+        private fun showDetail(userId: Int) {
             listOf(binding.tvContent, binding.ivImage).forEach {
                 it.setOnClickListener { clickPost(userId) }
             }

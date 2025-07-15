@@ -110,7 +110,7 @@ class PostsAdapter(
                 Timber.d("createdAt: ${data.post.createdAt}, formatted: $timeAgo")
                 tvTime.text = root.context.getString(R.string.community_time, timeAgo)
 
-                tvContent.text = data.post.content
+                tvContent.text = data.post.content.removeSurrounding("\"").replace("\\n", "\n")
                 tvLikeCount.text = data.post.likeCount.toString()
                 tvCommentCount.text = data.post.commentCount.toString()
 

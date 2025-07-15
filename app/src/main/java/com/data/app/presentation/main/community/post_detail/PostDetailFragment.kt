@@ -141,7 +141,7 @@ class PostDetailFragment : Fragment() {
 
             val timeAgo = TimeAgoFormatter.formatTimeAgo(post.createdAt)
             tvTime.text = getString(R.string.community_time, timeAgo)
-            tvContent.text = post.content
+            tvContent.text = post.content.removeSurrounding("\"").replace("\\n", "\n")
             tvLikeCount.text = post.likeCount.toString()
             tvCommentCount.text = post.commentCount.toString()
 
