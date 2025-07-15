@@ -49,8 +49,6 @@ class MainActivity : BaseActivity() {
         setupBottomNavigation()
         binding.bnvMain.selectedItemId = R.id.menu_home
         switchTab(R.id.menu_home)
-        //switchTab(R.id.menu_home)
-        // clickBottomNavigation()
     }
 
     private fun setupBottomNavigation() {
@@ -60,21 +58,53 @@ class MainActivity : BaseActivity() {
         }
     }
 
-  /*  private fun clickBottomNavigation() {
-        navHostMap = mapOf(
-            R.id.menu_community to binding.fcvCommunity,
-            R.id.menu_home to binding.fcvHome,
-            R.id.menu_explore to binding.fcvExplore,
-            R.id.menu_my to binding.fcvMy
-        )
-
-        binding.bnvMain.setOnItemSelectedListener { item ->
-            switchTab(item.itemId)
-            true
-        }
-    }*/
-
     private fun switchTab(targetTabId: Int) {
+        val wasCurrentTab = targetTabId == currentTabId
+        val tag = "tab_$targetTabId"
+        var targetFragment = supportFragmentManager.findFragmentByTag(tag)
+
+        val transaction = supportFragmentManager.beginTransaction()
+
+        // 모든 탭 숨김
+        listOf(R.id.menu_home, R.id.menu_explore, R.id.menu_community, R.id.menu_my).forEach { id ->
+            val existing = supportFragmentManager.findFragmentByTag("tab_$id")
+            if (existing != null && id != targetTabId) {
+                transaction.hide(existing)
+            }
+        }
+
+        val isNewlyCreated = targetFragment == null
+
+        // 해당 탭 프래그먼트가 없으면 생성, 있으면 show
+        if (isNewlyCreated) {
+            val navHost = NavHostFragment.create(getNavGraphId(targetTabId))
+            transaction.add(R.id.fcv_main, navHost, tag)
+            targetFragment = navHost
+        } else {
+            transaction.show(targetFragment!!)
+        }
+
+        transaction.commitNow()
+        // 새로 만든 게 아니라면 → 무조건 onTabReselected() 호출
+        if (!isNewlyCreated) {
+            val currentNavHost = targetFragment as? NavHostFragment
+            val navController = currentNavHost?.navController
+
+            val popped = navController?.popBackStack(navController.graph.startDestinationId, false) ?: false
+            if (!popped) {
+                val fragment = currentNavHost
+                    ?.childFragmentManager
+                    ?.fragments
+                    ?.firstOrNull()
+                (fragment as? OnTabReselectedListener)?.onTabReselected()
+            }
+        }
+
+        currentTabId = targetTabId
+    }
+
+
+    /*private fun switchTab(targetTabId: Int) {
         if (targetTabId == currentTabId) {
             val currentNavHost = supportFragmentManager.findFragmentByTag("tab_$targetTabId") as? NavHostFragment
             val navController = currentNavHost?.navController
@@ -120,41 +150,7 @@ class MainActivity : BaseActivity() {
 
         transaction.commitNow()
         currentTabId = targetTabId
-        /*val isReselected = targetTabId == currentTabId
-
-        navHostMap.forEach { (id, container) ->
-            container.visibility = if (id == targetTabId) View.VISIBLE else View.GONE
-        }
-
-        val navHostFragment = supportFragmentManager.findFragmentById(
-            navHostMap[targetTabId]!!.id
-        ) as NavHostFragment
-
-        val navController = navHostFragment.navController
-
-        if (isReselected) {
-            // 1. 루트가 아닐 경우 popBackStack
-            val popped = navController.popBackStack(
-                navController.graph.startDestinationId,
-                false
-            )
-            // 2. 이미 루트 상태였다면 → onTabReselected() 호출
-            if (!popped) {
-                val currentFragment = navHostFragment.childFragmentManager.fragments.firstOrNull()
-                if (currentFragment is OnTabReselectedListener) {
-                    currentFragment.onTabReselected()
-                }
-            }
-        }else {
-            // 탭 전환 시에도 onTabReselected() 호출
-            val currentFragment = navHostFragment.childFragmentManager.fragments.firstOrNull()
-            if (currentFragment is OnTabReselectedListener) {
-                currentFragment.onTabReselected()
-            }
-        }
-
-        currentTabId = targetTabId*/
-    }
+    }*/
 
     private fun getNavGraphId(menuId: Int): Int {
         return when (menuId) {
