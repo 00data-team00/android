@@ -84,6 +84,8 @@ class SignupActivity : AppCompatActivity() {
 
                     btn_send.setOnClickListener {
                         // verifyCode = "1234"
+                        binding.btnSend.setText("wait")
+                        binding.btnSend.setBackgroundColor(Color.parseColor("#dddddd"))
                         signUpViewModel.sendMail(email)
                     }
 
@@ -205,6 +207,7 @@ class SignupActivity : AppCompatActivity() {
                         }
 
                         with(binding) {
+                            etSignupEmail.keyListener = null
                             etVerifycode.visibility = View.VISIBLE
                             btnVerify.visibility = View.VISIBLE
                             tvTimer.visibility = View.VISIBLE
@@ -218,6 +221,9 @@ class SignupActivity : AppCompatActivity() {
                     is SendMailState.Loading -> {}
                     is SendMailState.Error -> {
                         Timber.e("get send mail state error!")
+                        Toast.makeText(this@SignupActivity, sendMailState.message, Toast.LENGTH_SHORT).show()
+                        binding.btnSend.setText("send")
+                        binding.btnSend.setBackgroundColor(Color.parseColor("#FFFFFF"))
                     }
                 }
             }
@@ -287,11 +293,13 @@ class SignupActivity : AppCompatActivity() {
             signUpViewModel.registerState.collect { registerState ->
                 when (registerState) {
                     is RegisterState.Success -> {
+                        Toast.makeText(this@SignupActivity, "Sign up success!", Toast.LENGTH_SHORT).show()
                         startActivity(intent)
                     }
 
                     is RegisterState.Loading -> {}
                     is RegisterState.Error -> {
+                        Toast.makeText(this@SignupActivity, "Sign up fail!", Toast.LENGTH_SHORT).show()
                         Timber.e("get register state error!")
                     }
                 }
