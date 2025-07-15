@@ -14,6 +14,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.data.app.data.response_dto.login.ResponseLoginDto
 import com.data.app.databinding.ActivityLandingBinding
 import com.data.app.extension.login.LoginState
+import com.data.app.extension.login.RefreshState
 import com.data.app.presentation.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -60,13 +61,21 @@ class LandingActivity:AppCompatActivity() {
                             navigateToMain(state.response)
                         }
                         is LoginState.Error -> {
-                            val elapsedTime = System.currentTimeMillis() - startTime
+                           /* val elapsedTime = System.currentTimeMillis() - startTime
                             val remainingTime = minSplashTimeMillis - elapsedTime
                             if (remainingTime > 0) {
                                 kotlinx.coroutines.delay(remainingTime)
-                            }
+                            }*/
                             Timber.w("LandingActivity: No saved login or error: ${state.message}. Navigating to LoginActivity.")
-                            navigateToLogin()
+                            //navigateToLogin()
+                            //loginViewModel.refresh()
+                            if(state.message=="token expired"){
+                                Timber.d("LandingActivity: token expired")
+                                refreshToken()
+                            }else{
+                                Timber.d("LandingActivity: No saved login or error")
+                                navigateToLogin()
+                            }
                         }
                         is LoginState.Loading -> {
                             Timber.d("LandingActivity: Checking saved login state...")
@@ -81,6 +90,31 @@ class LandingActivity:AppCompatActivity() {
         }
 
         loginViewModel.checkForSavedLogin()
+    }
+
+    private fun refreshToken(){
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED){
+                loginViewModel.refreshState.collect { state->
+                    Timber.d("LandingActivity: RefreshState changed to $state")
+                    when(state){
+                        is RefreshState.Success->{
+                            Timber.d("token: ${state.response.accessToken}")
+                            navigateToMain(state.response)
+                        }
+                        is RefreshState.Error->{
+                            Timber.w("LandingActivity: No saved login or error: ${state.message}. Navigating to LoginActivity.")
+                            navigateToLogin()
+                        }
+                        is RefreshState.Loading->{
+                            Timber.d("LandingActivity: Checking saved refresh state...")
+                        }
+                    }
+                }
+            }
+        }
+
+        loginViewModel.refresh()
     }
 
     private fun navigateToMain(response: ResponseLoginDto) {

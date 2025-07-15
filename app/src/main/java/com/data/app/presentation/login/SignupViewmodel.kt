@@ -3,6 +3,7 @@ package com.data.app.presentation.login
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.data.app.data.response_dto.login.ResponseNationDto
 import com.data.app.domain.repository.BaseRepository
 import com.data.app.extension.login.NationState
 import com.data.app.extension.login.RegisterState
@@ -35,7 +36,8 @@ class SignupViewmodel @Inject constructor(
 
     lateinit var email:String
     lateinit var username: String
-    var nationality: Int = 0
+    val nationList: MutableList<ResponseNationDto.Nations> = mutableListOf()
+    var nationality: ResponseNationDto.Nations?=null
     lateinit var password: String
 
     fun sendMail(newEmail:String){
@@ -86,9 +88,9 @@ class SignupViewmodel @Inject constructor(
         }
     }
 
-    fun register(name:String, pw:String, nation:Int){
+    fun register(name:String, pw:String){
         viewModelScope.launch {
-            baseRepository.register(email, name, pw, nation).onSuccess { response->
+            baseRepository.register(email, name, pw, nationality!!.id).onSuccess { response->
                 _registerState.value=RegisterState.Success(response)
                 Timber.d("register is success")
             }.onFailure {

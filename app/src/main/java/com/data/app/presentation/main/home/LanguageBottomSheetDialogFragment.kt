@@ -38,7 +38,7 @@ class LanguageBottomSheetDialogFragment(
         //한국어, 영어, 중국어, 일본어, 베트남어, 태국어
         val languageList = listOf(
             Language("ko", "Korean", R.drawable.ic_korea),
-            Language("en", "English",R.drawable.ic_america),
+            Language("en-US", "English",R.drawable.ic_america),
             Language("zh", "Chinese",R.drawable.ic_china),
             Language("ja", "Japanese",R.drawable.ic_japan),
             Language("vi", "Vietnamese",R.drawable.ic_vietnam),

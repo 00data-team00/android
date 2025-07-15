@@ -68,8 +68,12 @@ interface BaseService {
         @Body requestLoginDto: RequestLoginDto
     ):ResponseLoginDto
 
-    // community
+    @POST("api/refresh")
+    suspend fun refresh(
+        @Body refreshToken:String
+    ): ResponseLoginDto
 
+    // community
     @GET("api/posts/timeline")
     suspend fun getAllTimeLine(
         @Header("Authorization") token:String,
@@ -257,6 +261,11 @@ interface BaseService {
         @Header("Authorization") token:String,
         @Part image: MultipartBody.Part
     ): ResponseEditProfileDto
+
+    @POST("api/logout")
+    suspend fun logout(
+       @Body refreshToken: String
+    ): ResponseRegisterDto
 
     @DELETE("api/user/me")
     suspend fun quit(

@@ -12,6 +12,11 @@ fun Context.updateLocale(languageCode: String): Context {
     val config = Configuration(resources.configuration)
     config.setLocale(locale)
 
+    getSharedPreferences("settings", Context.MODE_PRIVATE)
+        .edit()
+        .putString("lang", languageCode)
+        .apply()
+
     return createConfigurationContext(config)
 }
 

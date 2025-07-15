@@ -53,6 +53,10 @@ interface BaseDataSource {
         requestLoginDto: RequestLoginDto
     ):ResponseLoginDto
 
+    suspend fun refresh(
+        refreshToken:String
+    ): ResponseLoginDto
+
     // community
     suspend fun getAllTimeLine(
         token:String,
@@ -205,6 +209,10 @@ interface BaseDataSource {
         token:String,
         image: MultipartBody.Part
     ): ResponseEditProfileDto
+
+    suspend fun logout(
+        refreshToken: String
+    ): ResponseRegisterDto
 
     suspend fun quit(
         token:String
