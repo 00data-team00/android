@@ -132,7 +132,7 @@ class PostDetailAdapter(
                     error(R.drawable.ic_profile)
                 }
                 tvId.text=comment.commenterName
-                tvContent.text=comment.content
+                tvContent.text=comment.content.removeSurrounding("\"").replace("\\n", "\n")
                 val timeAgo = TimeAgoFormatter.formatTimeAgo(comment.createdAt)
                 tvTime.text=root.context.getString(R.string.community_time, timeAgo)
                 //tvLikeCount.text="1"
