@@ -1,5 +1,6 @@
 package com.data.app.presentation.login
 
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.data.app.domain.repository.BaseRepository
@@ -44,18 +45,22 @@ class SignupViewmodel @Inject constructor(
                 email=newEmail
                 Timber.d("send mail is success!!")
             }.onFailure {
-                _sendMailState.value=SendMailState.Error("Error response failure: ${it.message}")
                 if (it is HttpException) {
                     try {
                         val errorBody: ResponseBody? = it.response()?.errorBody()
                         val errorBodyString = errorBody?.string() ?: ""
+                        val msg = JSONObject(errorBodyString).getString("msg")
+                        _sendMailState.value = SendMailState.Error(msg)
+                        _sendMailState.value = SendMailState.Loading
                         httpError(errorBodyString)
                     } catch (e: Exception) {
                         // JSON 파싱 실패 시 로깅
+                        _sendMailState.value = SendMailState.Error("server exception!")
                         Timber.e("Error parsing error body: ${e}")
                     }
+                } else{
+                    _sendMailState.value=SendMailState.Error("Error response failure: ${it.message}")
                 }
-
             }
         }
     }
