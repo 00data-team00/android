@@ -9,8 +9,8 @@ data class ResponseLoginDto (
     val accessToken: String? = null,
     @SerialName("refreshToken")
     val refreshToken: String? = null,
-    @SerialName("success")
-    val success: Boolean? = null,
-    @SerialName("msg")
-    val msg: String? = null
+    @SerialName("tokenType")
+    val tokenType:String,
+    @SerialName("expiresIn")
+    val expiresIn:Int,
 )

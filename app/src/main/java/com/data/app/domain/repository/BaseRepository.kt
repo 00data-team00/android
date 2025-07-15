@@ -50,6 +50,9 @@ interface BaseRepository {
         email:String,
         pw:String,
     ):Result<ResponseLoginDto>
+    suspend fun refresh(
+        refreshToken:String
+    ):Result<ResponseLoginDto>
 
     // community
     suspend fun getAllTimeLine(
@@ -204,6 +207,9 @@ interface BaseRepository {
         image:MultipartBody.Part
     ):Result<ResponseEditProfileDto>
 
+    suspend fun logout(
+        refreshToken:String
+    ):Result<ResponseRegisterDto>
     suspend fun quit(
         token:String,
     ):Result<ResponseQuitDto>

@@ -2,8 +2,11 @@ package com.data.app.data.shared_preferences
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.data.app.data.response_dto.login.ResponseLoginDto
 import com.data.app.util.security.CryptoUtils
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -20,30 +23,53 @@ class AppPreferences @Inject constructor(
         context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
     }
 
-    fun saveAccessToken(accessToken: String?) {
+    fun saveDtoInfo(dto: ResponseLoginDto?) {
         val editor = sharedPreferences.edit()
         val alias = cryptoUtils.getAliasForRefreshToken()
 
 
-        if (accessToken != null) {
+        if (dto != null) {
             try {
-                val (encryptedToken, iv) = cryptoUtils.encryptData(alias, accessToken) ?: return
-                editor.putString(KEY_ACCESS_TOKEN, encryptedToken)
+                val json = Json.encodeToString(dto)
+                val (encrypted, iv) = cryptoUtils.encryptData(alias, json) ?: return
+                editor.putString(KEY_ACCESS_TOKEN, encrypted)
                 editor.putString("${KEY_ACCESS_TOKEN}_iv", iv)
-                Timber.d("Access token encrypted and saved.")
+                Timber.d("Login info encrypted and saved.")
             } catch (e: Exception) {
-                Timber.e(e, "Failed to encrypt access token.")
+                Timber.e(e, "Failed to encrypt login info.")
             }
         } else {
             editor.remove(KEY_ACCESS_TOKEN)
             editor.remove("${KEY_ACCESS_TOKEN}_iv")
-            Timber.d("Null access token received, cleared saved one.")
+            Timber.d("Null login info received, cleared saved one.")
         }
 
         editor.apply()
     }
 
+    fun getLoginInfo(): ResponseLoginDto? {
+        val alias = cryptoUtils.getAliasForRefreshToken()
+        val encrypted = sharedPreferences.getString(KEY_ACCESS_TOKEN, null)
+        val iv = sharedPreferences.getString("${KEY_ACCESS_TOKEN}_iv", null)
+
+        return try {
+            val decryptedJson = cryptoUtils.decryptData(alias, encrypted, iv)
+            decryptedJson?.let { Json.decodeFromString<ResponseLoginDto>(it) }
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to decrypt login info.")
+            null
+        }
+    }
+
     fun getAccessToken(): String? {
+        return getLoginInfo()?.accessToken
+    }
+
+    fun getExpiresAt(): Int? {
+        return getLoginInfo()?.expiresIn
+    }
+
+    /*fun getAccessToken(): String? {
         val alias = cryptoUtils.getAliasForRefreshToken()
         val encryptedToken = sharedPreferences.getString(KEY_ACCESS_TOKEN, null)
         val iv = sharedPreferences.getString("${KEY_ACCESS_TOKEN}_iv", null)
@@ -54,7 +80,7 @@ class AppPreferences @Inject constructor(
             Timber.e(e, "Failed to decrypt access token.")
             null
         }
-    }
+    }*/
 
     fun clearAccessToken() {
         sharedPreferences.edit()

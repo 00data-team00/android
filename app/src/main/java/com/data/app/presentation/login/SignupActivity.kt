@@ -23,10 +23,12 @@ import com.data.app.extension.login.NationState
 import com.data.app.extension.login.RegisterState
 import com.data.app.extension.login.SendMailState
 import com.data.app.extension.login.VerifyMailState
+import com.data.app.util.security.updateLocale
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.launch
+import okhttp3.internal.filterList
 import timber.log.Timber
 import kotlin.math.sign
 
@@ -128,8 +130,9 @@ class SignupActivity : AppCompatActivity() {
         }
         et_nation.setOnItemClickListener { parent, view, position, id ->
             val selectedNameKo = parent.getItemAtPosition(position).toString()
-            val selectedCode = nationMap[selectedNameKo] ?: return@setOnItemClickListener
-            signUpViewModel.nationality = selectedCode // 이제 code 저장
+            val selectedNation = signUpViewModel.nationList.find { it.nameKo == selectedNameKo }
+            Timber.d("nation: ${selectedNation}")
+            signUpViewModel.nationality = selectedNation
             nationFilled = true
             updateSignupButtonVisibility()
         }
@@ -142,9 +145,8 @@ class SignupActivity : AppCompatActivity() {
             val email = et_email.text.toString()
             val name = et_name.text.toString()
             val pw = et_pw.text.toString()
-            val nationId = signUpViewModel.nationality // 이미 setOnItemClickListener에서 선택된 코드
 
-            if (nationId==0) {
+            if (signUpViewModel.nationality == null) {
                 // 예외 처리: 나라 선택 안 한 경우
                 Toast.makeText(this, "국가를 선택해주세요.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
@@ -153,7 +155,7 @@ class SignupActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            signUpViewModel.register(name, pw, nationId)
+            signUpViewModel.register(name, pw)
         }
 
         getNation()
@@ -165,12 +167,9 @@ class SignupActivity : AppCompatActivity() {
                 when (nationState) {
                     is NationState.Success -> {
                         Timber.d("get nation state success!")
-
-                        // ① nameKo -> code 맵으로 변환
-                        nationMap = nationState.response.nations.associate { it.nameKo to it.id }
-
-                        // ② UI에는 nameKo만 표시
-                        val nationalityList = nationMap.keys.toList()
+                        signUpViewModel.nationList.addAll(nationState.response.nations)
+                        // UI에는 nameKo만 표시
+                        val nationalityList = nationState.response.nations.map{it.nameKo}
                         val adapter = ArrayAdapter(this@SignupActivity, android.R.layout.simple_dropdown_item_1line, nationalityList)
                         binding.etNationality.setAdapter(adapter)
                     }
@@ -294,6 +293,7 @@ class SignupActivity : AppCompatActivity() {
                 when (registerState) {
                     is RegisterState.Success -> {
                         Toast.makeText(this@SignupActivity, "Sign up success!", Toast.LENGTH_SHORT).show()
+                        setLanguage()
                         startActivity(intent)
                     }
 
@@ -308,8 +308,9 @@ class SignupActivity : AppCompatActivity() {
     }
 
     private fun setLanguage(){
-        val selectedCountry = signUpViewModel.nationality
-
+        val selectedCountryCode = signUpViewModel.nationality!!.code
+        Timber.d("countryCode: $selectedCountryCode")
+        this.updateLocale(selectedCountryCode)
     }
 
     private fun isValidEmail(email: String): Boolean {

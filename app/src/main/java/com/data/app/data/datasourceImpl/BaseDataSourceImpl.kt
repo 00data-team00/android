@@ -46,6 +46,7 @@ class BaseDataSourceImpl @Inject constructor(
 
     // login
     override suspend fun login(requestLoginDto: RequestLoginDto): ResponseLoginDto = baseService.login(requestLoginDto)
+    override suspend fun refresh(refreshToken: String): ResponseLoginDto = baseService.refresh(refreshToken)
 
     // community
     override suspend fun getAllTimeLine(token: String): ResponseTimeLineDto = baseService.getAllTimeLine(token)
@@ -111,5 +112,6 @@ class BaseDataSourceImpl @Inject constructor(
     override suspend fun getMyProfile(token: String): ResponseProfileDto = baseService.getProfile(token)
     override suspend fun getMyPosts(token: String): ResponseMyPostDto = baseService.getMyPost(token)
     override suspend fun editProfile(token: String, image: MultipartBody.Part): ResponseEditProfileDto = baseService.editProfile(token, image)
+    override suspend fun logout(refreshToken: String): ResponseRegisterDto = baseService.logout(refreshToken)
     override suspend fun quit(token: String): ResponseQuitDto = baseService.quit(token)
 }

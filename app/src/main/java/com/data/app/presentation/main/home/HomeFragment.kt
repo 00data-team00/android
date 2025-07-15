@@ -216,7 +216,7 @@ class HomeFragment : Fragment(), OnTabReselectedListener {
         adapter.getList(
             listOf(
                 Language("ko", "Korean", R.drawable.ic_korea),
-                Language("en", "English", R.drawable.ic_america),
+                Language("en-US", "English", R.drawable.ic_america),
                 Language("zh", "Chinese", R.drawable.ic_china),
                 Language("ja", "Japanese", R.drawable.ic_japan),
                 Language("vi", "Vietnamese", R.drawable.ic_vietnam),

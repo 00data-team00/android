@@ -89,6 +89,14 @@ class BaseRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun refresh(refreshToken: String): Result<ResponseLoginDto> {
+        return runCatching {
+            baseDataSource.refresh(refreshToken)
+        }.onFailure {
+            Timber.e("base repository refresh fail: $it")
+        }
+    }
+
     // community
     override suspend fun getAllTimeLine(token: String): Result<ResponseTimeLineDto> {
         return runCatching {
@@ -377,6 +385,14 @@ class BaseRepositoryImpl @Inject constructor(
             baseDataSource.editProfile(token, image)
         }.onFailure {
             Timber.e("base repository profile edit fail: $it")
+        }
+    }
+
+    override suspend fun logout(refreshToken: String): Result<ResponseRegisterDto> {
+        return runCatching {
+            baseDataSource.logout(refreshToken)
+        }.onFailure {
+            Timber.e("base repository logout fail: $it")
         }
     }
 
