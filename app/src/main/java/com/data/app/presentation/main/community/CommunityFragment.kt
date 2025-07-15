@@ -105,10 +105,19 @@ class CommunityFragment : Fragment(), OnTabReselectedListener {
             communityViewModel.getAllTimeLineState.collect { state ->
                 when (state) {
                     is GetAllTimeLineState.Success -> {
-                        val filteredList = state.data.filter { it.post.authorName != "탈퇴한 사용자" }
+                        var filteredList = state.data.filter { it.post.authorName != "탈퇴한 사용자" }
 
                         // 2. 필요한 처리
                         searchList(filteredList)
+
+                        val keyword = binding.etSearch.text.toString().trim()
+
+                        if (keyword.isNotEmpty()){
+                            filteredList = filteredList.filter {
+                                it.post.content.contains(keyword, ignoreCase = true)
+                            }
+                        }
+
                         postsAdapter.setLoading(false)
                         postsAdapter.getList(filteredList) // 필터링된 리스트 전달
 
