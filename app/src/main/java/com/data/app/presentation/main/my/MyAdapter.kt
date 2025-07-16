@@ -17,7 +17,8 @@ import timber.log.Timber
 
 class MyAdapter(
     val clickPost: (Int) -> Unit,
-    val clickLike: (isLike: Boolean, postId: Int) -> Unit
+    val clickLike: (isLike: Boolean, postId: Int) -> Unit,
+    val clickShare:(Int) -> Unit
 ) :
     RecyclerView.Adapter<com.data.app.presentation.main.my.MyAdapter.MyViewHolder>() {
 
@@ -92,10 +93,13 @@ class MyAdapter(
 
                 if (data.isLiked) btnLike.isSelected = true
 
+                btnShare.setOnClickListener {
+                    clickShare(data.id)
+                }
+
                 //btnFollow.visibility=View.GONE
 
                 clickLike()
-
                 showDetail(data)
             }
         }

@@ -3,6 +3,8 @@ package com.data.app.presentation.main.my
 import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -26,6 +28,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import coil.load
 import coil.transform.CircleCropTransformation
+import com.data.app.BuildConfig
 import com.data.app.R
 import com.data.app.data.shared_preferences.AppPreferences
 import com.data.app.databinding.FragmentMyBinding
@@ -33,11 +36,14 @@ import com.data.app.extension.community.LikePostState
 import com.data.app.extension.my.EditProfileState
 import com.data.app.extension.my.MyPostState
 import com.data.app.extension.my.MyProfileState
+import com.data.app.extension.my.SharePostState
+import com.data.app.extension.my.ShareProfileState
 import com.data.app.presentation.login.LoginActivity
 import com.data.app.presentation.main.OnTabReselectedListener
 import com.data.app.util.security.resetToSystemLocale
 import com.yalantis.ucrop.UCrop
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -98,21 +104,20 @@ class MyFragment : Fragment(), OnTabReselectedListener {
     private fun setting() {
         // ✅ 뒤에서 넘어온 데이터 감지
         val savedStateHandle = findNavController().currentBackStackEntry?.savedStateHandle
-        savedStateHandle?.getLiveData<Boolean>("should_refresh_profile")?.observe(viewLifecycleOwner) { shouldRefresh ->
-            if (shouldRefresh) {
-                Timber.d("프로필 새로고침 신호 수신")
-                myViewModel.getProfile(appPreferences.getAccessToken()!!)
-                savedStateHandle.remove<Boolean>("should_refresh_profile") // 한 번만 실행되게 삭제
+        savedStateHandle?.getLiveData<Boolean>("should_refresh_profile")
+            ?.observe(viewLifecycleOwner) { shouldRefresh ->
+                if (shouldRefresh) {
+                    Timber.d("프로필 새로고침 신호 수신")
+                    myViewModel.getProfile(appPreferences.getAccessToken()!!)
+                    savedStateHandle.remove<Boolean>("should_refresh_profile") // 한 번만 실행되게 삭제
+                }
             }
-        }
 
         showProfile(false)
-
-        makeList()
         clickQuit()
     }
 
-    private fun showProfile(onlyList:Boolean) {
+    private fun showProfile(onlyList: Boolean) {
         lifecycleScope.launch {
             val myProfileState = myViewModel.myProfileState
                 .filter { it is MyProfileState.Success || it is MyProfileState.Error }
@@ -120,12 +125,13 @@ class MyFragment : Fragment(), OnTabReselectedListener {
             when (myProfileState) {
                 is MyProfileState.Success -> {
                     // reselected 된거라면
-                    if(onlyList) {
-                        with(binding){
+                    if (onlyList) {
+                        with(binding) {
                             Timber.d("FollowingCount: ${myProfileState.response.followingCount}")
                             tvPostCount.text = myProfileState.response.postCount.toString()
                             tvFollowerCount.text = myProfileState.response.followerCount.toString()
-                            tvFollowingCount.text = myProfileState.response.followingCount.toString()
+                            tvFollowingCount.text =
+                                myProfileState.response.followingCount.toString()
                         }
                         return@launch
                     }
@@ -149,6 +155,11 @@ class MyFragment : Fragment(), OnTabReselectedListener {
                             checkGalleryPermissionAndOpenPicker()
                         }
 
+                        btnShare.setOnClickListener {
+                            Timber.d("btn share clicked!")
+                            shareProfile(myProfileState.response.userId)
+                        }
+
                         showPosts(profile)
                         clickFollow(myProfileState.response.userId)
                     }
@@ -158,72 +169,42 @@ class MyFragment : Fragment(), OnTabReselectedListener {
                 is MyProfileState.Error -> Timber.d("myProfileState is error")
             }
         }
-
-        /* lifecycleScope.launch {
-             myViewModel.myProfileState.collect { myProfileState ->
-                 when (myProfileState) {
-                     is MyProfileState.Success -> {
-                         Timber.d("myProfileState is success")
-                         mainViewModel.saveUserId(myProfileState.response.userId)
-                         with(binding) {
-                             val profile =
-                                 myProfileState.response.profileImage
-                             // val resourceId = resources.getIdentifier("ic_profile", "drawable", requireContext().packageName)
-                             ivProfile.load(profile) {
-                                 transformations(CircleCropTransformation())
-                                 placeholder(R.drawable.ic_profile)
-                                 fallback(R.drawable.ic_profile) // profile이 null일 때 기본 이미지 표시
-                             }
-                             tvName.text = myProfileState.response.name
-                             tvCountry.text = myProfileState.response.nationNameKo
-                             tvPostCount.text = myProfileState.response.postCount.toString()
-                             tvFollowerCount.text = myProfileState.response.followerCount.toString()
-                             tvFollowingCount.text = myProfileState.response.followingCount.toString()
-
-                             btnEdit.setOnClickListener {
-                                 Timber.d("편집 버튼 클릭됨!")
-                                 checkGalleryPermissionAndOpenPicker()
-                             }
-
-                             showPosts(profile)
-                             clickFollow(myProfileState.response.userId)
-                         }
-                     }
-
-                     is MyProfileState.Loading -> {
-                         Timber.d("myProfileState is loading")
-                     }
-
-                     is MyProfileState.Error -> {
-                         Timber.d("myProfileState is error")
-                     }
-                 }
-             }
-         }*/
-
         myViewModel.getProfile(appPreferences.getAccessToken()!!)
     }
 
-    private fun showPosts(profile:String?) {
+    private fun showPosts(profile: String?) {
         lifecycleScope.launch {
             myViewModel.myPostState.collect { myPostState ->
                 when (myPostState) {
                     is MyPostState.Success -> {
                         myAdapter =
-                            _root_ide_package_.com.data.app.presentation.main.my.MyAdapter(clickPost = { post ->
-                                val action =
-                                    MyFragmentDirections.actionMyFragmentToMyPostDetailFragment(post.toString())
-                                findNavController().navigate(action)
-                            },
+                            _root_ide_package_.com.data.app.presentation.main.my.MyAdapter(
+                                clickPost = { post ->
+                                    val action =
+                                        MyFragmentDirections.actionMyFragmentToMyPostDetailFragment(
+                                            post.toString()
+                                        )
+                                    findNavController().navigate(action)
+                                },
                                 clickLike = { isLike, postId ->
-                                    if(isLike) myViewModel.likePost(appPreferences.getAccessToken()!!, postId)
-                                    else myViewModel.unLikePost(appPreferences.getAccessToken()!!, postId)
+                                    if (isLike) myViewModel.likePost(
+                                        appPreferences.getAccessToken()!!,
+                                        postId
+                                    )
+                                    else myViewModel.unLikePost(
+                                        appPreferences.getAccessToken()!!,
+                                        postId
+                                    )
+                                },
+                                clickShare = { postId ->
+                                    sharePost(postId)
                                 })
                         binding.rvPosts.adapter = myAdapter
                         myAdapter.getProfile(profile)
                         myAdapter.getList(myPostState.response.posts)
                         myViewModel.resetPostState()
                     }
+
                     is MyPostState.Loading -> {}
                     is MyPostState.Error -> {}
                 }
@@ -235,14 +216,15 @@ class MyFragment : Fragment(), OnTabReselectedListener {
         setLike()
     }
 
-    private fun setLike(){
+    private fun setLike() {
         lifecycleScope.launch {
-            myViewModel.likePostState.collect{
-                when(it){
+            myViewModel.likePostState.collect {
+                when (it) {
                     is LikePostState.Success -> {
                         Timber.d("like post state success!")
                         myViewModel.resetLikeState()
                     }
+
                     is LikePostState.Loading -> {}
                     is LikePostState.Error -> {
                         Timber.e("like post state error!")
@@ -302,8 +284,62 @@ class MyFragment : Fragment(), OnTabReselectedListener {
             .start(requireContext(), this)
     }
 
-    private fun makeList() {
-        myViewModel.getPosts()
+    private fun shareProfile(userId: Int) {
+        lifecycleScope.launch {
+            myViewModel.shareProfileState.collect { state ->
+                when (state) {
+                    is ShareProfileState.Loading -> {
+                        Timber.d("share profile loading...")
+                    }
+
+                    is ShareProfileState.Success -> {
+                        val url = BuildConfig.BASE_URL.removeSuffix("/") + state.response.shareUrl
+                        copyToClipboard(url)
+                        this.cancel() // 종료
+                    }
+
+                    is ShareProfileState.Error -> {
+                        Timber.e("share profile error!")
+                        this.cancel() // 종료
+                    }
+                }
+            }
+        }
+
+        myViewModel.shareProfile(userId)
+    }
+
+    private fun sharePost(postId: Int) {
+        lifecycleScope.launch {
+            myViewModel.sharePostState.collect { state ->
+                when (state) {
+                    is SharePostState.Loading -> {
+                        Timber.d("share post loading...")
+                    }
+
+                    is SharePostState.Success -> {
+                        val url = BuildConfig.BASE_URL.removeSuffix("/") + state.response.shareUrl
+                        copyToClipboard(url)
+                        this.cancel() // 종료
+                    }
+
+                    is SharePostState.Error -> {
+                        Timber.e("share post error!")
+                        this.cancel() // 종료
+                    }
+                }
+            }
+        }
+
+        myViewModel.sharePost(postId)
+    }
+
+    private fun copyToClipboard(text: String) {
+        val clipboard =
+            requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clip = ClipData.newPlainText("Profile URL", text)
+        clipboard.setPrimaryClip(clip)
+        Toast.makeText(requireContext(), "링크가 복사되었습니다.", Toast.LENGTH_SHORT).show()
     }
 
     private fun clickQuit() {
@@ -337,7 +373,8 @@ class MyFragment : Fragment(), OnTabReselectedListener {
                     appPreferences.clearAccessToken() // AppPreferences에 정의된 토큰 삭제 메서드 호출
 
                     // 언어 설정 정보 초기화
-                    val prefs = requireContext().getSharedPreferences("app_settings", Context.MODE_PRIVATE)
+                    val prefs =
+                        requireContext().getSharedPreferences("app_settings", Context.MODE_PRIVATE)
                     prefs.edit().remove("language_code").apply()
                     requireContext().resetToSystemLocale()
                     Timber.d("Access token cleared.")
@@ -384,13 +421,14 @@ class MyFragment : Fragment(), OnTabReselectedListener {
         }
     }
 
-    private fun clickFollow(userId:Int) {
+    private fun clickFollow(userId: Int) {
         listOf(
             binding.vFollower to "follower",
             binding.vFollowing to "following"
         ).forEach { (view, title) ->
             view.setOnClickListener {
-                val action = MyFragmentDirections.actionMyFragmentToFollowFragment(title, userId.toString())
+                val action =
+                    MyFragmentDirections.actionMyFragmentToFollowFragment(title, userId.toString())
                 findNavController().navigate(action)
             }
         }

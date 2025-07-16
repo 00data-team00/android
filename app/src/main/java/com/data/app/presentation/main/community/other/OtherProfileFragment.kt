@@ -2,6 +2,9 @@ package com.data.app.presentation.main.community.other
 
 import android.Manifest
 import android.app.Activity
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -11,6 +14,7 @@ import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -29,10 +33,14 @@ import com.data.app.data.shared_preferences.AppPreferences
 import com.data.app.databinding.FragmentOtherProfileBinding
 import com.data.app.extension.community.FollowState
 import com.data.app.extension.community.GetUserPostState
+import com.data.app.extension.community.LikePostState
+import com.data.app.extension.my.SharePostState
+import com.data.app.extension.my.ShareProfileState
 import com.data.app.extension.my.UserProfileState
 import com.data.app.presentation.main.MainViewModel
 import com.yalantis.ucrop.UCrop
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.io.File
@@ -127,7 +135,7 @@ class OtherProfileFragment : Fragment() {
                                     text = getString(R.string.my_profile_edit)
                                     clickEditButton()
                                 } else {
-                                    setBackgroundResource(R.drawable.btn_follow)
+                                    setBackgroundResource(R.drawable.btn_other_profile_follow)
                                     Timber.d("isSelected: $isSelected")
                                     if (userProfileState.response.isFollowing) {
                                         isSelected = true
@@ -141,6 +149,10 @@ class OtherProfileFragment : Fragment() {
 
                                     clickFollowButton(userId)
                                 }
+                            }
+
+                            btnShare.setOnClickListener {
+                                shareProfile(userId)
                             }
                         }
                     }
@@ -228,7 +240,17 @@ class OtherProfileFragment : Fragment() {
                                 findNavController().navigate(action)
                             },
                             clickLike = { postId, isLike ->
-
+                                if (isLike) otherProfileViewModel.likePost(
+                                    appPreferences.getAccessToken()!!,
+                                    postId
+                                )
+                                else otherProfileViewModel.unLikePost(
+                                    appPreferences.getAccessToken()!!,
+                                    postId
+                                )
+                            },
+                            clickShare = { postId ->
+                                sharePost(postId)
                             })
                         binding.rvPosts.adapter = otherProfileAdapter
                         otherProfileAdapter.getList(getUserPostState.data)
@@ -244,8 +266,8 @@ class OtherProfileFragment : Fragment() {
                 }
             }
         }
-
         otherProfileViewModel.getUserPost(appPreferences.getAccessToken()!!, userId)
+        setLike()
     }
 
     private fun getFollowState(userId:Int) {
@@ -321,6 +343,84 @@ class OtherProfileFragment : Fragment() {
             }
         }
     }
+
+    private fun setLike() {
+        lifecycleScope.launch {
+            otherProfileViewModel.likePostState.collect {
+                when (it) {
+                    is LikePostState.Success -> {
+                        Timber.d("like post state success!")
+                        otherProfileViewModel.resetLikeState()
+                    }
+
+                    is LikePostState.Loading -> {}
+                    is LikePostState.Error -> {
+                        Timber.e("like post state error!")
+                    }
+                }
+
+            }
+        }
+    }
+
+    private fun shareProfile(userId: Int) {
+        lifecycleScope.launch {
+            otherProfileViewModel.shareProfileState.collect { state ->
+                when (state) {
+                    is ShareProfileState.Loading -> {
+                        Timber.d("share profile loading...")
+                    }
+
+                    is ShareProfileState.Success -> {
+                        val url = BuildConfig.BASE_URL.removeSuffix("/") + state.response.shareUrl
+                        copyToClipboard(url)
+                        this.cancel() // 종료
+                    }
+
+                    is ShareProfileState.Error -> {
+                        Timber.e("share profile error!")
+                        this.cancel() // 종료
+                    }
+                }
+            }
+        }
+
+        otherProfileViewModel.shareProfile(userId)
+    }
+
+    private fun sharePost(postId: Int) {
+        lifecycleScope.launch {
+            otherProfileViewModel.sharePostState.collect { state ->
+                when (state) {
+                    is SharePostState.Loading -> {
+                        Timber.d("share post loading...")
+                    }
+
+                    is SharePostState.Success -> {
+                        val url = BuildConfig.BASE_URL.removeSuffix("/") + state.response.shareUrl
+                        copyToClipboard(url)
+                        this.cancel() // 종료
+                    }
+
+                    is SharePostState.Error -> {
+                        Timber.e("share post error!")
+                        this.cancel() // 종료
+                    }
+                }
+            }
+        }
+
+        otherProfileViewModel.sharePost(postId)
+    }
+
+    private fun copyToClipboard(text: String) {
+        val clipboard =
+            requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clip = ClipData.newPlainText("Profile URL", text)
+        clipboard.setPrimaryClip(clip)
+        Toast.makeText(requireContext(), "링크가 복사되었습니다.", Toast.LENGTH_SHORT).show()
+    }
+
 
     private fun clickBackButton() {
         binding.btnBack.setOnClickListener {

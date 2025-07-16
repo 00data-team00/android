@@ -21,7 +21,8 @@ import timber.log.Timber
 class PostsAdapter(
     val clickPost: (Int) -> Unit,
     val clickOtherUser: (Int) -> Unit,
-    val clickLikeBtn: (Int, Boolean) -> Unit
+    val clickLikeBtn: (Int, Boolean) -> Unit,
+    val clickShareBtn: (Int) -> Unit
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     companion object {
@@ -115,6 +116,10 @@ class PostsAdapter(
                 tvCommentCount.text = data.post.commentCount.toString()
 
                 btnLike.isSelected=data.post.isLiked
+
+                btnShare.setOnClickListener {
+                    clickShareBtn(data.post.id)
+                }
 
                 clickLike(data.post.id)
                 clickProfileOrId(data)

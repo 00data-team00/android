@@ -20,6 +20,7 @@ import com.data.app.data.response_dto.login.ResponseLoginDto
 import com.data.app.data.response_dto.community.ResponseEditProfileDto
 import com.data.app.data.response_dto.community.ResponseFollowDto
 import com.data.app.data.response_dto.community.ResponsePostDetailDto
+import com.data.app.data.response_dto.community.ResponseShareDto
 import com.data.app.data.response_dto.community.ResponseTimeLineDto
 import com.data.app.data.response_dto.my.ResponseMyPostDto
 import com.data.app.data.response_dto.my.ResponseProfileDto
@@ -120,15 +121,6 @@ interface BaseDataSource {
         token:String,
         userId:Int,
     ):ResponseFollowDto
-
-    /*suspend fun getFollowerList(
-        token: String
-    ):ResponseFollowListDto
-
-    suspend fun getFollowingList(
-        token: String
-    ):ResponseFollowListDto*/
-
     suspend fun getFollowerList(
         token:String,
         userId:Int
@@ -139,6 +131,13 @@ interface BaseDataSource {
         userId:Int
     ): ResponseFollowListDto
 
+    suspend fun shareProfile(
+        userId: Int
+    ): ResponseShareDto
+
+    suspend fun sharePost(
+        postId:Int
+    ): ResponseShareDto
 
     // home
     suspend fun getUserGameInfo(

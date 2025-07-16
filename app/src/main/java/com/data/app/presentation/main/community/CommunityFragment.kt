@@ -1,12 +1,16 @@
 package com.data.app.presentation.main.community
 
 import android.app.Activity
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
@@ -14,6 +18,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.data.app.BuildConfig
 import com.data.app.R
 import com.data.app.data.response_dto.community.ResponseTimeLineDto
 import com.data.app.data.response_dto.explore.ResponseAllProgramDto
@@ -21,11 +26,13 @@ import com.data.app.data.shared_preferences.AppPreferences
 import com.data.app.databinding.FragmentCommunityBinding
 import com.data.app.extension.community.GetAllTimeLineState
 import com.data.app.extension.community.LikePostState
+import com.data.app.extension.my.SharePostState
 import com.data.app.presentation.main.MainViewModel
 import com.data.app.presentation.main.OnTabReselectedListener
 import com.data.app.presentation.main.community.write.WritePostActivity
 import com.google.android.material.tabs.TabLayout
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -96,6 +103,9 @@ class CommunityFragment : Fragment(), OnTabReselectedListener {
             },
             clickLikeBtn = { postId, isLike ->
                 clickLikeBtn(postId, isLike)
+            },
+            clickShareBtn = {postId ->
+                sharePost(postId)
             }
         )
         binding.rvPosts.adapter = postsAdapter
@@ -288,6 +298,39 @@ class CommunityFragment : Fragment(), OnTabReselectedListener {
                 postsAdapter.updateList(filteredList)
             }
         }
+    }
+
+    private fun sharePost(postId: Int) {
+        lifecycleScope.launch {
+            communityViewModel.sharePostState.collect { state ->
+                when (state) {
+                    is SharePostState.Loading -> {
+                        Timber.d("share post loading...")
+                    }
+
+                    is SharePostState.Success -> {
+                        val url = BuildConfig.BASE_URL.removeSuffix("/") + state.response.shareUrl
+                        copyToClipboard(url)
+                        this.cancel() // 종료
+                    }
+
+                    is SharePostState.Error -> {
+                        Timber.e("share post error!")
+                        this.cancel() // 종료
+                    }
+                }
+            }
+        }
+
+        communityViewModel.sharePost(postId)
+    }
+
+    private fun copyToClipboard(text: String) {
+        val clipboard =
+            requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clip = ClipData.newPlainText("Profile URL", text)
+        clipboard.setPrimaryClip(clip)
+        Toast.makeText(requireContext(), "링크가 복사되었습니다.", Toast.LENGTH_SHORT).show()
     }
 
     override fun onPause() {

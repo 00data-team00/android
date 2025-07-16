@@ -19,8 +19,11 @@ import com.data.app.databinding.ItemPostBinding
 import com.data.app.util.TimeAgoFormatter
 import timber.log.Timber
 
-class OtherProfileAdapter(val clickPost: (Int) -> Unit, val clickLike: (Int, Boolean) -> Unit) :
-    RecyclerView.Adapter<OtherProfileAdapter.OtherProfileViewHolder>() {
+class OtherProfileAdapter(
+    val clickPost: (Int) -> Unit,
+    val clickLike: (Int, Boolean) -> Unit,
+    val clickShare: (Int) -> Unit
+): RecyclerView.Adapter<OtherProfileAdapter.OtherProfileViewHolder>() {
 
     private val postsList = mutableListOf<ResponseTimeLineDto.TimelinePostItem>()
 
@@ -88,6 +91,12 @@ class OtherProfileAdapter(val clickPost: (Int) -> Unit, val clickLike: (Int, Boo
                 tvContent.text = post.content.removeSurrounding("\"").replace("\\n", "\n")   // 맨 앞뒤 " 제거
                 tvLikeCount.text = post.likeCount.toString()
                 tvCommentCount.text = post.commentCount.toString()
+
+                if (data.post.isLiked) btnLike.isSelected = true
+
+                btnShare.setOnClickListener {
+                    clickShare(post.id)
+                }
 
                 // clickFollow()
                 clickLike(post.id)
