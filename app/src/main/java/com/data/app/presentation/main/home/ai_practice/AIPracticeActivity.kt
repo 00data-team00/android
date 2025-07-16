@@ -3,6 +3,7 @@ package com.data.app.presentation.main.home.ai_practice
 import android.content.Intent
 import android.content.res.Resources
 import android.os.Bundle
+import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.activity.viewModels
@@ -43,6 +44,13 @@ class AIPracticeActivity : BaseActivity() {
         showList(token)
         clickPracticeRecord(token)
         clickBack()
+        refresh()
+    }
+
+    private fun refresh() {
+        binding.btnRefresh.setOnClickListener{
+            aiPracticeViewModel.getAiTopics()
+        }
     }
 
     private fun showList(token: String?) {
@@ -60,8 +68,11 @@ class AIPracticeActivity : BaseActivity() {
 
         aiPracticeViewModel.essentialTopics.observe(this) { essential ->
             Timber.d("Observed essential topic list: size=${essential.size}")
+            binding.tvNointernet.visibility = View.GONE
+            binding.ivNointernet.visibility = View.GONE
+            binding.btnRefresh.visibility = View.GONE
+            binding.btnShowPreviousPractice.visibility = View.VISIBLE
             aiAdapter.getList(essential)
-
         }
         //aiAdapter.getList(aiPracticeViewModel.mockDailyList)
 

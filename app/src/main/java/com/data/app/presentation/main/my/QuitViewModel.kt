@@ -21,6 +21,10 @@ class QuitViewModel @Inject constructor(
     private val _quitState = MutableStateFlow<QuitState>(QuitState.Loading)
     val quitState: StateFlow<QuitState> = _quitState
 
+    fun resetLoading(){
+        _quitState.value = QuitState.Loading
+    }
+
     fun quit(token:String){
         viewModelScope.launch {
             baseRepository.quit(token).onSuccess { response->

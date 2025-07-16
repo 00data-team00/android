@@ -140,11 +140,11 @@ class OtherProfileFragment : Fragment() {
                                     if (userProfileState.response.isFollowing) {
                                         isSelected = true
                                         text = getString(R.string.community_following)
-                                        setTextColor(resources.getColor(R.color.bnv_unclicked_black))
+                                        setTextColor(resources.getColor(R.color.white))
                                     } else {
                                         isSelected = false
                                         text = getString(R.string.community_follow)
-                                        setTextColor(resources.getColor(R.color.white))
+                                        setTextColor(resources.getColor(R.color.bnv_unclicked_black))
                                     }
 
                                     clickFollowButton(userId)

@@ -20,6 +20,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentContainerView
@@ -115,6 +116,15 @@ class MyFragment : Fragment(), OnTabReselectedListener {
 
         showProfile()
         clickQuit()
+
+        refresh()
+    }
+
+    private fun refresh(){
+        binding.btnRefresh.setOnClickListener{
+            myViewModel.getProfile(appPreferences.getAccessToken()!!)
+            myViewModel.getMyPosts(appPreferences.getAccessToken()!!)
+        }
     }
 
     private fun showProfile() {
@@ -122,6 +132,11 @@ class MyFragment : Fragment(), OnTabReselectedListener {
             myViewModel.myProfileState.collect { myProfileState ->
                 when (myProfileState) {
                     is MyProfileState.Success -> {
+                        binding.ivNointernet.visibility = View.GONE
+                        binding.tvNointernet.visibility = View.GONE
+                        binding.btnRefresh.visibility = View.GONE
+                        binding.rvPosts.visibility = View.VISIBLE
+
                         Timber.d("FollowingCount: myProfileState is success")
                         with(binding) {
                             val profile = myProfileState.response.profileImage
@@ -151,8 +166,20 @@ class MyFragment : Fragment(), OnTabReselectedListener {
                         }
                     }
 
-                    is MyProfileState.Loading -> Timber.d("myProfileState is loading")
-                    is MyProfileState.Error -> Timber.d("myProfileState is error")
+                    is MyProfileState.Loading -> {
+                        Timber.d("myProfileState is loading")
+                    }
+
+                    is MyProfileState.Error -> {
+                        Timber.d("myProfileState is error")
+                        Timber.d(myProfileState.message)
+                        if (myProfileState.message.contains("No address")) {
+                            binding.ivNointernet.visibility = View.VISIBLE
+                            binding.tvNointernet.visibility = View.VISIBLE
+                            binding.btnRefresh.visibility = View.VISIBLE
+                            binding.rvPosts.visibility = View.GONE
+                        }
+                    }
                 }
             }
         }
@@ -192,8 +219,12 @@ class MyFragment : Fragment(), OnTabReselectedListener {
                         myViewModel.resetPostState()
                     }
 
-                    is MyPostState.Loading -> {}
-                    is MyPostState.Error -> {}
+                    is MyPostState.Loading -> {
+                        Timber.d("LOADINGGGGGGGGGG")
+                    }
+                    is MyPostState.Error -> {
+                        Timber.d(myPostState.message)
+                    }
                 }
             }
         }

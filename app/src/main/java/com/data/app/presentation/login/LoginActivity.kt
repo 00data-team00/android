@@ -10,6 +10,7 @@ import android.text.Spanned
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.view.View
+import android.widget.Toast
 import androidx.activity.viewModels
 import com.data.app.databinding.ActivityLoginBinding
 import androidx.core.graphics.toColorInt
@@ -98,6 +99,9 @@ class LoginActivity : AppCompatActivity() {
                                 //binding.tvPasswordError.text = message
                                 binding.tvEmailError.visibility=View.GONE
                                 binding.tvPasswordError.visibility = View.VISIBLE
+                            }
+                            message.contains("No address") -> {
+                                Toast.makeText(this@LoginActivity, "인터넷이 연결되어있지 않습니다.", Toast.LENGTH_SHORT).show()
                             }
                             else -> {
                                 // 기타 에러 처리

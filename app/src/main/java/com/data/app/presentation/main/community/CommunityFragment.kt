@@ -87,7 +87,24 @@ class CommunityFragment : Fragment(), OnTabReselectedListener {
     private fun setting() {
         showFeeds()
         writePost()
+        refresh()
     }
+
+    private fun refresh(){
+        binding.btnRefresh.setOnClickListener{
+            when (communityViewModel.selectedTab.value) {
+                CommunityViewModel.CommunityTab.ALL ->
+                    communityViewModel.getAllTimeLine(appPreferences.getAccessToken()!!)
+
+                CommunityViewModel.CommunityTab.FOLLOWING ->
+                    communityViewModel.getFollowingTimeLine(appPreferences.getAccessToken()!!)
+
+                CommunityViewModel.CommunityTab.COUNTRY ->
+                    communityViewModel.getNationTimeLine(appPreferences.getAccessToken()!!)
+            }
+        }
+    }
+
 
     private fun showFeeds() {
         postsAdapter = PostsAdapter(
@@ -115,6 +132,12 @@ class CommunityFragment : Fragment(), OnTabReselectedListener {
             communityViewModel.getAllTimeLineState.collect { state ->
                 when (state) {
                     is GetAllTimeLineState.Success -> {
+                        binding.ivNointernet.visibility = View.GONE
+                        binding.tvNointernet.visibility = View.GONE
+                        binding.btnRefresh.visibility = View.GONE
+                        binding.btnWritePost.visibility = View.VISIBLE
+                        binding.rvPosts.visibility = View.VISIBLE
+
                         var filteredList = state.data.filter { it.post.authorName != "탈퇴한 사용자" }
 
                         // 2. 필요한 처리
@@ -151,6 +174,13 @@ class CommunityFragment : Fragment(), OnTabReselectedListener {
 
                     is GetAllTimeLineState.Error -> {
                         Timber.e("get time line state error!")
+                        if(state.message.contains("No address")) {
+                            binding.ivNointernet.visibility = View.VISIBLE
+                            binding.tvNointernet.visibility = View.VISIBLE
+                            binding.btnRefresh.visibility = View.VISIBLE
+                            binding.btnWritePost.visibility = View.GONE
+                            binding.rvPosts.visibility = View.GONE
+                        }
                     }
 
                     is GetAllTimeLineState.Loading -> {

@@ -75,10 +75,18 @@ class HomeFragment : Fragment(), OnTabReselectedListener {
     private fun setting() {
         mainViewModel.accessToken.observe(viewLifecycleOwner) { token ->
             getInfo(token)
+            refresh(token)
         }
         showImage()
         //clickPractice(token)
         inputData()
+    }
+
+    private fun refresh(token: String) {
+        binding.btnRefresh.setOnClickListener{
+            homeViewModel.getUserGameInfo(token)
+            homeViewModel.getProfile(appPreferences.getAccessToken()!!)
+        }
     }
 
     private fun showImage() {
@@ -141,10 +149,25 @@ class HomeFragment : Fragment(), OnTabReselectedListener {
                 when (state) {
                     is UserGameInfoState.Success -> {
                         with(binding) {
-                            tvQuizCount1.text = (state.response.totalQuizSolved ?: 0).toString()
-                            tvQuizCount2.text = (state.response.quizSolvedToday ?: 0).toString()
-                            tvConversationCount.text =
-                                (state.response.chatRoomsCreated ?: 0).toString()
+                            tvQuizCount1.visibility = View.VISIBLE
+                            tvQuizCount2.visibility = View.VISIBLE
+                            tvConversationCount.visibility = View.VISIBLE
+                            tvQuiz1.visibility = View.VISIBLE
+                            tvQuiz2.visibility = View.VISIBLE
+                            tvConversation.visibility = View.VISIBLE
+
+                            tvNointernet.visibility = View.GONE
+                            btnRefresh.visibility = View.GONE
+                            ivNointernet.visibility = View.GONE
+
+
+                            val totalquiz = state.response.totalQuizSolved ?: 0
+                            val todayquiz = state.response.quizSolvedToday ?: 0
+                            val totalchat = state.response.chatRoomsCreated ?: 0
+                            tvQuizCount1.text = (totalquiz).toString()
+                            tvQuizCount2.text = (todayquiz).toString()
+                            tvConversationCount.text = (totalchat).toString()
+                            tvContinueStudy.text = getString(R.string.home_continue_study, totalquiz + totalchat)
                         }
                         clickOnline()
                         clickPractice(token)
@@ -152,7 +175,28 @@ class HomeFragment : Fragment(), OnTabReselectedListener {
                     }
 
                     is UserGameInfoState.Loading -> {}
-                    is UserGameInfoState.Error -> {}
+                    is UserGameInfoState.Error -> {
+                        Timber.d(state.message)
+                        if(state.message.contains("No address")) {
+                            with(binding) {
+                                tvQuizCount1.visibility = View.GONE
+                                tvQuizCount2.visibility = View.GONE
+                                tvConversationCount.visibility = View.GONE
+                                tvQuiz1.visibility = View.GONE
+                                tvQuiz2.visibility = View.GONE
+                                tvConversation.visibility = View.GONE
+
+                                tvContinueStudy.text = getString(R.string.home_continue_study, 0)
+
+                                tvNointernet.visibility = View.VISIBLE
+                                btnRefresh.visibility = View.VISIBLE
+                                ivNointernet.visibility = View.VISIBLE
+                            }
+                        }
+                        clickOnline()
+                        clickPractice(token)
+                        clickGame(token)
+                    }
                 }
             }
         }
@@ -172,13 +216,22 @@ class HomeFragment : Fragment(), OnTabReselectedListener {
                             tvTitleKor.text = getString(R.string.home_title, name)
                             tvSubtitleEng.text = getString(R.string.home_subtitle_eng, name)
                             tvNotGiveUp.text = getString(R.string.home_not_give_up, name)
-                            tvContinueStudy.text = getString(R.string.home_continue_study, 13)
                         }
                         mainViewModel.saveUserId(state.response.userId)
                     }
 
                     is MyProfileState.Loading -> {}
-                    is MyProfileState.Error -> {}
+                    is MyProfileState.Error -> {
+                        Timber.d(state.message)
+                        if(state.message.contains("No address")) {
+                            val name = "??"
+                            with(binding) {
+                                tvTitleKor.text = getString(R.string.home_title, name)
+                                tvSubtitleEng.text = getString(R.string.home_subtitle_eng, name)
+                                tvNotGiveUp.text = getString(R.string.home_not_give_up, name)
+                            }
+                        }
+                    }
                 }
             }
         }

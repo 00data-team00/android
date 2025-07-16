@@ -2,6 +2,7 @@ package com.data.app.presentation.main.home.game
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.activity.addCallback
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -35,6 +36,15 @@ class GameTabActivity : BaseActivity() {
         saveToken()
         showWeeks()
         clickBack()
+
+        refresh()
+    }
+
+    private fun refresh() {
+        val accessToken = intent.getStringExtra("accessToken")
+        binding.btnRefresh.setOnClickListener{
+            gameTabViewModel.saveToken(accessToken!!)
+        }
     }
 
     private fun saveToken() {
@@ -60,6 +70,9 @@ class GameTabActivity : BaseActivity() {
             gameTabViewModel.userGameInfoState.collect { state ->
                 when (state) {
                     is UserGameInfoState.Success -> {
+                        binding.tvNointernet.visibility = View.GONE
+                        binding.ivNointernet.visibility = View.GONE
+                        binding.btnRefresh.visibility = View.GONE
                         showLevels()
                         gameTabViewModel.resetUserGameInfoState()
                     }
