@@ -8,9 +8,13 @@ import com.data.app.extension.community.LikePostState
 import com.data.app.extension.community.PostDetailState
 import com.data.app.extension.community.WriteCommentState
 import com.data.app.extension.my.MyProfileState
+import com.data.app.extension.my.SharePostState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import okhttp3.ResponseBody
@@ -37,6 +41,9 @@ class PostDetailViewModel @Inject constructor(
 
     private val _deletePostState = MutableStateFlow<DeletePostState>(DeletePostState.Loading)
     val deletePostState: StateFlow<DeletePostState> = _deletePostState.asStateFlow()
+
+    private val _sharePostState = MutableSharedFlow<SharePostState>()
+    val sharePostState: SharedFlow<SharePostState> = _sharePostState.asSharedFlow()
 
     fun getPostDetail(token: String, postId: Int) {
         viewModelScope.launch {
@@ -164,6 +171,28 @@ class PostDetailViewModel @Inject constructor(
 
     fun resetDetailState(){
         _postDetailState.value=PostDetailState.Loading
+    }
+
+    fun sharePost(postId:Int){
+        viewModelScope.launch {
+            _sharePostState.emit(SharePostState.Loading)
+
+            baseRepository.sharePost(postId).onSuccess { response ->
+                _sharePostState.emit(SharePostState.Success(response))
+            }.onFailure {
+                _sharePostState.emit(SharePostState.Error(it.message.toString()))
+                if (it is HttpException) {
+                    try {
+                        val errorBody: ResponseBody? = it.response()?.errorBody()
+                        val errorBodyString = errorBody?.string() ?: ""
+                        httpError(errorBodyString)
+                    } catch (e: Exception) {
+                        // JSON 파싱 실패 시 로깅
+                        Timber.e("Error parsing error body: ${e}")
+                    }
+                }
+            }
+        }
     }
 
     private fun httpError(errorBody: String) {

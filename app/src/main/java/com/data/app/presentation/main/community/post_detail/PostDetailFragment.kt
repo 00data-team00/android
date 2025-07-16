@@ -1,6 +1,9 @@
 package com.data.app.presentation.main.community.post_detail
 
 import android.app.AlertDialog
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.ContextThemeWrapper
@@ -31,9 +34,11 @@ import com.data.app.extension.community.LikePostState
 import com.data.app.extension.community.PostDetailState
 import com.data.app.extension.community.WriteCommentState
 import com.data.app.extension.my.MyProfileState
+import com.data.app.extension.my.SharePostState
 import com.data.app.presentation.main.MainViewModel
 import com.data.app.util.TimeAgoFormatter
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -90,6 +95,9 @@ class PostDetailFragment : Fragment() {
                         }
 
                         getUserProfile(postState.response.comments)
+                        binding.btnShare.setOnClickListener {
+                            sharePost(postState.response.id)
+                        }
 
                     }
 
@@ -350,6 +358,39 @@ class PostDetailFragment : Fragment() {
 
         if (isLike) postDetailViewModel.likePost(appPreferences.getAccessToken()!!, postId)
         else postDetailViewModel.unLikePost(appPreferences.getAccessToken()!!, postId)
+    }
+
+    private fun sharePost(postId: Int) {
+        lifecycleScope.launch {
+            postDetailViewModel.sharePostState.collect { state ->
+                when (state) {
+                    is SharePostState.Loading -> {
+                        Timber.d("share post loading...")
+                    }
+
+                    is SharePostState.Success -> {
+                        val url = BuildConfig.BASE_URL.removeSuffix("/") + state.response.shareUrl
+                        copyToClipboard(url)
+                        this.cancel() // 종료
+                    }
+
+                    is SharePostState.Error -> {
+                        Timber.e("share post error!")
+                        this.cancel() // 종료
+                    }
+                }
+            }
+        }
+
+        postDetailViewModel.sharePost(postId)
+    }
+
+    private fun copyToClipboard(text: String) {
+        val clipboard =
+            requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clip = ClipData.newPlainText("Profile URL", text)
+        clipboard.setPrimaryClip(clip)
+        Toast.makeText(requireContext(), "링크가 복사되었습니다.", Toast.LENGTH_SHORT).show()
     }
 
     private fun clickBackButton() {

@@ -21,6 +21,7 @@ import com.data.app.data.response_dto.login.ResponseLoginDto
 import com.data.app.data.response_dto.community.ResponseEditProfileDto
 import com.data.app.data.response_dto.community.ResponseFollowDto
 import com.data.app.data.response_dto.community.ResponsePostDetailDto
+import com.data.app.data.response_dto.community.ResponseShareDto
 import com.data.app.data.response_dto.community.ResponseTimeLineDto
 import com.data.app.data.response_dto.my.ResponseMyPostDto
 import com.data.app.data.response_dto.my.ResponseProfileDto
@@ -211,22 +212,6 @@ class BaseRepositoryImpl @Inject constructor(
         }
     }
 
-   /* override suspend fun getFollowerList(token: String): Result<ResponseFollowListDto> {
-        return runCatching {
-            baseDataSource.getFollowerList(token)
-        }.onFailure {
-            Timber.e("base repository get follower list fail: $it")
-        }
-    }
-
-    override suspend fun getFollowingList(token: String): Result<ResponseFollowListDto> {
-        return runCatching {
-            baseDataSource.getFollowingList(token)
-        }.onFailure {
-            Timber.e("base repository get following list fail: $it")
-        }
-    }*/
-
     override suspend fun getFollowerList(
         token: String,
         userId: Int
@@ -248,6 +233,23 @@ class BaseRepositoryImpl @Inject constructor(
             Timber.e("base repository get following list fail: $it")
         }
     }
+
+    override suspend fun shareProfile(userId: Int): Result<ResponseShareDto> {
+        return runCatching {
+            baseDataSource.shareProfile(userId)
+        }.onFailure {
+            Timber.e("base repository share profile fail: $it")
+        }
+    }
+
+    override suspend fun sharePost(postId: Int): Result<ResponseShareDto> {
+        return runCatching {
+            baseDataSource.sharePost(postId)
+        }.onFailure {
+            Timber.e("base repository share post fail: $it")
+        }
+    }
+
     // home
     override suspend fun getUserGameInfo(token: String): Result<ResponseUserGameInfoDto> {
         return runCatching {

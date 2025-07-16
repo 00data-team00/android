@@ -159,11 +159,11 @@
             android:layout_marginEnd="5dp"
             android:background="@drawable/btn_other_profile_follow"
             android:text="@string/community_following"
-            app:layout_constraintEnd_toEndOf="@id/tv_following"
+            app:layout_constraintEnd_toStartOf="@id/btn_share"
             app:layout_constraintStart_toStartOf="@id/tv_country"
             app:layout_constraintTop_toBottomOf="@id/tv_country" />
 
-        <!--<androidx.appcompat.widget.AppCompatButton
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_share"
             android:layout_width="0dp"
             android:layout_height="30dp"
@@ -173,7 +173,7 @@
             android:textColor="@color/bnv_unclicked_black"
             app:layout_constraintEnd_toEndOf="@id/tv_following"
             app:layout_constraintStart_toEndOf="@id/btn_follow"
-            app:layout_constraintTop_toTopOf="@id/btn_follow" />-->
+            app:layout_constraintTop_toTopOf="@id/btn_follow" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_posts"

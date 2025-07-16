@@ -20,6 +20,7 @@ import com.data.app.data.response_dto.login.ResponseLoginDto
 import com.data.app.data.response_dto.community.ResponseEditProfileDto
 import com.data.app.data.response_dto.community.ResponseFollowDto
 import com.data.app.data.response_dto.community.ResponsePostDetailDto
+import com.data.app.data.response_dto.community.ResponseShareDto
 import com.data.app.data.response_dto.community.ResponseTimeLineDto
 import com.data.app.data.response_dto.my.ResponseMyPostDto
 import com.data.app.data.response_dto.my.ResponseProfileDto
@@ -152,16 +153,6 @@ interface BaseService {
         @Path("userId") userId:Int,
     ): ResponseFollowDto
 
-   /* @GET("api/me/followers")
-    suspend fun getFollowerList(
-        @Header("Authorization") token:String
-    ):ResponseFollowListDto
-
-    @GET("/api/me/following")
-    suspend fun getFollowingList(
-        @Header("Authorization") token:String
-    ): ResponseFollowListDto*/
-
     @GET("api/users/{userId}/followers")
     suspend fun getFollowerList(
         @Header("Authorization") token:String,
@@ -174,6 +165,17 @@ interface BaseService {
         @Path("userId") userId:Int
     ): ResponseFollowListDto
 
+    @POST("api/share/profile/{userId}")
+    suspend fun shareProfile(
+        // @Header("Authorization") token:String,
+        @Path("userId") userId:Int
+    ): ResponseShareDto
+
+    @POST("api/share/post/{postId}")
+    suspend fun sharePost(
+        // @Header("Authorization") token:String,
+        @Path("postId") postId:Int
+    ): ResponseShareDto
 
     // home
     @GET("api/me/user-game-info")

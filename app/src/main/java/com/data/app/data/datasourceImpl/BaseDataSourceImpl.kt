@@ -21,6 +21,7 @@ import com.data.app.data.response_dto.login.ResponseLoginDto
 import com.data.app.data.response_dto.community.ResponseEditProfileDto
 import com.data.app.data.response_dto.community.ResponseFollowDto
 import com.data.app.data.response_dto.community.ResponsePostDetailDto
+import com.data.app.data.response_dto.community.ResponseShareDto
 import com.data.app.data.response_dto.community.ResponseTimeLineDto
 import com.data.app.data.response_dto.my.ResponseMyPostDto
 import com.data.app.data.response_dto.my.ResponseProfileDto
@@ -66,11 +67,11 @@ class BaseDataSourceImpl @Inject constructor(
 
     override suspend fun deletePost(token: String, postId: Int): ResponseDeletePostDto = baseService.deletePost(token, postId)
     override suspend fun follow(token: String, userId: Int): ResponseFollowDto = baseService.follow(token, userId)
-    override suspend fun unFollow(token: String, userId: Int): ResponseFollowDto = baseService.unFollow(token, userId)/*
-    override suspend fun getFollowerList(token: String): ResponseFollowListDto = baseService.getFollowerList(token)
-    override suspend fun getFollowingList(token: String): ResponseFollowListDto = baseService.getFollowingList(token)*/
+    override suspend fun unFollow(token: String, userId: Int): ResponseFollowDto = baseService.unFollow(token, userId)
     override suspend fun getFollowerList(token: String, userId: Int): ResponseFollowListDto = baseService.getFollowerList(token, userId)
     override suspend fun getFollowingList(token: String, userId: Int): ResponseFollowListDto = baseService.getFollowingList(token, userId)
+    override suspend fun shareProfile(userId: Int): ResponseShareDto = baseService.shareProfile(userId)
+    override suspend fun sharePost(postId: Int): ResponseShareDto = baseService.sharePost(postId)
 
     // home
     override suspend fun getUserGameInfo(token: String): ResponseUserGameInfoDto = baseService.getUserGameInfo(token)
