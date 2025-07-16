@@ -53,9 +53,10 @@ class MyViewModel @Inject constructor(
 
     fun getProfile(token: String) {
         viewModelScope.launch {
+            _myProfileState.value = MyProfileState.Loading
+
             baseRepository.getMyProfile(token).onSuccess { response ->
                 _myProfileState.value = MyProfileState.Success(response)
-                _myProfileState.value = MyProfileState.Loading
             }.onFailure {
                 _myProfileState.value = MyProfileState.Error(it.message.toString())
                 if (it is HttpException) {

@@ -113,60 +113,47 @@ class MyFragment : Fragment(), OnTabReselectedListener {
                 }
             }
 
-        showProfile(false)
+        showProfile()
         clickQuit()
     }
 
-    private fun showProfile(onlyList: Boolean) {
-        lifecycleScope.launch {
-            val myProfileState = myViewModel.myProfileState
-                .filter { it is MyProfileState.Success || it is MyProfileState.Error }
-                .first() // 최초 1개만 수집
-            when (myProfileState) {
-                is MyProfileState.Success -> {
-                    // reselected 된거라면
-                    if (onlyList) {
+    private fun showProfile() {
+        lifecycleScope.launch{
+            myViewModel.myProfileState.collect { myProfileState ->
+                when (myProfileState) {
+                    is MyProfileState.Success -> {
+                        Timber.d("FollowingCount: myProfileState is success")
                         with(binding) {
-                            Timber.d("FollowingCount: ${myProfileState.response.followingCount}")
+                            val profile = myProfileState.response.profileImage
+                            ivProfile.load(profile) {
+                                transformations(CircleCropTransformation())
+                                placeholder(R.drawable.ic_profile)
+                                fallback(R.drawable.ic_profile)
+                            }
+                            tvName.text = myProfileState.response.name
+                            tvCountry.text = myProfileState.response.nationNameKo
                             tvPostCount.text = myProfileState.response.postCount.toString()
                             tvFollowerCount.text = myProfileState.response.followerCount.toString()
-                            tvFollowingCount.text =
-                                myProfileState.response.followingCount.toString()
+                            tvFollowingCount.text = myProfileState.response.followingCount.toString()
+
+                            btnEdit.setOnClickListener {
+                                Timber.d("편집 버튼 클릭됨!")
+                                checkGalleryPermissionAndOpenPicker()
+                            }
+
+                            btnShare.setOnClickListener {
+                                Timber.d("btn share clicked!")
+                                shareProfile(myProfileState.response.userId)
+                            }
+
+                            showPosts(profile)
+                            clickFollow(myProfileState.response.userId)
                         }
-                        return@launch
                     }
 
-                    Timber.d("FollowingCount: myProfileState is success")
-                    with(binding) {
-                        val profile = myProfileState.response.profileImage
-                        ivProfile.load(profile) {
-                            transformations(CircleCropTransformation())
-                            placeholder(R.drawable.ic_profile)
-                            fallback(R.drawable.ic_profile)
-                        }
-                        tvName.text = myProfileState.response.name
-                        tvCountry.text = myProfileState.response.nationNameKo
-                        tvPostCount.text = myProfileState.response.postCount.toString()
-                        tvFollowerCount.text = myProfileState.response.followerCount.toString()
-                        tvFollowingCount.text = myProfileState.response.followingCount.toString()
-
-                        btnEdit.setOnClickListener {
-                            Timber.d("편집 버튼 클릭됨!")
-                            checkGalleryPermissionAndOpenPicker()
-                        }
-
-                        btnShare.setOnClickListener {
-                            Timber.d("btn share clicked!")
-                            shareProfile(myProfileState.response.userId)
-                        }
-
-                        showPosts(profile)
-                        clickFollow(myProfileState.response.userId)
-                    }
+                    is MyProfileState.Loading -> Timber.d("myProfileState is loading")
+                    is MyProfileState.Error -> Timber.d("myProfileState is error")
                 }
-
-                is MyProfileState.Loading -> Timber.d("myProfileState is loading")
-                is MyProfileState.Error -> Timber.d("myProfileState is error")
             }
         }
         myViewModel.getProfile(appPreferences.getAccessToken()!!)
@@ -510,7 +497,7 @@ class MyFragment : Fragment(), OnTabReselectedListener {
 
     override fun onTabReselected() {
         myViewModel.getMyPosts(appPreferences.getAccessToken()!!)
-        showProfile(true)
+        myViewModel.getProfile(appPreferences.getAccessToken()!!)
     }
 
     override fun onDestroyView() {
