@@ -41,8 +41,12 @@ class MyAdapter(
         holder.bind(postsList[position])
     }
 
-    fun getList(profile: String?, list: List<ResponseMyPostDto.PostDto>) {
-        userProfile = profile
+    fun getProfile(profile:String?){
+        userProfile=profile
+        notifyDataSetChanged()
+    }
+
+    fun getList(list: List<ResponseMyPostDto.PostDto>) {
         postsList.clear()
         postsList.addAll(list)
         notifyDataSetChanged()

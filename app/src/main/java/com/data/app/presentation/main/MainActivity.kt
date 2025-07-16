@@ -16,6 +16,8 @@ import timber.log.Timber
 class MainActivity : BaseActivity() {
     private lateinit var binding: ActivityMainBinding
     private var currentTabId = -1
+    private var previousTabId: Int = R.id.menu_home
+
     private var lastBackPressedTime = 0L
 
     private lateinit var navHostMap: Map<Int, FragmentContainerView>
@@ -59,7 +61,10 @@ class MainActivity : BaseActivity() {
     }
 
     private fun switchTab(targetTabId: Int) {
-        val wasCurrentTab = targetTabId == currentTabId
+        val wasReselected = previousTabId == targetTabId
+        previousTabId = currentTabId
+        currentTabId = targetTabId
+
         val tag = "tab_$targetTabId"
         var targetFragment = supportFragmentManager.findFragmentByTag(tag)
 
@@ -75,7 +80,6 @@ class MainActivity : BaseActivity() {
 
         val isNewlyCreated = targetFragment == null
 
-        // 해당 탭 프래그먼트가 없으면 생성, 있으면 show
         if (isNewlyCreated) {
             val navHost = NavHostFragment.create(getNavGraphId(targetTabId))
             transaction.add(R.id.fcv_main, navHost, tag)
@@ -85,24 +89,122 @@ class MainActivity : BaseActivity() {
         }
 
         transaction.commitNow()
-        // 새로 만든 게 아니라면 → 무조건 onTabReselected() 호출
-        if (!isNewlyCreated) {
-            val currentNavHost = targetFragment as? NavHostFragment
-            val navController = currentNavHost?.navController
 
-            val popped = navController?.popBackStack(navController.graph.startDestinationId, false) ?: false
-            if (!popped) {
-                val fragment = currentNavHost
-                    ?.childFragmentManager
-                    ?.fragments
-                    ?.firstOrNull()
-                (fragment as? OnTabReselectedListener)?.onTabReselected()
-            }
+        val currentNavHost = targetFragment as? NavHostFragment
+        val navController = currentNavHost?.navController
+
+        if (wasReselected) {
+            navController?.popBackStack(navController.graph.startDestinationId, false)
+
+            val fragment = currentNavHost
+                ?.childFragmentManager
+                ?.fragments
+                ?.firstOrNull()
+            (fragment as? OnTabReselectedListener)?.onTabReselected()
+        }
+    }
+
+
+    /* private fun switchTab(targetTabId: Int) {
+         val wasCurrentTab = targetTabId == currentTabId
+         val tag = "tab_$targetTabId"
+         var targetFragment = supportFragmentManager.findFragmentByTag(tag)
+
+         val transaction = supportFragmentManager.beginTransaction()
+
+         // 모든 탭 숨김
+         listOf(R.id.menu_home, R.id.menu_explore, R.id.menu_community, R.id.menu_my).forEach { id ->
+             val existing = supportFragmentManager.findFragmentByTag("tab_$id")
+             if (existing != null && id != targetTabId) {
+                 transaction.hide(existing)
+             }
+         }
+
+         val isNewlyCreated = targetFragment == null
+
+         if (isNewlyCreated) {
+             val navHost = NavHostFragment.create(getNavGraphId(targetTabId))
+             transaction.add(R.id.fcv_main, navHost, tag)
+             targetFragment = navHost
+         } else {
+             transaction.show(targetFragment!!)
+         }
+
+         transaction.commitNow()
+
+         val currentNavHost = targetFragment as? NavHostFragment
+         val navController = currentNavHost?.navController
+
+         if (wasCurrentTab) {
+             // ❗️오직 같은 탭을 다시 눌렀을 때만 popBackStack 수행
+             navController?.popBackStack(navController.graph.startDestinationId, false)
+
+             val fragment = currentNavHost
+                 ?.childFragmentManager
+                 ?.fragments
+                 ?.firstOrNull()
+             (fragment as? OnTabReselectedListener)?.onTabReselected()
+         }
+
+         currentTabId = targetTabId
+     }
+ */
+
+    /* private fun switchTab(targetTabId: Int) {
+         val wasCurrentTab = targetTabId == currentTabId
+         val tag = "tab_$targetTabId"
+         var targetFragment = supportFragmentManager.findFragmentByTag(tag)
+
+         val transaction = supportFragmentManager.beginTransaction()
+
+         // 모든 탭 숨김
+         listOf(R.id.menu_home, R.id.menu_explore, R.id.menu_community, R.id.menu_my).forEach { id ->
+             val existing = supportFragmentManager.findFragmentByTag("tab_$id")
+             if (existing != null && id != targetTabId) {
+                 transaction.hide(existing)
+             }
+         }
+
+         val isNewlyCreated = targetFragment == null
+
+         // 해당 탭 프래그먼트가 없으면 생성, 있으면 show
+         if (isNewlyCreated) {
+             val navHost = NavHostFragment.create(getNavGraphId(targetTabId))
+             transaction.add(R.id.fcv_main, navHost, tag)
+             targetFragment = navHost
+         } else {
+             transaction.show(targetFragment!!)
+         }
+
+         transaction.commitNow()
+         // 새로 만든 게 아니라면 → 무조건 onTabReselected() 호출
+         if (!isNewlyCreated) {
+             val currentNavHost = targetFragment as? NavHostFragment
+             val navController = currentNavHost?.navController
+
+             navController?.popBackStack(navController.graph.startDestinationId, false)
+             val fragment = currentNavHost
+                 ?.childFragmentManager
+                 ?.fragments
+                 ?.firstOrNull()
+             (fragment as? OnTabReselectedListener)?.onTabReselected()
+
+             *//* val currentNavHost = targetFragment as? NavHostFragment
+             val navController = currentNavHost?.navController
+
+             val popped = navController?.popBackStack(navController.graph.startDestinationId, false) ?: false
+             if (!popped) {
+                 val fragment = currentNavHost
+                     ?.childFragmentManager
+                     ?.fragments
+                     ?.firstOrNull()
+                 (fragment as? OnTabReselectedListener)?.onTabReselected()
+             }*//*
         }
 
         currentTabId = targetTabId
     }
-
+*/
 
     /*private fun switchTab(targetTabId: Int) {
         if (targetTabId == currentTabId) {

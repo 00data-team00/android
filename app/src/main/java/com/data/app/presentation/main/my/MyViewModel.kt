@@ -26,31 +26,31 @@ import javax.inject.Inject
 @HiltViewModel
 class MyViewModel @Inject constructor(
     val baseRepository: BaseRepository
-) :ViewModel() {
+) : ViewModel() {
     private val profile = "https://avatars.githubusercontent.com/u/71327548?v=4"
-    private val id="구구"
+    private val id = "구구"
 
     private val _myProfileState = MutableStateFlow<MyProfileState>(MyProfileState.Loading)
     val myProfileState: StateFlow<MyProfileState> = _myProfileState.asStateFlow()
 
     private val _myPostState = MutableStateFlow<MyPostState>(MyPostState.Loading)
-    val myPostState:StateFlow<MyPostState> = _myPostState.asStateFlow()
+    val myPostState: StateFlow<MyPostState> = _myPostState.asStateFlow()
 
     private val _myState = MutableStateFlow<MyState>(MyState.Loading)
-    val myState:StateFlow<MyState> = _myState.asStateFlow()
+    val myState: StateFlow<MyState> = _myState.asStateFlow()
 
     private val _editProfileState = MutableStateFlow<EditProfileState>(EditProfileState.Loading)
-    val editProfileState:StateFlow<EditProfileState> = _editProfileState.asStateFlow()
+    val editProfileState: StateFlow<EditProfileState> = _editProfileState.asStateFlow()
 
     private val _likePostState = MutableStateFlow<LikePostState>(LikePostState.Loading)
     val likePostState: StateFlow<LikePostState> = _likePostState.asStateFlow()
 
 
-
-    fun getProfile(token:String){
+    fun getProfile(token: String) {
         viewModelScope.launch {
-            baseRepository.getMyProfile(token).onSuccess { response->
-                _myProfileState.value=MyProfileState.Success(response)
+            baseRepository.getMyProfile(token).onSuccess { response ->
+                _myProfileState.value = MyProfileState.Success(response)
+                _myProfileState.value = MyProfileState.Loading
             }.onFailure {
                 _myProfileState.value = MyProfileState.Error(it.message.toString())
                 if (it is HttpException) {
@@ -67,7 +67,7 @@ class MyViewModel @Inject constructor(
         }
     }
 
-    fun getMyPosts(token:String){
+    fun getMyPosts(token: String) {
         viewModelScope.launch {
             baseRepository.getMyPosts(token).onSuccess { response ->
                 _myPostState.value = MyPostState.Success(response)
@@ -87,12 +87,12 @@ class MyViewModel @Inject constructor(
         }
     }
 
-    fun editProfile(token: String, image: MultipartBody.Part){
+    fun editProfile(token: String, image: MultipartBody.Part) {
         viewModelScope.launch {
-            baseRepository.editProfile(token, image).onSuccess { response->
-                _editProfileState.value=EditProfileState.Success(response)
+            baseRepository.editProfile(token, image).onSuccess { response ->
+                _editProfileState.value = EditProfileState.Success(response)
             }.onFailure {
-                _editProfileState.value=EditProfileState.Error(it.message.toString())
+                _editProfileState.value = EditProfileState.Error(it.message.toString())
                 if (it is HttpException) {
                     try {
                         val errorBody: ResponseBody? = it.response()?.errorBody()
@@ -107,7 +107,7 @@ class MyViewModel @Inject constructor(
         }
     }
 
-    fun resetPostState(){
+    fun resetPostState() {
         _myPostState.value = MyPostState.Loading
     }
 
@@ -165,10 +165,10 @@ class MyViewModel @Inject constructor(
         val errorMessage = jsonObject.optString("message", "Unknown error")
 
         // 추출된 에러 메시지 로깅
-        Timber.e( "Error message: $errorMessage")
+        Timber.e("Error message: $errorMessage")
     }
 
-    fun getPosts(){
+    fun getPosts() {
         val myPosts = listOf(
             Post(
                 profile = profile,
@@ -179,8 +179,18 @@ class MyViewModel @Inject constructor(
                 images = listOf(R.drawable.ic_image2, R.drawable.ic_image3),
                 like = 101,
                 comments = listOf(
-                    Post.Comments("https://avatars.githubusercontent.com/u/71327548?v=4", "Liam", "와 생일 축하해요!!", 5),
-                    Post.Comments("https://avatars.githubusercontent.com/u/71327548?v=4", "Emma", "케이크 진짜 맛있어보여요", 3)
+                    Post.Comments(
+                        "https://avatars.githubusercontent.com/u/71327548?v=4",
+                        "Liam",
+                        "와 생일 축하해요!!",
+                        5
+                    ),
+                    Post.Comments(
+                        "https://avatars.githubusercontent.com/u/71327548?v=4",
+                        "Emma",
+                        "케이크 진짜 맛있어보여요",
+                        3
+                    )
                 )
             ),
             Post(
@@ -192,7 +202,12 @@ class MyViewModel @Inject constructor(
                 images = listOf(R.drawable.ic_image, R.drawable.ic_image4),
                 like = 78,
                 comments = listOf(
-                    Post.Comments("https://avatars.githubusercontent.com/u/71327548?v=4", "Ben", "저도 같이 뒹굴고 싶네요 ㅎㅎ", 2)
+                    Post.Comments(
+                        "https://avatars.githubusercontent.com/u/71327548?v=4",
+                        "Ben",
+                        "저도 같이 뒹굴고 싶네요 ㅎㅎ",
+                        2
+                    )
                 )
             ),
             Post(
@@ -204,8 +219,18 @@ class MyViewModel @Inject constructor(
                 images = listOf(R.drawable.ic_image3),
                 like = 96,
                 comments = listOf(
-                    Post.Comments("https://avatars.githubusercontent.com/u/71327548?v=4", "Sasha", "그래도 너무 귀여워요!", 4),
-                    Post.Comments("https://avatars.githubusercontent.com/u/71327548?v=4", "Noah", "저희 집도 삐져요ㅠㅠ", 3)
+                    Post.Comments(
+                        "https://avatars.githubusercontent.com/u/71327548?v=4",
+                        "Sasha",
+                        "그래도 너무 귀여워요!",
+                        4
+                    ),
+                    Post.Comments(
+                        "https://avatars.githubusercontent.com/u/71327548?v=4",
+                        "Noah",
+                        "저희 집도 삐져요ㅠㅠ",
+                        3
+                    )
                 )
             ),
             Post(
@@ -217,12 +242,22 @@ class MyViewModel @Inject constructor(
                 images = listOf(R.drawable.ic_image, R.drawable.ic_image2, R.drawable.ic_image4),
                 like = 132,
                 comments = listOf(
-                    Post.Comments("https://avatars.githubusercontent.com/u/71327548?v=4", "Jisoo", "우리 애는 무서워서 안 올라가요ㅠ", 2),
-                    Post.Comments("https://avatars.githubusercontent.com/u/71327548?v=4", "Nina", "캣타워 정보 공유 가능할까요?", 1)
+                    Post.Comments(
+                        "https://avatars.githubusercontent.com/u/71327548?v=4",
+                        "Jisoo",
+                        "우리 애는 무서워서 안 올라가요ㅠ",
+                        2
+                    ),
+                    Post.Comments(
+                        "https://avatars.githubusercontent.com/u/71327548?v=4",
+                        "Nina",
+                        "캣타워 정보 공유 가능할까요?",
+                        1
+                    )
                 )
             )
         )
 
-        _myState.value=MyState.Success(myPosts)
+        _myState.value = MyState.Success(myPosts)
     }
 }

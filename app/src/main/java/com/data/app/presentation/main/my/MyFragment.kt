@@ -21,13 +21,11 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentContainerView
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import coil.load
 import coil.transform.CircleCropTransformation
-import com.data.app.BuildConfig
 import com.data.app.R
 import com.data.app.data.shared_preferences.AppPreferences
 import com.data.app.databinding.FragmentMyBinding
@@ -36,11 +34,12 @@ import com.data.app.extension.my.EditProfileState
 import com.data.app.extension.my.MyPostState
 import com.data.app.extension.my.MyProfileState
 import com.data.app.presentation.login.LoginActivity
-import com.data.app.presentation.main.MainViewModel
 import com.data.app.presentation.main.OnTabReselectedListener
 import com.data.app.util.security.resetToSystemLocale
 import com.yalantis.ucrop.UCrop
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -55,7 +54,6 @@ class MyFragment : Fragment(), OnTabReselectedListener {
     private val binding: FragmentMyBinding
         get() = requireNotNull(_binding) { "home fragment is null" }
     private val myViewModel: MyViewModel by viewModels()
-    private val mainViewModel: MainViewModel by activityViewModels()
     private lateinit var myAdapter: _root_ide_package_.com.data.app.presentation.main.my.MyAdapter
     private lateinit var galleryLauncher: ActivityResultLauncher<Intent>
 
@@ -108,54 +106,100 @@ class MyFragment : Fragment(), OnTabReselectedListener {
             }
         }
 
-        showProfile()
+        showProfile(false)
 
         makeList()
         clickQuit()
     }
 
-    private fun showProfile() {
+    private fun showProfile(onlyList:Boolean) {
         lifecycleScope.launch {
-            myViewModel.myProfileState.collect { myProfileState ->
-                when (myProfileState) {
-                    is MyProfileState.Success -> {
-                        Timber.d("myProfileState is success")
-                        mainViewModel.saveUserId(myProfileState.response.userId)
-                        with(binding) {
-                            val profile =
-                                myProfileState.response.profileImage
-                            // val resourceId = resources.getIdentifier("ic_profile", "drawable", requireContext().packageName)
-                            ivProfile.load(profile) {
-                                transformations(CircleCropTransformation())
-                                placeholder(R.drawable.ic_profile)
-                                fallback(R.drawable.ic_profile) // profile이 null일 때 기본 이미지 표시
-                            }
-                            tvName.text = myProfileState.response.name
-                            tvCountry.text = myProfileState.response.nationNameKo
+            val myProfileState = myViewModel.myProfileState
+                .filter { it is MyProfileState.Success || it is MyProfileState.Error }
+                .first() // 최초 1개만 수집
+            when (myProfileState) {
+                is MyProfileState.Success -> {
+                    // reselected 된거라면
+                    if(onlyList) {
+                        with(binding){
+                            Timber.d("FollowingCount: ${myProfileState.response.followingCount}")
                             tvPostCount.text = myProfileState.response.postCount.toString()
                             tvFollowerCount.text = myProfileState.response.followerCount.toString()
                             tvFollowingCount.text = myProfileState.response.followingCount.toString()
-
-                            btnEdit.setOnClickListener {
-                                Timber.d("편집 버튼 클릭됨!")
-                                checkGalleryPermissionAndOpenPicker()
-                            }
-
-                            showPosts(profile)
-                            clickFollow(myProfileState.response.userId)
                         }
+                        return@launch
                     }
 
-                    is MyProfileState.Loading -> {
-                        Timber.d("myProfileState is loading")
-                    }
+                    Timber.d("FollowingCount: myProfileState is success")
+                    with(binding) {
+                        val profile = myProfileState.response.profileImage
+                        ivProfile.load(profile) {
+                            transformations(CircleCropTransformation())
+                            placeholder(R.drawable.ic_profile)
+                            fallback(R.drawable.ic_profile)
+                        }
+                        tvName.text = myProfileState.response.name
+                        tvCountry.text = myProfileState.response.nationNameKo
+                        tvPostCount.text = myProfileState.response.postCount.toString()
+                        tvFollowerCount.text = myProfileState.response.followerCount.toString()
+                        tvFollowingCount.text = myProfileState.response.followingCount.toString()
 
-                    is MyProfileState.Error -> {
-                        Timber.d("myProfileState is error")
+                        btnEdit.setOnClickListener {
+                            Timber.d("편집 버튼 클릭됨!")
+                            checkGalleryPermissionAndOpenPicker()
+                        }
+
+                        showPosts(profile)
+                        clickFollow(myProfileState.response.userId)
                     }
                 }
+
+                is MyProfileState.Loading -> Timber.d("myProfileState is loading")
+                is MyProfileState.Error -> Timber.d("myProfileState is error")
             }
         }
+
+        /* lifecycleScope.launch {
+             myViewModel.myProfileState.collect { myProfileState ->
+                 when (myProfileState) {
+                     is MyProfileState.Success -> {
+                         Timber.d("myProfileState is success")
+                         mainViewModel.saveUserId(myProfileState.response.userId)
+                         with(binding) {
+                             val profile =
+                                 myProfileState.response.profileImage
+                             // val resourceId = resources.getIdentifier("ic_profile", "drawable", requireContext().packageName)
+                             ivProfile.load(profile) {
+                                 transformations(CircleCropTransformation())
+                                 placeholder(R.drawable.ic_profile)
+                                 fallback(R.drawable.ic_profile) // profile이 null일 때 기본 이미지 표시
+                             }
+                             tvName.text = myProfileState.response.name
+                             tvCountry.text = myProfileState.response.nationNameKo
+                             tvPostCount.text = myProfileState.response.postCount.toString()
+                             tvFollowerCount.text = myProfileState.response.followerCount.toString()
+                             tvFollowingCount.text = myProfileState.response.followingCount.toString()
+
+                             btnEdit.setOnClickListener {
+                                 Timber.d("편집 버튼 클릭됨!")
+                                 checkGalleryPermissionAndOpenPicker()
+                             }
+
+                             showPosts(profile)
+                             clickFollow(myProfileState.response.userId)
+                         }
+                     }
+
+                     is MyProfileState.Loading -> {
+                         Timber.d("myProfileState is loading")
+                     }
+
+                     is MyProfileState.Error -> {
+                         Timber.d("myProfileState is error")
+                     }
+                 }
+             }
+         }*/
 
         myViewModel.getProfile(appPreferences.getAccessToken()!!)
     }
@@ -176,7 +220,8 @@ class MyFragment : Fragment(), OnTabReselectedListener {
                                     else myViewModel.unLikePost(appPreferences.getAccessToken()!!, postId)
                                 })
                         binding.rvPosts.adapter = myAdapter
-                        myAdapter.getList(profile, myPostState.response.posts)
+                        myAdapter.getProfile(profile)
+                        myAdapter.getList(myPostState.response.posts)
                         myViewModel.resetPostState()
                     }
                     is MyPostState.Loading -> {}
@@ -386,6 +431,8 @@ class MyFragment : Fragment(), OnTabReselectedListener {
                                     placeholder(R.drawable.ic_profile)  // 로딩 중 이미지
                                     error(R.drawable.ic_profile)  // 오류 시 이미지
                                 }
+
+                                myAdapter.getProfile(state.response.msg)
                             }
 
                             is EditProfileState.Loading -> {}
@@ -400,7 +447,6 @@ class MyFragment : Fragment(), OnTabReselectedListener {
                 }
 
                 myViewModel.editProfile(appPreferences.getAccessToken()!!, createImagePart(it))
-                myViewModel.getMyPosts(appPreferences.getAccessToken()!!)
             }
         } else if (requestCode == UCrop.REQUEST_CROP && resultCode == UCrop.RESULT_ERROR) {
             val error = UCrop.getError(data!!)
@@ -426,6 +472,7 @@ class MyFragment : Fragment(), OnTabReselectedListener {
 
     override fun onTabReselected() {
         myViewModel.getMyPosts(appPreferences.getAccessToken()!!)
+        showProfile(true)
     }
 
     override fun onDestroyView() {

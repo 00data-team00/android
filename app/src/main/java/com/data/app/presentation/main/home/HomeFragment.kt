@@ -174,6 +174,7 @@ class HomeFragment : Fragment(), OnTabReselectedListener {
                             tvNotGiveUp.text = getString(R.string.home_not_give_up, name)
                             tvContinueStudy.text = getString(R.string.home_continue_study, 13)
                         }
+                        mainViewModel.saveUserId(state.response.userId)
                     }
 
                     is MyProfileState.Loading -> {}

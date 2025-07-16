@@ -65,7 +65,8 @@ class ExploreFragment : Fragment(), OnTabReselectedListener {
     private fun getDeadLineList() {
         val deadlineAdapter = ExploreDeadLineAdapter(onClick = { appLink ->
             if (appLink.isNullOrEmpty() || !appLink.startsWith("http")) {
-                val dialogBinding = DialogExpiredBinding.inflate(LayoutInflater.from(requireContext()))
+                val dialogBinding =
+                    DialogExpiredBinding.inflate(LayoutInflater.from(requireContext()))
 
                 val alertDialog = AlertDialog.Builder(requireContext())
                     .setView(dialogBinding.root)
@@ -89,7 +90,10 @@ class ExploreFragment : Fragment(), OnTabReselectedListener {
                 when (deadLineProgramState) {
                     is DeadLineProgramState.Success -> {
                         Timber.d("deadlineprogram: ${deadLineProgramState.response.eduPrograms}")
-                        deadlineAdapter.getList(deadLineProgramState.response.eduPrograms)
+
+                        val nonNullList =
+                            deadLineProgramState.response.eduPrograms.filter { it.appLink != "검색 결과가 없습니다." }
+                        deadlineAdapter.getList(nonNullList)
                     }
 
                     is DeadLineProgramState.Loading -> {}
@@ -106,7 +110,8 @@ class ExploreFragment : Fragment(), OnTabReselectedListener {
     private fun getProgramList() {
         exploreProgramAdapter = ExploreProgramAdapter(clickProgram = { appLink ->
             if (appLink.isNullOrEmpty() || !appLink.startsWith("http")) {
-                val dialogBinding = DialogExpiredBinding.inflate(LayoutInflater.from(requireContext()))
+                val dialogBinding =
+                    DialogExpiredBinding.inflate(LayoutInflater.from(requireContext()))
 
                 val alertDialog = AlertDialog.Builder(requireContext())
                     .setView(dialogBinding.root)
@@ -130,10 +135,11 @@ class ExploreFragment : Fragment(), OnTabReselectedListener {
                 when (allProgramsState) {
                     is AllProgramsState.Success -> {
 //                        searchList(allProgramsState.response.content)
+                        val nonNullList = allProgramsState.response.content.filter { it.appLink != "검색 결과가 없습니다." }
                         if (allProgramsState.isAppend)
-                            exploreProgramAdapter.addPrograms(allProgramsState.response.content)
-                        else exploreProgramAdapter.replacePrograms(allProgramsState.response.content)
-                        reflectFreePaid(allProgramsState.response.content)
+                            exploreProgramAdapter.addPrograms(nonNullList)
+                        else exploreProgramAdapter.replacePrograms(nonNullList)
+                        reflectFreePaid(nonNullList)
                     }
 
                     is AllProgramsState.Loading -> {}
@@ -159,9 +165,11 @@ class ExploreFragment : Fragment(), OnTabReselectedListener {
                 btnPaid.setTextColor(getResources().getColor(R.color.mock_ai_practice_title_gray))
 
                 exploreViewModel.resetPage()
-                if (binding.etSearch.text.isEmpty()){
+                if (binding.etSearch.text.isEmpty()) {
                     exploreViewModel.getAllPrograms(true, 10)
-                } else {exploreViewModel.getAllPrograms(true, 100)}
+                } else {
+                    exploreViewModel.getAllPrograms(true, 100)
+                }
 
 
 //                if(!etSearch.text.isEmpty()){
@@ -196,9 +204,11 @@ class ExploreFragment : Fragment(), OnTabReselectedListener {
                 btnPaid.setTextColor(getResources().getColor(R.color.white))
 
                 exploreViewModel.resetPage()
-                if (binding.etSearch.text.isEmpty()){
+                if (binding.etSearch.text.isEmpty()) {
                     exploreViewModel.getAllPrograms(false, 10)
-                } else {exploreViewModel.getAllPrograms(false, 100)}
+                } else {
+                    exploreViewModel.getAllPrograms(false, 100)
+                }
 
 //               if(!etSearch.text.isEmpty()){
 //                    exploreViewModel.resetPage()
@@ -229,7 +239,7 @@ class ExploreFragment : Fragment(), OnTabReselectedListener {
 
                 if (scrollY >= (view.measuredHeight - v.measuredHeight)) {
                     // 스크롤이 맨 아래 도달
-                    if (binding.etSearch.text.isEmpty()){
+                    if (binding.etSearch.text.isEmpty()) {
                         exploreViewModel.getAllPrograms(binding.btnFree.isSelected, 10)
                     }
                 }
@@ -237,75 +247,75 @@ class ExploreFragment : Fragment(), OnTabReselectedListener {
         }
     }
 
-   /* private fun switchPrograms() {
-        with(binding) {
-            btnFree.isSelected = true
-            btnFree.setTextColor(getResources().getColor(R.color.white))
-            exploreViewModel.getAllPrograms(true, 10)
+    /* private fun switchPrograms() {
+         with(binding) {
+             btnFree.isSelected = true
+             btnFree.setTextColor(getResources().getColor(R.color.white))
+             exploreViewModel.getAllPrograms(true, 10)
 
-            btnFree.setOnClickListener {
-                btnFree.isSelected = true
-                btnFree.setTextColor(getResources().getColor(R.color.white))
-                btnPaid.isSelected = false
-                btnPaid.setTextColor(getResources().getColor(R.color.mock_ai_practice_title_gray))
+             btnFree.setOnClickListener {
+                 btnFree.isSelected = true
+                 btnFree.setTextColor(getResources().getColor(R.color.white))
+                 btnPaid.isSelected = false
+                 btnPaid.setTextColor(getResources().getColor(R.color.mock_ai_practice_title_gray))
 
-                if(!etSearch.text.isEmpty()){
-                    val currentState = exploreViewModel.allProgramsState.value
-                    var curList: List<ResponseAllProgramDto.ProgramDto> = emptyList()
+                 if(!etSearch.text.isEmpty()){
+                     val currentState = exploreViewModel.allProgramsState.value
+                     var curList: List<ResponseAllProgramDto.ProgramDto> = emptyList()
 
-                    if (currentState is AllProgramsState.Success) {
-                        val response = currentState.response
-                        curList = response.content
-                    }
+                     if (currentState is AllProgramsState.Success) {
+                         val response = currentState.response
+                         curList = response.content
+                     }
 
-                    val keyword = etSearch.text
-                    val filteredList = curList.filter {
-                        it.titleNm.contains(keyword, ignoreCase = true)
-                    }
-                    exploreProgramAdapter.updateList(filteredList)
-                }
-                else{
-                    exploreViewModel.resetPage()
-                    exploreViewModel.getAllPrograms(true, 10)
-                }
+                     val keyword = etSearch.text
+                     val filteredList = curList.filter {
+                         it.titleNm.contains(keyword, ignoreCase = true)
+                     }
+                     exploreProgramAdapter.updateList(filteredList)
+                 }
+                 else{
+                     exploreViewModel.resetPage()
+                     exploreViewModel.getAllPrograms(true, 10)
+                 }
 
-            }
-            btnPaid.setOnClickListener {
-                btnFree.isSelected = false
-                btnFree.setTextColor(getResources().getColor(R.color.mock_ai_practice_title_gray))
-                btnPaid.isSelected = true
-                btnPaid.setTextColor(getResources().getColor(R.color.white))
+             }
+             btnPaid.setOnClickListener {
+                 btnFree.isSelected = false
+                 btnFree.setTextColor(getResources().getColor(R.color.mock_ai_practice_title_gray))
+                 btnPaid.isSelected = true
+                 btnPaid.setTextColor(getResources().getColor(R.color.white))
 
-                if(!etSearch.text.isEmpty()){
-                    val currentState = exploreViewModel.allProgramsState.value
-                    var curList: List<ResponseAllProgramDto.ProgramDto> = emptyList()
+                 if(!etSearch.text.isEmpty()){
+                     val currentState = exploreViewModel.allProgramsState.value
+                     var curList: List<ResponseAllProgramDto.ProgramDto> = emptyList()
 
-                    if (currentState is AllProgramsState.Success) {
-                        val response = currentState.response
-                        curList = response.content
-                    }
+                     if (currentState is AllProgramsState.Success) {
+                         val response = currentState.response
+                         curList = response.content
+                     }
 
-                    val keyword = etSearch.text
-                    val filteredList = curList.filter {
-                        it.titleNm.contains(keyword, ignoreCase = true)
-                    }
-                    exploreProgramAdapter.updateList(filteredList)
-                }else{
-                    exploreViewModel.resetPage()
-                    exploreViewModel.getAllPrograms(false, 10)
-                }
-            }
+                     val keyword = etSearch.text
+                     val filteredList = curList.filter {
+                         it.titleNm.contains(keyword, ignoreCase = true)
+                     }
+                     exploreProgramAdapter.updateList(filteredList)
+                 }else{
+                     exploreViewModel.resetPage()
+                     exploreViewModel.getAllPrograms(false, 10)
+                 }
+             }
 
-            nsvExplore.setOnScrollChangeListener { v: NestedScrollView, _, scrollY, _, oldScrollY ->
-                val view = v.getChildAt(v.childCount - 1)
+             nsvExplore.setOnScrollChangeListener { v: NestedScrollView, _, scrollY, _, oldScrollY ->
+                 val view = v.getChildAt(v.childCount - 1)
 
-                if (scrollY >= (view.measuredHeight - v.measuredHeight)) {
-                    // 스크롤이 맨 아래 도달
-                    exploreViewModel.getAllPrograms(binding.btnFree.isSelected, 10)
-                }
-            }
-        }
-    }*/
+                 if (scrollY >= (view.measuredHeight - v.measuredHeight)) {
+                     // 스크롤이 맨 아래 도달
+                     exploreViewModel.getAllPrograms(binding.btnFree.isSelected, 10)
+                 }
+             }
+         }
+     }*/
 
     /*private fun clickPriceButton() {
         val programAdapter = ExploreProgramAdapter(clickProgram = {
@@ -335,7 +345,7 @@ class ExploreFragment : Fragment(), OnTabReselectedListener {
         }
     }*/
 
-    private fun reflectFreePaid(followlist: List<ResponseAllProgramDto.ProgramDto>){
+    private fun reflectFreePaid(followlist: List<ResponseAllProgramDto.ProgramDto>) {
         val keyword = binding.etSearch.text.toString().trim()
         val filteredList = followlist.filter {
             it.titleNm.contains(keyword, ignoreCase = true)
@@ -346,8 +356,8 @@ class ExploreFragment : Fragment(), OnTabReselectedListener {
         }
     }
 
-    private fun searchList_(){
-        binding.etSearch.doOnTextChanged{ text, _, _, _ ->
+    private fun searchList_() {
+        binding.etSearch.doOnTextChanged { text, _, _, _ ->
             val keyword = text.toString().trim()
             if (keyword.isEmpty()) {
                 exploreViewModel.resetPage()
@@ -378,8 +388,8 @@ class ExploreFragment : Fragment(), OnTabReselectedListener {
 //        }
 //    }
 
-    private fun getText(){
-       binding.etSearch.addTextChangedListener(object : TextWatcher {
+    private fun getText() {
+        binding.etSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
 
