@@ -197,6 +197,50 @@
                 app:layout_constraintBottom_toBottomOf="@id/tv_quiz_count_2"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/tv_quiz_count_2" />
+
+            <ImageView
+                android:id="@+id/iv_nointernet"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:src="@drawable/ic_nointernet_black_24"
+                android:visibility="gone"
+                android:layout_marginBottom="5dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="@id/tv_nointernet"
+                app:tint="#aa1111" />
+
+            <TextView
+                android:id="@+id/tv_nointernet"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="@string/no_internet"
+                android:textColor="@color/community_content_black"
+                android:textStyle="bold"
+                android:textAlignment="center"
+                android:textSize="10sp"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/iv_nointernet"
+                app:layout_constraintBottom_toTopOf="@id/btn_refresh"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_refresh"
+                android:layout_width="wrap_content"
+                android:layout_height="25dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginBottom="14dp"
+                android:background="@drawable/btn_answer_click"
+                android:text="refresh"
+                android:textColor="#449944"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_nointernet"
+                app:layout_constraintBottom_toBottomOf="parent"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView

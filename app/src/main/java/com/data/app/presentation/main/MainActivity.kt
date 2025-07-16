@@ -266,6 +266,7 @@ class MainActivity : BaseActivity() {
 
 
     override fun onBackPressed() {
+        super.onBackPressed()
         val quitFragment = supportFragmentManager.findFragmentById(R.id.fcv_quit)
         if (quitFragment != null) {
             supportFragmentManager.popBackStack()

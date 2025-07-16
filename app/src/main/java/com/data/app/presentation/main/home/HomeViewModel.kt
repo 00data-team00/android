@@ -33,7 +33,7 @@ class HomeViewModel @Inject constructor(
             baseRepository.getUserGameInfo(token).onSuccess { response->
                 _userGameInfoState.value= UserGameInfoState.Success(response)
             }.onFailure {
-                _userGameInfoState.value= UserGameInfoState.Error("user game info error!")
+                _userGameInfoState.value= UserGameInfoState.Error(it.message.toString())
                 if (it is HttpException) {
                     try {
                         val errorBody: ResponseBody? = it.response()?.errorBody()

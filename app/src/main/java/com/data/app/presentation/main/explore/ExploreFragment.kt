@@ -60,6 +60,14 @@ class ExploreFragment : Fragment(), OnTabReselectedListener {
         getProgramList()
         switchPrograms()
         getText()
+        refresh()
+    }
+
+    private fun refresh(){
+        binding.btnRefresh.setOnClickListener{
+            exploreViewModel.getDeadLinePrograms()
+            exploreViewModel.getAllPrograms(binding.btnFree.isSelected, 10)
+        }
     }
 
     private fun getDeadLineList() {
@@ -135,6 +143,11 @@ class ExploreFragment : Fragment(), OnTabReselectedListener {
                 when (allProgramsState) {
                     is AllProgramsState.Success -> {
 //                        searchList(allProgramsState.response.content)
+                        binding.ivNointernet.visibility = View.GONE
+                        binding.tvNointernet.visibility = View.GONE
+                        binding.btnRefresh.visibility = View.GONE
+                        binding.rvAllProgram.visibility = View.VISIBLE
+
                         val nonNullList = allProgramsState.response.content.filter { it.appLink != "검색 결과가 없습니다." }
                         if (allProgramsState.isAppend)
                             exploreProgramAdapter.addPrograms(nonNullList)
@@ -145,6 +158,12 @@ class ExploreFragment : Fragment(), OnTabReselectedListener {
                     is AllProgramsState.Loading -> {}
                     is AllProgramsState.Error -> {
                         Timber.e("explore all programs state error!")
+                        if(allProgramsState.message.contains("No address")) {
+                            binding.ivNointernet.visibility = View.VISIBLE
+                            binding.tvNointernet.visibility = View.VISIBLE
+                            binding.btnRefresh.visibility = View.VISIBLE
+                            binding.rvAllProgram.visibility = View.GONE
+                        }
                     }
                 }
 

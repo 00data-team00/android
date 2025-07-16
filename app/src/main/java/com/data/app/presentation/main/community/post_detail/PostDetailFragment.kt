@@ -75,6 +75,15 @@ class PostDetailFragment : Fragment() {
     private fun setting() {
         getPost()
         clickBackButton()
+
+        refresh()
+    }
+
+    private fun refresh(){
+        val postId = postDetailFragmentArgs.postId.toInt()
+        binding.btnRefresh.setOnClickListener{
+            postDetailViewModel.getPostDetail(appPreferences.getAccessToken()!!, postId)
+        }
     }
 
     private fun getPost() {
@@ -83,6 +92,22 @@ class PostDetailFragment : Fragment() {
             postDetailViewModel.postDetailState.collect { postState ->
                 when (postState) {
                     is PostDetailState.Success -> {
+                        with(binding){
+                            tvId.visibility = View.VISIBLE
+                            ivProfile.visibility = View.VISIBLE
+                            tvTime.visibility = View.VISIBLE
+                            tvContent.visibility = View.VISIBLE
+                            btnLike.visibility = View.VISIBLE
+                            tvLikeCount.visibility = View.VISIBLE
+                            btnComment.visibility = View.VISIBLE
+                            tvCommentCount.visibility = View.VISIBLE
+                            btnShare.visibility = View.VISIBLE
+
+                            ivNointernet.visibility = View.GONE
+                            tvNointernet.visibility = View.GONE
+                            btnRefresh.visibility = View.GONE
+                        }
+
                         val post = postState.response
 
                         //binding.btnFollow.isSelected = post.isFollowing
@@ -101,8 +126,31 @@ class PostDetailFragment : Fragment() {
 
                     }
 
-                    is PostDetailState.Loading -> {}
-                    is PostDetailState.Error -> {}
+                    is PostDetailState.Loading -> {
+                        Timber.d("loading in post detail")
+                        with(binding){
+                            tvId.visibility = View.GONE
+                            ivProfile.visibility = View.GONE
+                            tvTime.visibility = View.GONE
+                            tvContent.visibility = View.GONE
+                            btnLike.visibility = View.GONE
+                            tvLikeCount.visibility = View.GONE
+                            btnComment.visibility = View.GONE
+                            tvCommentCount.visibility = View.GONE
+                            btnShare.visibility = View.GONE
+
+                            ivNointernet.visibility = View.VISIBLE
+                            tvNointernet.visibility = View.VISIBLE
+                            btnRefresh.visibility = View.VISIBLE
+                        }
+                    }
+                    is PostDetailState.Error -> {
+                        if(postState.message.contains("No address")){
+                            binding.ivNointernet.visibility = View.VISIBLE
+                            binding.tvNointernet.visibility = View.VISIBLE
+                            binding.btnRefresh.visibility = View.VISIBLE
+                        }
+                    }
                 }
             }
         }

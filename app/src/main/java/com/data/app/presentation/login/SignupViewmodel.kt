@@ -40,6 +40,14 @@ class SignupViewmodel @Inject constructor(
     var nationality: ResponseNationDto.Nations?=null
     lateinit var password: String
 
+    fun resetLoading() {
+        _sendMailState.value = SendMailState.Loading
+    }
+
+    fun resetLoading2() {
+        _registerState.value = RegisterState.Loading
+    }
+
     fun sendMail(newEmail:String){
         viewModelScope.launch {
             baseRepository.sendMail(newEmail).onSuccess { response->

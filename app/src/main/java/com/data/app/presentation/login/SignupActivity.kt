@@ -220,9 +220,14 @@ class SignupActivity : AppCompatActivity() {
                     is SendMailState.Loading -> {}
                     is SendMailState.Error -> {
                         Timber.e("get send mail state error!")
-                        Toast.makeText(this@SignupActivity, sendMailState.message, Toast.LENGTH_SHORT).show()
+                        Timber.d(sendMailState.message)
+                        if(sendMailState.message.contains("No address")){
+                            Toast.makeText(this@SignupActivity, "인터넷이 연결되어있지 않습니다.", Toast.LENGTH_SHORT).show()
+                        }
+                        else{Toast.makeText(this@SignupActivity, sendMailState.message, Toast.LENGTH_SHORT).show()}
                         binding.btnSend.setText("send")
                         binding.btnSend.setBackgroundColor(Color.parseColor("#FFFFFF"))
+                        signUpViewModel.resetLoading()
                     }
                 }
             }
@@ -299,6 +304,10 @@ class SignupActivity : AppCompatActivity() {
 
                     is RegisterState.Loading -> {}
                     is RegisterState.Error -> {
+                        if(registerState.message.contains("No address")){
+                            Toast.makeText(this@SignupActivity, "인터넷이 연결되어있지 않습니다.", Toast.LENGTH_SHORT).show()
+                            signUpViewModel.resetLoading2()
+                        }
                         Toast.makeText(this@SignupActivity, "Sign up fail!", Toast.LENGTH_SHORT).show()
                         Timber.e("get register state error!")
                     }

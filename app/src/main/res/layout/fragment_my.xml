@@ -199,5 +199,47 @@
             app:layout_constraintTop_toBottomOf="@id/btn_edit"
             app:layout_constraintVertical_bias="0.0"
             tools:listitem="@layout/item_post" />
+
+        <ImageView
+            android:id="@+id/iv_nointernet"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/ic_nointernet_black_24"
+            android:layout_marginTop="40dp"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btn_edit"
+            app:layout_constraintBottom_toBottomOf="@id/tv_nointernet"
+            app:tint="#aa1111" />
+
+        <TextView
+            android:id="@+id/tv_nointernet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="@string/no_internet"
+            android:textColor="@color/community_content_black"
+            android:textStyle="bold"
+            android:textAlignment="center"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/iv_nointernet"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_refresh"
+            android:layout_width="wrap_content"
+            android:layout_height="25dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="5dp"
+            android:background="@drawable/btn_answer_click"
+            android:text="refresh"
+            android:textColor="#449944"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_nointernet" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

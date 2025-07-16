@@ -70,6 +70,18 @@ class QuitFragment:Fragment() {
 
         binding.clQuit.setOnClickListener{}
         binding.clQuitagain.setOnClickListener{}
+
+        refresh()
+    }
+
+    private fun refresh() {
+        binding.btnRefresh.setOnClickListener{
+            binding.ivNointernet.visibility = View.GONE
+            binding.tvNointernet.visibility = View.GONE
+            binding.btnRefresh.visibility = View.GONE
+            binding.btnDecide.visibility = View.VISIBLE
+            binding.btnCancel.visibility = View.VISIBLE
+        }
     }
 
     private fun clickButtons() {
@@ -147,6 +159,15 @@ class QuitFragment:Fragment() {
                     }
                     is QuitState.Error -> {
                         Timber.d("quitState is error")
+                        Timber.d(quitState.message)
+                        if(quitState.message.contains("No address")) {
+                            binding.ivNointernet.visibility = View.VISIBLE
+                            binding.tvNointernet.visibility = View.VISIBLE
+                            binding.btnRefresh.visibility = View.VISIBLE
+                            binding.btnDecide.visibility = View.GONE
+                            binding.btnCancel.visibility = View.GONE
+                            quitViewModel.resetLoading()
+                        }
                     }
                 }
             }

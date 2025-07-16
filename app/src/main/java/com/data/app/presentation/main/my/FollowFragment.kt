@@ -19,6 +19,7 @@ import com.data.app.databinding.FragmentFollowBinding
 import com.data.app.extension.community.FollowListState
 import com.data.app.extension.community.FollowState
 import com.data.app.presentation.main.MainViewModel
+import com.data.app.presentation.main.community.CommunityViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -80,6 +81,11 @@ class FollowFragment : Fragment() {
             followViewModel.followListState.collect{state->
                 when(state){
                     is FollowListState.Success->{
+                        binding.ivNointernet.visibility = View.GONE
+                        binding.tvNointernet.visibility = View.GONE
+                        binding.btnRefresh.visibility = View.GONE
+                        binding.rvFollowList.visibility = View.VISIBLE
+
                         followAdapter.submitList(
                             if (title == "follower") {
                                 state.response.messages
@@ -90,9 +96,19 @@ class FollowFragment : Fragment() {
                     }
                     is FollowListState.Loading->{
                         Timber.d("follower state loading")
+                        binding.ivNointernet.visibility = View.VISIBLE
+                        binding.tvNointernet.visibility = View.VISIBLE
+                        binding.btnRefresh.visibility = View.VISIBLE
+                        binding.rvFollowList.visibility = View.GONE
                     }
                     is FollowListState.Error->{
                         Timber.e("setChats start chat state is error!!")
+                        if(state.message.contains("No address")) {
+                            binding.ivNointernet.visibility = View.VISIBLE
+                            binding.tvNointernet.visibility = View.VISIBLE
+                            binding.btnRefresh.visibility = View.VISIBLE
+                            binding.rvFollowList.visibility = View.GONE
+                        }
                     }
                 }
             }
@@ -102,6 +118,11 @@ class FollowFragment : Fragment() {
         if(title=="follower") followViewModel.getFollowers(appPreferences.getAccessToken()!!, userId)
         else if(title=="following") followViewModel.getFollowing(appPreferences.getAccessToken()!!, userId)
         clickBackButton()
+
+        binding.btnRefresh.setOnClickListener{
+            if(title=="follower") followViewModel.getFollowers(appPreferences.getAccessToken()!!, userId)
+            else if(title=="following") followViewModel.getFollowing(appPreferences.getAccessToken()!!, userId)
+        }
     }
 
     private fun setFollow(){
