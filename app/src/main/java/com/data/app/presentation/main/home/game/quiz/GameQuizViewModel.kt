@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.data.app.data.response_dto.home.quiz.ResponseQuizDto
 import com.data.app.domain.repository.BaseRepository
+import com.data.app.extension.home.UserGameInfoState
 import com.data.app.extension.home.quiz.QuizCompleteState
 import com.data.app.extension.home.quiz.QuizState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -36,6 +37,9 @@ class GameQuizViewModel @Inject constructor(
     private val _quizCompleteState =
         MutableStateFlow<QuizCompleteState>(QuizCompleteState.Loading)
     val quizCompleteState: StateFlow<QuizCompleteState> = _quizCompleteState.asStateFlow()
+
+    private var _userGameInfoState = MutableStateFlow<UserGameInfoState>(UserGameInfoState.Loading)
+    val userGameInfoState: StateFlow<UserGameInfoState> = _userGameInfoState.asStateFlow()
 
     private val _quiz = MutableLiveData<List<ResponseQuizDto.QuizDto>>()
     val quiz: LiveData<List<ResponseQuizDto.QuizDto>> = _quiz
@@ -93,6 +97,30 @@ class GameQuizViewModel @Inject constructor(
         }
     }
 
+    fun getUserGameInfo(){
+        viewModelScope.launch {
+            baseRepository.getUserGameInfo(_accessToken.value!!).onSuccess { response->
+                _userGameInfoState.value= UserGameInfoState.Success(response)
+            }.onFailure {
+                _userGameInfoState.value= UserGameInfoState.Error("user game info error!")
+                if (it is HttpException) {
+                    try {
+                        val errorBody: ResponseBody? = it.response()?.errorBody()
+                        val errorBodyString = errorBody?.string() ?: ""
+                        httpError(errorBodyString)
+                    } catch (e: Exception) {
+                        // JSON 파싱 실패 시 로깅
+                        Timber.e("Error parsing error body: ${e}")
+                    }
+                }
+            }
+        }
+    }
+
+    fun resetUserGameInfoState() {
+        _userGameInfoState.value = UserGameInfoState.Loading // 또는 Idle 같은 상태 정의
+    }
+
     private fun httpError(errorBody: String) {
         // 전체 에러 바디를 로깅하여 디버깅
         Timber.e("Full error body: $errorBody")
@@ -105,38 +133,5 @@ class GameQuizViewModel @Inject constructor(
         Timber.e("Error message: $errorMessage")
     }
 
-    /* val quiz = listOf(
-         Quiz.Word(
-             "그림에 맞는 단어를 선택해주세요!", R.drawable.ic_question, listOf(
-                 Quiz.Word.Answer("보이스피싱", true),
-                 Quiz.Word.Answer("로그인", false),
-                 Quiz.Word.Answer("리모컨", false),
-                 Quiz.Word.Answer("계약", false),
-             )
-         ),
-         Quiz.Listening(
-             "음성을 듣고 해당하는 단어의\n뜻을 선택해주세요.", "보이스피싱", listOf(
-                 Quiz.Word.Answer("보이스피싱", true),
-                 Quiz.Word.Answer("로그인", false),
-                 Quiz.Word.Answer("리모컨", false),
-                 Quiz.Word.Answer("계약", false),
-             )
-         ),
-         Quiz.Word(
-              "그림에 맞는 단어를 선택해주세요!", R.drawable.ic_question, listOf(
-                 Quiz.Word.Answer("보이스피싱", true),
-                 Quiz.Word.Answer("로그인", false),
-                 Quiz.Word.Answer("리모컨", false),
-                 Quiz.Word.Answer("계약", false),
-             )
-         ),
-         Quiz.Listening(
-             "음성을 듣고 해당하는 단어의\n뜻을 선택해주세요.", "로그인", listOf(
-                 Quiz.Word.Answer("보이스피싱", false),
-                 Quiz.Word.Answer("로그인", true),
-                 Quiz.Word.Answer("리모컨", false),
-                 Quiz.Word.Answer("계약", false),
-             )
-         ),
-     )*/
+    val dayNames = listOf("월", "화", "수", "목", "금", "토", "일")
 }
