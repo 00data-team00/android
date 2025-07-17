@@ -72,6 +72,7 @@ class GameTabViewModel @Inject constructor(
 
     private fun updateList(levelComplete:Int){
         for(i in 1 .. levelComplete){
+            if(i>=3) return
             levels[i].isOpen=true
         }
     }
@@ -81,12 +82,12 @@ class GameTabViewModel @Inject constructor(
         GameLevel("LV.1", true),
         GameLevel("LV.2", false),
         GameLevel("LV.3", false),
-        GameLevel("LV.4", false),
-        GameLevel("LV.5", false),
-        GameLevel("LV.6", false),
-        GameLevel("LV.7", false),
-        GameLevel("LV.8", false),
-        GameLevel("LV.9", false),
-        GameLevel("LV.10", false),
+        GameLevel("준비중", false),
+        GameLevel("준비중", false),
+        GameLevel("준비중", false),
+        GameLevel("준비중", false),
+        GameLevel("준비중", false),
+        GameLevel("준비중", false),
+        GameLevel("준비중", false),
     )
 }

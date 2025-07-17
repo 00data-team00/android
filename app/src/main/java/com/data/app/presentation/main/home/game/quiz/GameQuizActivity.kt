@@ -34,7 +34,7 @@ import timber.log.Timber
 class GameQuizActivity : BaseActivity() {
     private lateinit var binding: ActivityGameQuizBinding
     private lateinit var lifeAdapter: GameQuizLifeAdapter
-    private val gameQuizViewModel : GameQuizViewModel by viewModels()
+    private val gameQuizViewModel: GameQuizViewModel by viewModels()
     private var currentLives = 3 // 초기 생명
     var isGameFinished = false
     private var currentGameQuizFragment: Fragment? = null
@@ -86,15 +86,15 @@ class GameQuizActivity : BaseActivity() {
     private fun setQuestion() {
         isGameFinished = false
 
-        val token=intent.getStringExtra("accessToken")!!
+        val token = intent.getStringExtra("accessToken")!!
 
         lifecycleScope.launch {
-            gameQuizViewModel.accessToken.observe(this@GameQuizActivity){
+            gameQuizViewModel.accessToken.observe(this@GameQuizActivity) {
                 val level = intent.getIntExtra("level", 0)
                 showQuestions()
 
-                lifecycleScope.launch{
-                    gameQuizViewModel.level.observe(this@GameQuizActivity){
+                lifecycleScope.launch {
+                    gameQuizViewModel.level.observe(this@GameQuizActivity) {
                         val lang = getSharedPreferences("settings", Context.MODE_PRIVATE)
                             .getString("lang", "ko") ?: "ko"
 
@@ -112,11 +112,11 @@ class GameQuizActivity : BaseActivity() {
         gameQuizViewModel.saveToken(token!!)
     }
 
-    private fun showQuestions(){
+    private fun showQuestions() {
         lifecycleScope.launch {
             gameQuizViewModel.quizState.collect { state ->
-                when(state){
-                    is QuizState.Success->{
+                when (state) {
+                    is QuizState.Success -> {
                         // ivLoadingBg와 laLoading이 동시에 fadeout으로 사라지도록 설정
                         binding.ivLoadingBg.animate().alpha(0f).setDuration(500).withEndAction {
                             // 애니메이션 끝난 후 GONE 처리
@@ -132,14 +132,18 @@ class GameQuizActivity : BaseActivity() {
                         val fragment = GameQuizFragment()
                         currentGameQuizFragment = fragment // 새로운 프래그먼트 인스턴스 참조 저장
                         supportFragmentManager.beginTransaction()
-                            .replace(R.id.fcv_question, fragment) // ID가 fcv_question인 FrameLayout에 교체
+                            .replace(
+                                R.id.fcv_question,
+                                fragment
+                            ) // ID가 fcv_question인 FrameLayout에 교체
                             // .addToBackStack(null) // 필요에 따라 추가
                             .commit()
                         // fcvQuestion FrameLayout 자체를 보이게 설정 (만약 이전에 GONE 처리했다면)
                         binding.fcvQuestion.visibility = View.VISIBLE
                     }
-                    is QuizState.Loading->{}
-                    is QuizState.Error->{
+
+                    is QuizState.Loading -> {}
+                    is QuizState.Error -> {
                         Timber.e("quiz state error")
                     }
                 }
@@ -187,8 +191,8 @@ class GameQuizActivity : BaseActivity() {
         isGameFinished = true
     }
 
-    fun updateProgress(percent:Int) {
-        if(binding.progressQuiz.progress==percent) return
+    fun updateProgress(percent: Int) {
+        if (binding.progressQuiz.progress == percent) return
 
         binding.progressQuiz.progressTintList =
             ColorStateList.valueOf(ContextCompat.getColor(this, R.color.community_follow_green))
@@ -229,44 +233,46 @@ class GameQuizActivity : BaseActivity() {
             binding.fcvQuestion.visibility = View.GONE
         }
 
-        if (success) {
-            lifecycleScope.launch {
-                gameQuizViewModel.userGameInfoState.collect { state->
-                    when(state){
-                        is UserGameInfoState.Success->{
-                            binding.clGameQuiz.setBackgroundColor(Color.WHITE)
-                            binding.tvGameSuccessfail.text = getString(R.string.game_quiz_finalsucess)
-                            binding.tvGameComment.text = getString(R.string.game_quiz_commentsuccess)
-                            binding.ivGameFinal.setImageResource(R.drawable.ic_correct)
-                            binding.btnQuizStop.isSelected = true
-                            binding.btnQuizAgain.isSelected = true
-                            binding.rvWeeks.setBackgroundResource(R.drawable.bg_week_success_green)
-                            showWeeks(state.response.weeklyQuizStatus)
-
-                            gameQuizViewModel.resetUserGameInfoState()
+        lifecycleScope.launch {
+            gameQuizViewModel.userGameInfoState.collect { state ->
+                when (state) {
+                    is UserGameInfoState.Success -> {
+                        if (success) {
+                            with(binding) {
+                                clGameQuiz.setBackgroundColor(Color.WHITE)
+                                tvGameSuccessfail.text = getString(R.string.game_quiz_finalsucess)
+                                tvGameComment.text = getString(R.string.game_quiz_commentsuccess)
+                                ivGameFinal.setImageResource(R.drawable.ic_correct)
+                                btnQuizStop.isSelected = true
+                                btnQuizAgain.isSelected = true
+                                rvWeeks.setBackgroundResource(R.drawable.bg_week_success_green)
+                                                            }
+                        } else {
+                            with(binding){
+                                clGameQuiz.setBackgroundColor(getColor(R.color.game_fail_pink))
+                                tvGameSuccessfail.text = getString(R.string.game_quiz_finalfail)
+                                tvGameComment.text = getString(R.string.game_quiz_commentafail)
+                                ivGameFinal.setImageResource(R.drawable.ic_wrong)
+                                btnQuizStop.isSelected = false
+                                btnQuizAgain.isSelected = false
+                                rvWeeks.setBackgroundResource(R.drawable.bg_week_fail_white)
+                                progressQuiz.progressTintList =
+                                    ColorStateList.valueOf(ContextCompat.getColor(this@GameQuizActivity, R.color.game_flag_red))
+                            }
                         }
-                        is UserGameInfoState.Loading->{}
-                        is UserGameInfoState.Error->{
-                            Timber.e("user game info error!")
-                        }
+                        showWeeks(state.response.weeklyQuizStatus)
+                        gameQuizViewModel.resetUserGameInfoState()
                     }
 
+                    is UserGameInfoState.Loading -> {}
+                    is UserGameInfoState.Error -> {
+                        Timber.e("user game info error!")
+                    }
                 }
+
             }
-
-            gameQuizViewModel.getUserGameInfo()
-
-        } else {
-            binding.clGameQuiz.setBackgroundColor(getColor(R.color.game_fail_pink))
-            binding.tvGameSuccessfail.text = getString(R.string.game_quiz_finalfail)
-            binding.tvGameComment.text = getString(R.string.game_quiz_commentafail)
-            binding.ivGameFinal.setImageResource(R.drawable.ic_wrong)
-            binding.btnQuizStop.isSelected = false
-            binding.btnQuizAgain.isSelected = false
-            binding.rvWeeks.setBackgroundResource(R.drawable.bg_week_fail_white)
-            binding.progressQuiz.progressTintList =
-                ColorStateList.valueOf(ContextCompat.getColor(this, R.color.game_flag_red))
         }
+        gameQuizViewModel.getUserGameInfo()
         binding.clGameSuccess.visibility = View.VISIBLE
         //binding.fcvQuestion.visibility=View.GONE
         binding.rvLife.visibility = View.GONE
@@ -377,8 +383,8 @@ class GameQuizActivity : BaseActivity() {
             setLife()
             setQuestion()
 
-            binding.rvWeeks.adapter=null
-            binding.progressQuiz.progress=0
+            binding.rvWeeks.adapter = null
+            binding.progressQuiz.progress = 0
             binding.progressQuiz.progressDrawable?.clearColorFilter()
         }
     }
