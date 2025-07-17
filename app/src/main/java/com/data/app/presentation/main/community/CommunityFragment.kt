@@ -105,6 +105,7 @@ class CommunityFragment : Fragment(), OnTabReselectedListener {
             communityViewModel.alreadyNavigated = true
 
             val contentId = state.response.contentId
+            val contentType = state.response.contentType
             Timber.d("✅ contentId: $contentId")
 
             val navHost = requireActivity()
@@ -113,10 +114,24 @@ class CommunityFragment : Fragment(), OnTabReselectedListener {
 
             val navController = navHost?.navController
 
-            val action = CommunityFragmentDirections
-                .actionCommunityFragmentToOtherProfileFragment(contentId.toString())
 
-            navController?.navigate(action)
+            when (contentType) {
+                "PROFILE" -> {
+                    val action = CommunityFragmentDirections
+                        .actionCommunityFragmentToOtherProfileFragment(contentId.toString())
+                    navController?.navigate(action)
+                }
+
+                "POST" -> {
+                    val action = CommunityFragmentDirections
+                        .actionCommunityFragmentToPostDetailFragment(contentId.toString())
+                    navController?.navigate(action)
+                }
+
+                else -> {
+                    Timber.w("❓ Unknown contentType: $contentType")
+                }
+            }
 
             return true
         }

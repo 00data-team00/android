@@ -124,10 +124,12 @@ class LandingActivity:AppCompatActivity() {
     private fun navigateToMain(accessToken: String) {
         val intent = Intent(this, MainActivity::class.java).apply{
             putExtra("accessToken", accessToken)
-            if (deepLinkUri?.toString()?.contains("/shared/profile/") == true) {
+            if (deepLinkUri?.toString()?.contains("/shared/profile/") == true
+                || deepLinkUri?.toString()?.contains("/shared/post/") == true) {
                 val token = deepLinkUri?.toString()?.substringAfterLast("/")
-                putExtra("profile_token", token)
+                putExtra("token", token)
             }
+
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
         startActivity(intent)
