@@ -73,21 +73,21 @@ class PostDetailFragment : Fragment() {
     }
 
     private fun setting() {
-        getPost()
+        val postId = postDetailFragmentArgs.postId.toInt()
+        Timber.d("postId: ${postId}")
+        getPost(postId)
         clickBackButton()
 
-        refresh()
+        refresh(postId)
     }
 
-    private fun refresh(){
-        val postId = postDetailFragmentArgs.postId.toInt()
+    private fun refresh(postId:Int){
         binding.btnRefresh.setOnClickListener{
             postDetailViewModel.getPostDetail(appPreferences.getAccessToken()!!, postId)
         }
     }
 
-    private fun getPost() {
-        val postId = postDetailFragmentArgs.postId.toInt()
+    private fun getPost(postId:Int) {
         lifecycleScope.launch {
             postDetailViewModel.postDetailState.collect { postState ->
                 when (postState) {
@@ -203,7 +203,7 @@ class PostDetailFragment : Fragment() {
 
             if (post.isLiked) btnLike.isSelected = true
 
-            if (mainViewModel.getUserId() == post.authorId) {
+            if (appPreferences.getUserId() == post.authorId) {
                 btnMenu.visibility = View.VISIBLE
                 binding.btnMenu.setOnClickListener {
                     clickMenu(post.id)

@@ -19,6 +19,7 @@ import com.data.app.data.response_dto.community.ResponseFollowListDto
 import com.data.app.data.response_dto.login.ResponseLoginDto
 import com.data.app.data.response_dto.community.ResponseEditProfileDto
 import com.data.app.data.response_dto.community.ResponseFollowDto
+import com.data.app.data.response_dto.community.ResponseGetIdFromTokenDto
 import com.data.app.data.response_dto.community.ResponsePostDetailDto
 import com.data.app.data.response_dto.community.ResponseShareDto
 import com.data.app.data.response_dto.community.ResponseTimeLineDto
@@ -176,6 +177,11 @@ interface BaseService {
         // @Header("Authorization") token:String,
         @Path("postId") postId:Int
     ): ResponseShareDto
+
+    @GET("api/share/token/{token}")
+    suspend fun getIdFromToken(
+        @Path("token") token:String
+    ): ResponseGetIdFromTokenDto
 
     // home
     @GET("api/me/user-game-info")

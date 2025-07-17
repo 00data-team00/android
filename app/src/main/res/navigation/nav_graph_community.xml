@@ -8,6 +8,11 @@
         android:id="@+id/communityFragment"
         android:name="com.data.app.presentation.main.community.CommunityFragment"
         android:label="community">
+        <argument
+            android:name="profile_id"
+            app:argType="string"
+            app:nullable="true"/>
+
         <action
             android:id="@+id/action_communityFragment_to_postDetailFragment"
             app:destination="@id/postDetailFragment"

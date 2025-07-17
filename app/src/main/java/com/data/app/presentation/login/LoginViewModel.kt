@@ -7,6 +7,7 @@ import com.data.app.data.shared_preferences.AppPreferences
 import com.data.app.domain.repository.BaseRepository
 import com.data.app.extension.login.LoginState
 import com.data.app.extension.login.RefreshState
+import com.data.app.extension.my.MyProfileState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,23 +32,20 @@ class LoginViewModel @Inject constructor(
     private var _refreshState = MutableStateFlow<RefreshState>(RefreshState.Loading)
     val refreshState: StateFlow<RefreshState> = _refreshState.asStateFlow()
 
-    /**
-     * 앱 시작 시 저장된 액세스 토큰이 있는지 확인합니다.
-     * 실제 유효성 검증은 API 호출 시 서버에서 이루어집니다.
-     * 여기서는 토큰 존재 유무만으로 간단히 판단합니다.
-     */
+    private val _myProfileState = MutableStateFlow<MyProfileState>(MyProfileState.Loading)
+    val myProfileState: StateFlow<MyProfileState> = _myProfileState.asStateFlow()
+
     fun checkForSavedLogin() {
         viewModelScope.launch {
             _loginState.value = LoginState.Loading
             delay(100)
             val expiresAt = appPreferences.getExpiresAt()
-            if (appPreferences.getAccessToken() != null && expiresAt != null) {
+            if (appPreferences.getAccessToken() != null && expiresAt != null && appPreferences.getUserId()!=null) {
                 if (expiresAt < System.currentTimeMillis()) {
                     // 토큰이 존재하면, 일단 성공으로 간주하고 메인 화면으로 보냅니다.
-                    // 실제 API 호출에서 토큰이 만료되었다면, 그때 로그아웃 처리됩니다.
-                    // (더 나은 방법: 토큰 유효성 검증 API를 호출하거나, 토큰 자체에 만료시간 정보가 있다면 클라에서 확인)
+                    // 실제 API 호출에서 토큰이 만료되었다면, refresh 토큰으로 새로운 토큰을 받아옵니다.
                     Timber.d("ViewModel: Found saved access token: ${appPreferences.getAccessToken()}. Assuming valid for now.")
-                    _loginState.value = LoginState.Success(appPreferences.getLoginInfo()!!)
+                    _loginState.value = LoginState.Success(appPreferences.getAccessToken()!!)
                 } else {
                     Timber.d("ViewModel: token expired: ${appPreferences.getAccessToken()}")
                     _loginState.value = LoginState.Error("token expired")
@@ -68,7 +66,7 @@ class LoginViewModel @Inject constructor(
                 appPreferences.saveDtoInfo(ResponseLoginDto("Bearer ${response.accessToken}", response.refreshToken, response.tokenType, expiresAt.toInt()), )
 
                 Timber.d("Login successful. Token saved: ${response.accessToken}")
-                _loginState.value = LoginState.Success(response)
+                _loginState.value = LoginState.Success("Bearer ${response.accessToken}")
                 /*} else {
                     val errorMessage = response.msg ?: "로그인 실패: 서버 응답 오류"
                     Timber.w("Login API call was successful but response indicates failure: $errorMessage")
@@ -115,6 +113,27 @@ class LoginViewModel @Inject constructor(
                     }
                 } else {
                     _refreshState.value = RefreshState.Error("네트워크 에러 또는 알 수 없는 오류: ${it.message}")
+                }
+            }
+        }
+    }
+
+    fun getProfile(token:String){
+        viewModelScope.launch {
+            baseRepository.getMyProfile(token).onSuccess { response->
+                appPreferences.saveUserInfo(response.userId, response.name)
+                _myProfileState.value=MyProfileState.Success(response)
+            }.onFailure {
+                _myProfileState.value = MyProfileState.Error(it.message.toString())
+                if (it is HttpException) {
+                    try {
+                        val errorBody: ResponseBody? = it.response()?.errorBody()
+                        val errorBodyString = errorBody?.string() ?: ""
+                        httpError(errorBodyString)
+                    } catch (e: Exception) {
+                        // JSON 파싱 실패 시 로깅
+                        Timber.e("Error parsing error body: ${e}")
+                    }
                 }
             }
         }

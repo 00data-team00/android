@@ -41,7 +41,7 @@ class FollowAdapter(
                 btnFollow.isSelected = data.isFollowing
 
                 val profile =
-                    data.profileImage?.let { BuildConfig.BASE_URL.removeSuffix("/") + it }
+                    data.profileImage
                 // val resourceId = resources.getIdentifier("ic_profile", "drawable", requireContext().packageName)
                 ivProfile.load(profile) {
                     transformations(CircleCropTransformation())

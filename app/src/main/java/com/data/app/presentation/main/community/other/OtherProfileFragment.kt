@@ -34,6 +34,7 @@ import com.data.app.databinding.FragmentOtherProfileBinding
 import com.data.app.extension.community.FollowState
 import com.data.app.extension.community.GetUserPostState
 import com.data.app.extension.community.LikePostState
+import com.data.app.extension.my.MyProfileState
 import com.data.app.extension.my.SharePostState
 import com.data.app.extension.my.ShareProfileState
 import com.data.app.extension.my.UserProfileState
@@ -129,7 +130,8 @@ class OtherProfileFragment : Fragment() {
                             clickFollow(userId)
 
                             with(btnFollow) {
-                                if (mainViewModel.getUserId() == userProfileState.response.userId) {
+                                val loginUserId = appPreferences.getUserId()
+                                if (loginUserId == userProfileState.response.userId) {
                                     setBackgroundResource(R.drawable.btn_profile_share)
                                     setTextColor(resources.getColor(R.color.bnv_unclicked_black))
                                     text = getString(R.string.my_profile_edit)
@@ -173,7 +175,7 @@ class OtherProfileFragment : Fragment() {
 
     private fun clickEditButton() {
         binding.btnFollow.setOnClickListener {
-            val currentUserId = mainViewModel.getUserId()
+            val currentUserId = appPreferences.getUserId()
             val thisProfileUserId = otherProfileFragmentArgs.userId.toInt()
 
             if (currentUserId != thisProfileUserId) return@setOnClickListener // 방어 코드
@@ -270,14 +272,17 @@ class OtherProfileFragment : Fragment() {
         setLike()
     }
 
-    private fun getFollowState(userId:Int) {
+    private fun getFollowState(userId: Int) {
         lifecycleScope.launch {
             otherProfileViewModel.followState.collect { followState ->
                 when (followState) {
                     is FollowState.Success -> {
                         Timber.d("followState is success")
-                      //  isRequesting = false
-                        otherProfileViewModel.getUserProfile(appPreferences.getAccessToken()!!, userId)
+                        //  isRequesting = false
+                        otherProfileViewModel.getUserProfile(
+                            appPreferences.getAccessToken()!!,
+                            userId
+                        )
                         otherProfileViewModel.resetFollowState()
                     }
 
@@ -299,24 +304,24 @@ class OtherProfileFragment : Fragment() {
             setOnClickListener {
                 //if (isRequesting) return@setOnClickListener
 
-              /*  isRequesting = true
-                isEnabled = false // 버튼 비활성화
-*/
-               /* with(binding.btnFollow){
-                    //isSelected=!isSelected
+                /*  isRequesting = true
+                  isEnabled = false // 버튼 비활성화
+  */
+                /* with(binding.btnFollow){
+                     //isSelected=!isSelected
 
-                    text = context.getString(
-                        if (isSelected) R.string.community_following
-                        else R.string.community_follow
-                    )
-                    setTextColor(
-                        ContextCompat.getColor(
-                            context,
-                            if (isSelected)R.color.bnv_unclicked_black else R.color.white
-                        )
-                    )
-                    //isEnabled = true
-                }*/
+                     text = context.getString(
+                         if (isSelected) R.string.community_following
+                         else R.string.community_follow
+                     )
+                     setTextColor(
+                         ContextCompat.getColor(
+                             context,
+                             if (isSelected)R.color.bnv_unclicked_black else R.color.white
+                         )
+                     )
+                     //isEnabled = true
+                 }*/
 
                 if (isSelected) {
                     otherProfileViewModel.unFollow(
@@ -325,20 +330,23 @@ class OtherProfileFragment : Fragment() {
                     )
                 } else otherProfileViewModel.follow(appPreferences.getAccessToken()!!, userId)
 
-               //
+                //
 
             }
         }
     }
 
-    private fun clickFollow(userId:Int) {
+    private fun clickFollow(userId: Int) {
         listOf(
             binding.vFollower to "follower",
             binding.vFollowing to "following"
         ).forEach { (view, title) ->
             view.setOnClickListener {
                 val action =
-                    OtherProfileFragmentDirections.actionOtherProfileFragmentToFollowFragment(title, userId.toString())
+                    OtherProfileFragmentDirections.actionOtherProfileFragmentToFollowFragment(
+                        title,
+                        userId.toString()
+                    )
                 findNavController().navigate(action)
             }
         }

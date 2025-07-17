@@ -25,8 +25,6 @@ class HomeViewModel @Inject constructor(
     private var _userGameInfoState = MutableStateFlow<UserGameInfoState>(UserGameInfoState.Loading)
     val userGameInfoState: StateFlow<UserGameInfoState> = _userGameInfoState.asStateFlow()
 
-    private val _myProfileState = MutableStateFlow<MyProfileState>(MyProfileState.Loading)
-    val myProfileState: StateFlow<MyProfileState> = _myProfileState.asStateFlow()
 
     fun getUserGameInfo(token:String){
         viewModelScope.launch {
@@ -48,7 +46,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun getProfile(token:String){
+    /*fun getProfile(token:String){
         viewModelScope.launch {
             baseRepository.getMyProfile(token).onSuccess { response->
                 _myProfileState.value=MyProfileState.Success(response)
@@ -67,7 +65,7 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
-
+*/
     private fun httpError(errorBody: String) {
         // 전체 에러 바디를 로깅하여 디버깅
         Timber.e("Full error body: $errorBody")

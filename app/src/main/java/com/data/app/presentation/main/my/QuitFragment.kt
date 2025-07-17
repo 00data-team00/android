@@ -142,8 +142,10 @@ class QuitFragment:Fragment() {
             quitViewModel.quitState.collect { quitState ->
                 when (quitState) {
                     is QuitState.Success -> {
+
                         // 로그인 정보 삭제
                         appPreferences.clearAccessToken()
+                        appPreferences.clearInfo()
 
                         val prefs = requireContext().getSharedPreferences("app_settings", Context.MODE_PRIVATE)
                         prefs.edit().remove("language_code").apply()

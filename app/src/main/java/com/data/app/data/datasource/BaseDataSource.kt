@@ -19,6 +19,7 @@ import com.data.app.data.response_dto.community.ResponseFollowListDto
 import com.data.app.data.response_dto.login.ResponseLoginDto
 import com.data.app.data.response_dto.community.ResponseEditProfileDto
 import com.data.app.data.response_dto.community.ResponseFollowDto
+import com.data.app.data.response_dto.community.ResponseGetIdFromTokenDto
 import com.data.app.data.response_dto.community.ResponsePostDetailDto
 import com.data.app.data.response_dto.community.ResponseShareDto
 import com.data.app.data.response_dto.community.ResponseTimeLineDto
@@ -138,6 +139,10 @@ interface BaseDataSource {
     suspend fun sharePost(
         postId:Int
     ): ResponseShareDto
+
+    suspend fun getIdFromToken(
+        token:String,
+    ): ResponseGetIdFromTokenDto
 
     // home
     suspend fun getUserGameInfo(

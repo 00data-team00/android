@@ -20,6 +20,7 @@ import com.data.app.data.response_dto.community.ResponseFollowListDto
 import com.data.app.data.response_dto.login.ResponseLoginDto
 import com.data.app.data.response_dto.community.ResponseEditProfileDto
 import com.data.app.data.response_dto.community.ResponseFollowDto
+import com.data.app.data.response_dto.community.ResponseGetIdFromTokenDto
 import com.data.app.data.response_dto.community.ResponsePostDetailDto
 import com.data.app.data.response_dto.community.ResponseShareDto
 import com.data.app.data.response_dto.community.ResponseTimeLineDto
@@ -72,6 +73,7 @@ class BaseDataSourceImpl @Inject constructor(
     override suspend fun getFollowingList(token: String, userId: Int): ResponseFollowListDto = baseService.getFollowingList(token, userId)
     override suspend fun shareProfile(userId: Int): ResponseShareDto = baseService.shareProfile(userId)
     override suspend fun sharePost(postId: Int): ResponseShareDto = baseService.sharePost(postId)
+    override suspend fun getIdFromToken(token: String): ResponseGetIdFromTokenDto = baseService.getIdFromToken(token)
 
     // home
     override suspend fun getUserGameInfo(token: String): ResponseUserGameInfoDto = baseService.getUserGameInfo(token)

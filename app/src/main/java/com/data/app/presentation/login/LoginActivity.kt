@@ -16,6 +16,7 @@ import com.data.app.databinding.ActivityLoginBinding
 import androidx.core.graphics.toColorInt
 import androidx.lifecycle.lifecycleScope
 import com.data.app.extension.login.LoginState
+import com.data.app.extension.my.MyProfileState
 import com.data.app.presentation.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -81,9 +82,7 @@ class LoginActivity : AppCompatActivity() {
             loginViewModel.loginState.collect { loginState ->
                 when (loginState) {
                     is LoginState.Success -> {
-                        val token = "Bearer " + loginState.response.accessToken
-                        if (token != null)
-                            startMain(token)
+                        saveInfo(loginState.accessToken)
                     }
                     is LoginState.Loading -> {}
                     is LoginState.Error -> {
@@ -116,10 +115,25 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun startMain(token: String) {
-        Timber.d("token: $token")
+    private fun saveInfo(accessToken: String) {
+        lifecycleScope.launch {
+            loginViewModel.myProfileState.collect { myProfileState ->
+                when (myProfileState) {
+                    is MyProfileState.Success -> {
+                        startMain()
+                    }
+                    is MyProfileState.Loading -> {}
+                    is MyProfileState.Error -> {
+                        Timber.e(myProfileState.message)
+                    }
+                }
+            }
+        }
+
+        loginViewModel.getProfile(accessToken)
+    }
+    private fun startMain() {
         val intent = Intent(this, MainActivity::class.java)
-        intent.putExtra("accessToken", token)
         startActivity(intent)
     }
 

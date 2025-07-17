@@ -2,6 +2,7 @@ package com.data.app.presentation.login
 
 import android.content.Intent
 import android.graphics.Typeface
+import android.net.Uri
 import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.text.Spanned
@@ -25,6 +26,7 @@ class LandingActivity:AppCompatActivity() {
 
     private lateinit var binding:ActivityLandingBinding
     private val loginViewModel: LoginViewModel by viewModels()
+    private var deepLinkUri: Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,6 +39,8 @@ class LandingActivity:AppCompatActivity() {
         builder.setSpan(StyleSpan(Typeface.BOLD), 22, textData.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         binding.tvLanding.text = builder
 
+        deepLinkUri = intent?.data
+        Timber.d("LandingActivity: 딥링크 URI = $deepLinkUri")
 
         observeLoginStateAndNavigate()
     }
@@ -51,14 +55,14 @@ class LandingActivity:AppCompatActivity() {
                     Timber.d("LandingActivity: LoginState changed to $state")
                     when (state) {
                         is LoginState.Success -> {
-                            Timber.d("token: ${state.response.accessToken}")
+                            Timber.d("token: ${state.accessToken}")
                             val elapsedTime = System.currentTimeMillis() - startTime
                             val remainingTime = minSplashTimeMillis - elapsedTime
                             if (remainingTime > 0) {
                                 kotlinx.coroutines.delay(remainingTime)
                             }
                             Timber.i("LandingActivity: Saved login found. Navigating to MainActivity.")
-                            navigateToMain(state.response)
+                            navigateToMain(state.accessToken)
                         }
                         is LoginState.Error -> {
                            /* val elapsedTime = System.currentTimeMillis() - startTime
@@ -100,7 +104,7 @@ class LandingActivity:AppCompatActivity() {
                     when(state){
                         is RefreshState.Success->{
                             Timber.d("token: ${state.response.accessToken}")
-                            navigateToMain(state.response)
+                            navigateToMain(state.response.accessToken!!)
                         }
                         is RefreshState.Error->{
                             Timber.w("LandingActivity: No saved login or error: ${state.message}. Navigating to LoginActivity.")
@@ -117,10 +121,15 @@ class LandingActivity:AppCompatActivity() {
         loginViewModel.refresh()
     }
 
-    private fun navigateToMain(response: ResponseLoginDto) {
-        val intent = Intent(this, MainActivity::class.java)
-        intent.putExtra("accessToken", response.accessToken)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+    private fun navigateToMain(accessToken: String) {
+        val intent = Intent(this, MainActivity::class.java).apply{
+            putExtra("accessToken", accessToken)
+            if (deepLinkUri?.toString()?.contains("/shared/profile/") == true) {
+                val token = deepLinkUri?.toString()?.substringAfterLast("/")
+                putExtra("profile_token", token)
+            }
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
         startActivity(intent)
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
         finish() // LandingActivity 종료
