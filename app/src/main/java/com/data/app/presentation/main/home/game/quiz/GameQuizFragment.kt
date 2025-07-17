@@ -32,6 +32,7 @@ class GameQuizFragment : Fragment() {
         get() = requireNotNull(_binding) { "home fragment is null" }
 
     private val gameQuizViewModel: GameQuizViewModel by activityViewModels()
+    private var clickedSubmit = false
 
     private var currentIndex = 0  // 현재 문제 번호
     private var isAnswerSelected = false
@@ -164,6 +165,9 @@ class GameQuizFragment : Fragment() {
 
     private fun clickCompleteBtn(question: ResponseQuizDto.QuizDto) {
         binding.btnComplete.setOnClickListener {
+            if (clickedSubmit) return@setOnClickListener
+            clickedSubmit=true
+
             if (textToSpeech?.isSpeaking == true) {
                 textToSpeech?.stop()
             }
@@ -191,6 +195,7 @@ class GameQuizFragment : Fragment() {
                 fragment?.setOnNextClickListener(object :
                     GameSuccessOrNotFragment.OnNextClickListener {
                     override fun onNextClicked(success: Boolean) {
+                        clickedSubmit=false
                         if (success) {
                             updateProgressBar()
                             moveToNextQuestion()

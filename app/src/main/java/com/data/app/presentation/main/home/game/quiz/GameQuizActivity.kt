@@ -22,6 +22,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.data.app.data.Week
+import com.data.app.extension.home.UserGameInfoState
 import com.data.app.extension.home.quiz.QuizState
 import com.data.app.presentation.main.BaseActivity
 import com.data.app.presentation.main.home.game.GameTabWeekAdapter
@@ -229,31 +230,32 @@ class GameQuizActivity : BaseActivity() {
         }
 
         if (success) {
-            binding.clGameQuiz.setBackgroundColor(Color.WHITE)
-            binding.tvGameSuccessfail.text = getString(R.string.game_quiz_finalsucess)
-            binding.tvGameComment.text = getString(R.string.game_quiz_commentsuccess)
-            binding.ivGameFinal.setImageResource(R.drawable.ic_correct)
-            binding.btnQuizStop.isSelected = true
-            binding.btnQuizAgain.isSelected = true
-           // binding.rvWeeks.setBackgroundResource(R.drawable.bg_week_success_green)
-
-           /* lifecycleScope.launch {
-                gameQuizViewModel.quizCompleteState.collect { state->
+            lifecycleScope.launch {
+                gameQuizViewModel.userGameInfoState.collect { state->
                     when(state){
-                        is QuizCompleteState.Success->{
-                            Timber.d("quiz complete!")
+                        is UserGameInfoState.Success->{
+                            binding.clGameQuiz.setBackgroundColor(Color.WHITE)
+                            binding.tvGameSuccessfail.text = getString(R.string.game_quiz_finalsucess)
+                            binding.tvGameComment.text = getString(R.string.game_quiz_commentsuccess)
+                            binding.ivGameFinal.setImageResource(R.drawable.ic_correct)
+                            binding.btnQuizStop.isSelected = true
+                            binding.btnQuizAgain.isSelected = true
+                            binding.rvWeeks.setBackgroundResource(R.drawable.bg_week_success_green)
+                            showWeeks(state.response.weeklyQuizStatus)
+
+                            gameQuizViewModel.resetUserGameInfoState()
                         }
-                        is QuizCompleteState.Loading->{}
-                        is QuizCompleteState.Error->{
-                            Timber.e("quiz complete state error!!!")
+                        is UserGameInfoState.Loading->{}
+                        is UserGameInfoState.Error->{
+                            Timber.e("user game info error!")
                         }
                     }
+
                 }
             }
 
-            if(!gameQuizViewModel.accessToken.value.isNullOrEmpty()){
-                gameQuizViewModel.completeQuiz()
-            }*/
+            gameQuizViewModel.getUserGameInfo()
+
         } else {
             binding.clGameQuiz.setBackgroundColor(getColor(R.color.game_fail_pink))
             binding.tvGameSuccessfail.text = getString(R.string.game_quiz_finalfail)
@@ -261,7 +263,7 @@ class GameQuizActivity : BaseActivity() {
             binding.ivGameFinal.setImageResource(R.drawable.ic_wrong)
             binding.btnQuizStop.isSelected = false
             binding.btnQuizAgain.isSelected = false
-           // binding.rvWeeks.setBackgroundResource(R.drawable.bg_week_fail_white)
+            binding.rvWeeks.setBackgroundResource(R.drawable.bg_week_fail_white)
             binding.progressQuiz.progressTintList =
                 ColorStateList.valueOf(ContextCompat.getColor(this, R.color.game_flag_red))
         }
@@ -269,12 +271,20 @@ class GameQuizActivity : BaseActivity() {
         //binding.fcvQuestion.visibility=View.GONE
         binding.rvLife.visibility = View.GONE
 
-        setWeek()
-
         Timber.d("Progress: ${binding.progressQuiz.progress}%")
     }
 
-    private fun setWeek() {
+    private fun showWeeks(weeklyQuizStatus: List<Boolean>) {
+        val weekAdapter = GameTabWeekAdapter()
+        binding.rvWeeks.adapter = weekAdapter
+        weekAdapter.getList(gameQuizViewModel.dayNames.zip(weeklyQuizStatus).map { (day, active) ->
+            Week(
+                day,
+                active
+            )
+        })
+    }
+    /*private fun setWeek() {
         val weekAdapter = GameTabWeekAdapter()
         val weeks = listOf(
             Week("월", false),
@@ -285,12 +295,12 @@ class GameQuizActivity : BaseActivity() {
             Week("토", false),
             Week("일", false),
         )
-       /* binding.rvWeeks.setPadding(0, binding.rvWeeks.paddingTop, 0, binding.rvWeeks.paddingBottom) //  좌우 패딩 초기화
+        binding.rvWeeks.setPadding(0, binding.rvWeeks.paddingTop, 0, binding.rvWeeks.paddingBottom) //  좌우 패딩 초기화
         binding.rvWeeks.scrollToPosition(0)
         binding.rvWeeks.adapter = weekAdapter
         weekAdapter.getList(weeks)
-        centerAlignItems(binding.rvWeeks, weekAdapter)*/
-    }
+        centerAlignItems(binding.rvWeeks, weekAdapter)
+    }*/
 
     private fun centerAlignItems(recyclerView: RecyclerView, adapter: GameTabWeekAdapter) {
         recyclerView.doOnPreDraw { // RecyclerView의 크기가 측정된 후에 실행
@@ -367,7 +377,7 @@ class GameQuizActivity : BaseActivity() {
             setLife()
             setQuestion()
 
-           // binding.rvWeeks.adapter=null
+            binding.rvWeeks.adapter=null
             binding.progressQuiz.progress=0
             binding.progressQuiz.progressDrawable?.clearColorFilter()
         }
