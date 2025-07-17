@@ -42,6 +42,7 @@ import javax.inject.Inject
 class WritePostActivity : BaseActivity() {
     private lateinit var binding: ActivityWritePostBinding
     private val writePostViewModel: WritePostViewModel by viewModels()
+    private var writeComplete = false
     @Inject
     lateinit var appPreferences: AppPreferences
 
@@ -178,11 +179,11 @@ class WritePostActivity : BaseActivity() {
 
             btnComplete.setOnClickListener {
                 if (btnComplete.isSelected) {
+                    if(writeComplete) return@setOnClickListener
                     val drawable = binding.ivGallery.drawable
                     if (drawable == null) {
                         Timber.d("이미지 없음!")
                     }
-
 
                     writePostViewModel.writePost(appPreferences.getAccessToken()!!, etPostWrite.text.toString(),getImage())
                 }
@@ -214,6 +215,7 @@ class WritePostActivity : BaseActivity() {
             writePostViewModel.writePostState.collect { writePostState ->
                 when (writePostState) {
                     is WritePostState.Success -> {
+                        writeComplete=true
                         Timber.d("write post success")
                         setResult(Activity.RESULT_OK)
                         finish()

@@ -13,7 +13,9 @@ import com.data.app.data.shared_preferences.AppPreferences
 import com.data.app.databinding.ActivityMainBinding
 import com.data.app.extension.main.GetIdFromTokenState
 import com.data.app.extension.my.MyProfileState
+import com.data.app.presentation.main.community.CommunityFragment
 import com.data.app.presentation.main.community.CommunityFragmentDirections
+import com.data.app.presentation.main.my.MyFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -127,28 +129,6 @@ class MainActivity : BaseActivity() {
 
         val isNewlyCreated = targetFragment == null
 
-        /*if (isNewlyCreated) {
-            val navHost = if (args != null) {
-                NavHostFragment.create(getNavGraphId(targetTabId), args)
-            } else {
-                NavHostFragment.create(getNavGraphId(targetTabId))
-            }
-            transaction.add(R.id.fcv_main, navHost, tag)
-            targetFragment = navHost
-
-            Timber.d("✅ navHost arguments = ${navHost.arguments}")
-        } else {
-            transaction.show(targetFragment!!)
-
-            // 이미 생성된 경우에도 args가 있으면 넘겨줌
-            args?.let { bundle ->
-                (targetFragment as? NavHostFragment)
-                    ?.childFragmentManager
-                    ?.primaryNavigationFragment
-                    ?.arguments = bundle
-            }
-        }*/
-
          if (isNewlyCreated) {
              Timber.d("newly created")
              val navHost = NavHostFragment.create(getNavGraphId(targetTabId))
@@ -167,6 +147,22 @@ class MainActivity : BaseActivity() {
 
         val currentNavHost = targetFragment as? NavHostFragment
         val navController = currentNavHost?.navController
+
+        if (targetTabId == R.id.menu_my) {
+            val myFragment = currentNavHost
+                ?.childFragmentManager
+                ?.fragments
+                ?.firstOrNull() as? MyFragment
+
+            myFragment?.dataUpdate()
+        }else if(targetTabId == R.id.menu_community){
+            val communityFragment = currentNavHost
+                ?.childFragmentManager
+                ?.fragments
+                ?.firstOrNull() as? CommunityFragment
+
+            communityFragment?.dataUpdate()
+        }
 
         if (wasReselected) {
             navController?.popBackStack(navController.graph.startDestinationId, false)
