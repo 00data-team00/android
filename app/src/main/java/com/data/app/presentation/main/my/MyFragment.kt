@@ -59,7 +59,7 @@ import javax.inject.Inject
 class MyFragment : Fragment(), OnTabReselectedListener {
     private var _binding: FragmentMyBinding? = null
     private val binding: FragmentMyBinding
-        get() = requireNotNull(_binding) { "home fragment is null" }
+        get() = requireNotNull(_binding) { "my fragment is null" }
     private val myViewModel: MyViewModel by viewModels()
     private lateinit var myAdapter: _root_ide_package_.com.data.app.presentation.main.my.MyAdapter
     private lateinit var galleryLauncher: ActivityResultLauncher<Intent>
@@ -525,6 +525,12 @@ class MyFragment : Fragment(), OnTabReselectedListener {
 
         val requestFile = tempFile.asRequestBody("image/*".toMediaTypeOrNull())
         return MultipartBody.Part.createFormData("image", tempFile.name, requestFile)
+    }
+
+    fun dataUpdate() {
+        Timber.d("🌀 MyFragment refresh() 호출")
+        myViewModel.getMyPosts(appPreferences.getAccessToken()!!)
+        myViewModel.getProfile(appPreferences.getAccessToken()!!)
     }
 
     override fun onTabReselected() {

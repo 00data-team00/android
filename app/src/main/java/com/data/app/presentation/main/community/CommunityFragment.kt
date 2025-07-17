@@ -428,24 +428,23 @@ class CommunityFragment : Fragment(), OnTabReselectedListener {
         Toast.makeText(requireContext(), "링크가 복사되었습니다.", Toast.LENGTH_SHORT).show()
     }
 
+    fun dataUpdate() {
+        when (communityViewModel.selectedTab.value) {
+            CommunityViewModel.CommunityTab.ALL ->
+                communityViewModel.getAllTimeLine(appPreferences.getAccessToken()!!)
+
+            CommunityViewModel.CommunityTab.FOLLOWING ->
+                communityViewModel.getFollowingTimeLine(appPreferences.getAccessToken()!!)
+
+            CommunityViewModel.CommunityTab.COUNTRY ->
+                communityViewModel.getNationTimeLine(appPreferences.getAccessToken()!!)
+        }
+    }
+
     override fun onPause() {
         super.onPause()
         // 스크롤 위치 저장
         communityViewModel.recyclerViewState = binding.rvPosts.layoutManager?.onSaveInstanceState()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        /* binding.rvPosts.smoothScrollToPosition(0)
-
-         when (communityViewModel.selectedTab.value) {
-             CommunityViewModel.CommunityTab.ALL ->
-                 communityViewModel.getAllTimeLine(appPreferences.getAccessToken()!!)
-             CommunityViewModel.CommunityTab.FOLLOWING ->
-                 communityViewModel.getFollowingTimeLine(appPreferences.getAccessToken()!!)
-             CommunityViewModel.CommunityTab.COUNTRY ->
-                 communityViewModel.getNationTimeLine(appPreferences.getAccessToken()!!)
-         }*/
     }
 
     override fun onDestroyView() {
