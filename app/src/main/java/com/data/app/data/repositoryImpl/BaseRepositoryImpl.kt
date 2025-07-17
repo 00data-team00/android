@@ -20,6 +20,7 @@ import com.data.app.data.response_dto.community.ResponseFollowListDto
 import com.data.app.data.response_dto.login.ResponseLoginDto
 import com.data.app.data.response_dto.community.ResponseEditProfileDto
 import com.data.app.data.response_dto.community.ResponseFollowDto
+import com.data.app.data.response_dto.community.ResponseGetIdFromTokenDto
 import com.data.app.data.response_dto.community.ResponsePostDetailDto
 import com.data.app.data.response_dto.community.ResponseShareDto
 import com.data.app.data.response_dto.community.ResponseTimeLineDto
@@ -247,6 +248,14 @@ class BaseRepositoryImpl @Inject constructor(
             baseDataSource.sharePost(postId)
         }.onFailure {
             Timber.e("base repository share post fail: $it")
+        }
+    }
+
+    override suspend fun getIdFromToken(token: String): Result<ResponseGetIdFromTokenDto> {
+        return runCatching {
+            baseDataSource.getIdFromToken(token)
+        }.onFailure {
+            Timber.e("base repository get id from token fail: $it")
         }
     }
 

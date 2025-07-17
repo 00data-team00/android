@@ -59,6 +59,8 @@ class CommunityViewModel @Inject constructor(
     private val _sharePostState = MutableSharedFlow<SharePostState>()
     val sharePostState: SharedFlow<SharePostState> = _sharePostState.asSharedFlow()
 
+    var alreadyNavigated = false
+
 
     fun selectTab(tab: CommunityTab) {
         _selectedTab.value = tab

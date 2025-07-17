@@ -6,11 +6,18 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentContainerView
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import com.data.app.R
+import com.data.app.data.shared_preferences.AppPreferences
 import com.data.app.databinding.ActivityMainBinding
+import com.data.app.extension.main.GetIdFromTokenState
+import com.data.app.extension.my.MyProfileState
+import com.data.app.presentation.main.community.CommunityFragmentDirections
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : BaseActivity() {
@@ -23,8 +30,12 @@ class MainActivity : BaseActivity() {
     private lateinit var navHostMap: Map<Int, FragmentContainerView>
     private val mainViewModel:MainViewModel by viewModels()
 
+    @Inject
+    lateinit var appPreferences: AppPreferences
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Timber.d("🧠 savedInstanceState = $savedInstanceState")
         initBinds()
         setting()
     }
@@ -35,33 +46,69 @@ class MainActivity : BaseActivity() {
     }
 
     private fun setting() {
-       /* binding.bnvMain.post {
-            val navController = findNavController(R.id.fcv_main)
-            binding.bnvMain.setupWithNavController(navController)
-        }*/
-        //clickBottomNavigation()
-        //replaceFragment(HomeFragment())
-        val token=intent.getStringExtra("accessToken")
-        Timber.d("token: $token")
-        if (token != null) {
-            mainViewModel.saveToken(token)
-            Timber.d("token: $token")
-        }
+        showFirstFragment()
+    }
 
-        setupBottomNavigation()
-        binding.bnvMain.selectedItemId = R.id.menu_home
-        switchTab(R.id.menu_home)
+    private fun showFirstFragment(){
+        val profileToken = intent.getStringExtra("profile_token")
+        Timber.d("profiletoken: ${profileToken}")
+        if (!profileToken.isNullOrBlank()) {
+            goCommunity()
+            mainViewModel.getIdFromToken(profileToken)
+        }else{
+            binding.bnvMain.selectedItemId = R.id.menu_home
+            switchTab(R.id.menu_home, false)
+            setupBottomNavigation()
+        }
+    }
+
+    private fun goCommunity(){
+        lifecycleScope.launch {
+            mainViewModel.getIdFromTokenState.collect { state->
+                when(state){
+                    is GetIdFromTokenState.Success-> {
+                        binding.bnvMain.selectedItemId = R.id.menu_community
+
+                       /* val bundle = Bundle().apply {
+                            putString("profile_id", state.response.contentId.toString())
+                            //putBoolean("shouldNavigateToOtherProfile", true)
+                        }*/
+
+                        switchTab(R.id.menu_community, true)
+                        setupBottomNavigation()
+                        //navController?.navigate(R.id.communityFragment, bundle)
+
+                        /*binding.fcvMain.post {
+                            val navHost = supportFragmentManager.findFragmentByTag("tab_${R.id.menu_community}") as? NavHostFragment
+                            val navController = navHost?.navController
+
+                            *//*val action = CommunityFragmentDirections
+                                .actionCommunityFragmentToOtherProfileFragment(state.response.contentId.toString()) // userId 넘김
+                            navController?.navigate(action)*//*
+                        }*/
+                    }
+                    is GetIdFromTokenState.Error->{
+                        Timber.e("get id from token state error: ${state.message}")
+                    }
+                    is GetIdFromTokenState.Loading->{
+                        Timber.d("get id from token state loading...")
+                    }
+                }
+            }
+        }
     }
 
     private fun setupBottomNavigation() {
         binding.bnvMain.setOnItemSelectedListener { item ->
-            switchTab(item.itemId)
+            Timber.d("👆 유저 탭 클릭 감지: ${item.itemId}")
+            switchTab(item.itemId, false)
             true
         }
     }
 
-    private fun switchTab(targetTabId: Int) {
-        val wasReselected = previousTabId == targetTabId
+    private fun switchTab(targetTabId: Int, skipShow: Boolean) {
+        Timber.d("🔁 switchTab 호출됨 targetTabId=$targetTabId, skipShow=$skipShow")
+        val wasReselected = currentTabId  == targetTabId
         previousTabId = currentTabId
         currentTabId = targetTabId
 
@@ -80,13 +127,41 @@ class MainActivity : BaseActivity() {
 
         val isNewlyCreated = targetFragment == null
 
-        if (isNewlyCreated) {
-            val navHost = NavHostFragment.create(getNavGraphId(targetTabId))
+        /*if (isNewlyCreated) {
+            val navHost = if (args != null) {
+                NavHostFragment.create(getNavGraphId(targetTabId), args)
+            } else {
+                NavHostFragment.create(getNavGraphId(targetTabId))
+            }
             transaction.add(R.id.fcv_main, navHost, tag)
             targetFragment = navHost
+
+            Timber.d("✅ navHost arguments = ${navHost.arguments}")
         } else {
             transaction.show(targetFragment!!)
-        }
+
+            // 이미 생성된 경우에도 args가 있으면 넘겨줌
+            args?.let { bundle ->
+                (targetFragment as? NavHostFragment)
+                    ?.childFragmentManager
+                    ?.primaryNavigationFragment
+                    ?.arguments = bundle
+            }
+        }*/
+
+         if (isNewlyCreated) {
+             Timber.d("newly created")
+             val navHost = NavHostFragment.create(getNavGraphId(targetTabId))
+             transaction.add(R.id.fcv_main, navHost, tag)
+             targetFragment = navHost
+         } else {
+             if (!skipShow) {
+                 transaction.show(targetFragment!!) // ✅ 조건적으로 show
+             } else {
+                 Timber.d("🔕 skipShow == true: show() 생략")
+             }
+             //transaction.show(targetFragment!!)
+         }
 
         transaction.commitNow()
 
@@ -103,157 +178,6 @@ class MainActivity : BaseActivity() {
             (fragment as? OnTabReselectedListener)?.onTabReselected()
         }
     }
-
-
-    /* private fun switchTab(targetTabId: Int) {
-         val wasCurrentTab = targetTabId == currentTabId
-         val tag = "tab_$targetTabId"
-         var targetFragment = supportFragmentManager.findFragmentByTag(tag)
-
-         val transaction = supportFragmentManager.beginTransaction()
-
-         // 모든 탭 숨김
-         listOf(R.id.menu_home, R.id.menu_explore, R.id.menu_community, R.id.menu_my).forEach { id ->
-             val existing = supportFragmentManager.findFragmentByTag("tab_$id")
-             if (existing != null && id != targetTabId) {
-                 transaction.hide(existing)
-             }
-         }
-
-         val isNewlyCreated = targetFragment == null
-
-         if (isNewlyCreated) {
-             val navHost = NavHostFragment.create(getNavGraphId(targetTabId))
-             transaction.add(R.id.fcv_main, navHost, tag)
-             targetFragment = navHost
-         } else {
-             transaction.show(targetFragment!!)
-         }
-
-         transaction.commitNow()
-
-         val currentNavHost = targetFragment as? NavHostFragment
-         val navController = currentNavHost?.navController
-
-         if (wasCurrentTab) {
-             // ❗️오직 같은 탭을 다시 눌렀을 때만 popBackStack 수행
-             navController?.popBackStack(navController.graph.startDestinationId, false)
-
-             val fragment = currentNavHost
-                 ?.childFragmentManager
-                 ?.fragments
-                 ?.firstOrNull()
-             (fragment as? OnTabReselectedListener)?.onTabReselected()
-         }
-
-         currentTabId = targetTabId
-     }
- */
-
-    /* private fun switchTab(targetTabId: Int) {
-         val wasCurrentTab = targetTabId == currentTabId
-         val tag = "tab_$targetTabId"
-         var targetFragment = supportFragmentManager.findFragmentByTag(tag)
-
-         val transaction = supportFragmentManager.beginTransaction()
-
-         // 모든 탭 숨김
-         listOf(R.id.menu_home, R.id.menu_explore, R.id.menu_community, R.id.menu_my).forEach { id ->
-             val existing = supportFragmentManager.findFragmentByTag("tab_$id")
-             if (existing != null && id != targetTabId) {
-                 transaction.hide(existing)
-             }
-         }
-
-         val isNewlyCreated = targetFragment == null
-
-         // 해당 탭 프래그먼트가 없으면 생성, 있으면 show
-         if (isNewlyCreated) {
-             val navHost = NavHostFragment.create(getNavGraphId(targetTabId))
-             transaction.add(R.id.fcv_main, navHost, tag)
-             targetFragment = navHost
-         } else {
-             transaction.show(targetFragment!!)
-         }
-
-         transaction.commitNow()
-         // 새로 만든 게 아니라면 → 무조건 onTabReselected() 호출
-         if (!isNewlyCreated) {
-             val currentNavHost = targetFragment as? NavHostFragment
-             val navController = currentNavHost?.navController
-
-             navController?.popBackStack(navController.graph.startDestinationId, false)
-             val fragment = currentNavHost
-                 ?.childFragmentManager
-                 ?.fragments
-                 ?.firstOrNull()
-             (fragment as? OnTabReselectedListener)?.onTabReselected()
-
-             *//* val currentNavHost = targetFragment as? NavHostFragment
-             val navController = currentNavHost?.navController
-
-             val popped = navController?.popBackStack(navController.graph.startDestinationId, false) ?: false
-             if (!popped) {
-                 val fragment = currentNavHost
-                     ?.childFragmentManager
-                     ?.fragments
-                     ?.firstOrNull()
-                 (fragment as? OnTabReselectedListener)?.onTabReselected()
-             }*//*
-        }
-
-        currentTabId = targetTabId
-    }
-*/
-
-    /*private fun switchTab(targetTabId: Int) {
-        if (targetTabId == currentTabId) {
-            val currentNavHost = supportFragmentManager.findFragmentByTag("tab_$targetTabId") as? NavHostFragment
-            val navController = currentNavHost?.navController
-            val popped = navController?.popBackStack(navController.graph.startDestinationId, false) ?: false
-            if (!popped) {
-                val reselFragment = currentNavHost
-                    ?.childFragmentManager
-                    ?.fragments
-                    ?.firstOrNull()
-
-                if (reselFragment is OnTabReselectedListener) {
-                    Timber.d("🔁 onTabReselected triggered for tab $targetTabId")
-                    reselFragment.onTabReselected()
-                } else {
-                    Timber.w("🚨 No fragment implementing OnTabReselectedListener found for tab $targetTabId")
-                }
-               // (currentNavHost?.childFragmentManager?.fragments?.firstOrNull() as? OnTabReselectedListener)?.onTabReselected()
-            }
-            return
-        }
-
-        val tag = "tab_$targetTabId"
-        var targetFragment = supportFragmentManager.findFragmentByTag(tag)
-
-        val transaction = supportFragmentManager.beginTransaction()
-
-        // 먼저 모든 fragment를 숨김
-        listOf(R.id.menu_home, R.id.menu_explore, R.id.menu_community, R.id.menu_my).forEach { id ->
-            val existing = supportFragmentManager.findFragmentByTag("tab_$id")
-            if (existing != null && id != targetTabId) {
-                transaction.hide(existing)
-            }
-        }
-
-        // 없으면 새로 생성
-        if (targetFragment == null) {
-            val navHost = NavHostFragment.create(getNavGraphId(targetTabId))
-            transaction.add(R.id.fcv_main, navHost, tag)
-            targetFragment = navHost
-        } else {
-            transaction.show(targetFragment)
-        }
-
-        transaction.commitNow()
-        currentTabId = targetTabId
-    }*/
-
     private fun getNavGraphId(menuId: Int): Int {
         return when (menuId) {
             R.id.menu_home -> R.navigation.nav_graph_home
@@ -264,9 +188,8 @@ class MainActivity : BaseActivity() {
         }
     }
 
-
     override fun onBackPressed() {
-        super.onBackPressed()
+        //super.onBackPressed()
         val quitFragment = supportFragmentManager.findFragmentById(R.id.fcv_quit)
         if (quitFragment != null) {
             supportFragmentManager.popBackStack()

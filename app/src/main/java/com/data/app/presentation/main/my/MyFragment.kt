@@ -389,6 +389,7 @@ class MyFragment : Fragment(), OnTabReselectedListener {
 
                     // 로그인 정보 삭제
                     appPreferences.clearAccessToken() // AppPreferences에 정의된 토큰 삭제 메서드 호출
+                    appPreferences.clearInfo()
 
                     // 언어 설정 정보 초기화
                     val prefs =

@@ -8,6 +8,7 @@ import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.data.app.R
+import com.data.app.data.Week
 import com.data.app.databinding.ActivityGameTabBinding
 import com.data.app.extension.home.UserGameInfoState
 import com.data.app.presentation.main.BaseActivity
@@ -34,7 +35,6 @@ class GameTabActivity : BaseActivity() {
 
     private fun setting() {
         saveToken()
-        showWeeks()
         clickBack()
 
         refresh()
@@ -59,10 +59,15 @@ class GameTabActivity : BaseActivity() {
         gameTabViewModel.saveToken(accessToken!!)
     }
 
-    private fun showWeeks() {
+    private fun showWeeks(weeklyQuizStatus: List<Boolean>) {
         val weekAdapter = GameTabWeekAdapter()
-        //binding.rvWeeks.adapter = weekAdapter
-        weekAdapter.getList(gameTabViewModel.weeks)
+        binding.rvWeeks.adapter = weekAdapter
+        weekAdapter.getList(gameTabViewModel.dayNames.zip(weeklyQuizStatus).map { (day, active) ->
+            Week(
+                day,
+                active
+            )
+        })
     }
 
     private fun getLevelInfo() {
@@ -75,6 +80,8 @@ class GameTabActivity : BaseActivity() {
                         binding.btnRefresh.visibility = View.GONE
                         showLevels()
                         gameTabViewModel.resetUserGameInfoState()
+
+                        showWeeks(state.response.weeklyQuizStatus)
                     }
 
                     is UserGameInfoState.Loading -> {}

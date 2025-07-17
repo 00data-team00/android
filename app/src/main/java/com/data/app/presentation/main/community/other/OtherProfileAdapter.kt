@@ -100,7 +100,7 @@ class OtherProfileAdapter(
 
                 // clickFollow()
                 clickLike(post.id)
-                showDetail(post.authorId)
+                showDetail(post.id)
             }
         }
 
@@ -131,9 +131,9 @@ class OtherProfileAdapter(
             }
         }
 
-        private fun showDetail(userId: Int) {
+        private fun showDetail(postId: Int) {
             listOf(binding.tvContent, binding.ivImage).forEach {
-                it.setOnClickListener { clickPost(userId) }
+                it.setOnClickListener { clickPost(postId) }
             }
         }
 

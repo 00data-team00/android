@@ -7,6 +7,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,8 +18,12 @@ import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.data.app.BuildConfig
 import com.data.app.R
 import com.data.app.data.response_dto.community.ResponseTimeLineDto
@@ -26,6 +32,7 @@ import com.data.app.data.shared_preferences.AppPreferences
 import com.data.app.databinding.FragmentCommunityBinding
 import com.data.app.extension.community.GetAllTimeLineState
 import com.data.app.extension.community.LikePostState
+import com.data.app.extension.main.GetIdFromTokenState
 import com.data.app.extension.my.SharePostState
 import com.data.app.presentation.main.MainViewModel
 import com.data.app.presentation.main.OnTabReselectedListener
@@ -33,6 +40,7 @@ import com.data.app.presentation.main.community.write.WritePostActivity
 import com.google.android.material.tabs.TabLayout
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -40,9 +48,9 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class CommunityFragment : Fragment(), OnTabReselectedListener {
     private var _binding: FragmentCommunityBinding? = null
-    private val binding: FragmentCommunityBinding
-        get() = requireNotNull(_binding) { "home fragment is null" }
-
+    private val binding get() = _binding ?: throw IllegalStateException("Binding is null")
+    //private val args: CommunityFragmentArgs by navArgs()
+    private val mainViewModel: MainViewModel by activityViewModels()
     private val communityViewModel: CommunityViewModel by viewModels()
     private lateinit var postsAdapter: PostsAdapter
     private var afterWrite = false
@@ -69,7 +77,6 @@ class CommunityFragment : Fragment(), OnTabReselectedListener {
         }
     }
 
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -85,9 +92,52 @@ class CommunityFragment : Fragment(), OnTabReselectedListener {
     }
 
     private fun setting() {
+        if (checkAndNavigateToProfile()) return
+
         showFeeds()
         writePost()
         refresh()
+    }
+
+    private fun checkAndNavigateToProfile(): Boolean {
+        val state = mainViewModel.getIdFromTokenState.value
+        if (!communityViewModel.alreadyNavigated && state is GetIdFromTokenState.Success) {
+            communityViewModel.alreadyNavigated = true
+
+            val contentId = state.response.contentId
+            Timber.d("✅ contentId: $contentId")
+
+            val navHost = requireActivity()
+                .supportFragmentManager
+                .findFragmentByTag("tab_${R.id.menu_community}") as? NavHostFragment
+
+            val navController = navHost?.navController
+
+            val action = CommunityFragmentDirections
+                .actionCommunityFragmentToOtherProfileFragment(contentId.toString())
+
+            navController?.navigate(action)
+
+            return true
+        }
+
+        /*if (!alreadyNavigated && state is GetIdFromTokenState.Success) {
+            alreadyNavigated = true
+
+            val contentId = state.response.contentId
+            Timber.d("contentId: ${contentId}")
+
+            val navController = findNavController()
+            Timber.d("📦 Graph ID: ${navController.graph.id}, Current Dest ID: ${navController.currentDestination?.id}")
+
+            val action = CommunityFragmentDirections
+                .actionCommunityFragmentToOtherProfileFragment(contentId.toString())
+            findNavController().navigate(action)
+
+            return true
+        }*/
+
+        return false
     }
 
     private fun refresh(){

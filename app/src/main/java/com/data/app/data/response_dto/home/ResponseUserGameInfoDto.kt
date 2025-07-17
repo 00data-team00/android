@@ -15,4 +15,6 @@ data class ResponseUserGameInfoDto (
     val chatRoomsCreated:Int?,
     @SerialName("levelCompleted")
     val levelCompleted:Int?,
+    @SerialName("weeklyQuizStatus")
+    val weeklyQuizStatus:List<Boolean>,
 )

@@ -18,6 +18,8 @@ class AppPreferences @Inject constructor(
 ) {
     private val PREFS_NAME = "com.data.app.app_prefs" // 이름 변경 가능
     private val KEY_ACCESS_TOKEN = "access_token_v2" // 버전 관리 명시
+    private val KEY_USER_ID = "user_id"
+    private val KEY_USER_NAME = "user_name"
 
     private val sharedPreferences: SharedPreferences by lazy {
         context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -26,7 +28,6 @@ class AppPreferences @Inject constructor(
     fun saveDtoInfo(dto: ResponseLoginDto?) {
         val editor = sharedPreferences.edit()
         val alias = cryptoUtils.getAliasForRefreshToken()
-
 
         if (dto != null) {
             try {
@@ -46,6 +47,29 @@ class AppPreferences @Inject constructor(
 
         editor.apply()
     }
+
+    fun saveUserInfo(userId: Int, userName: String) {
+        val editor = sharedPreferences.edit()
+        val alias = cryptoUtils.getAliasForRefreshToken() // 같은 키로 암호화
+
+        try {
+            val (encryptedUserId, ivUserId) = cryptoUtils.encryptData(alias, userId.toString()) ?: return
+            val (encryptedUserName, ivUserName) = cryptoUtils.encryptData(alias, userName) ?: return
+
+            editor.putString(KEY_USER_ID, encryptedUserId)
+            editor.putString("${KEY_USER_ID}_iv", ivUserId)
+
+            editor.putString(KEY_USER_NAME, encryptedUserName)
+            editor.putString("${KEY_USER_NAME}_iv", ivUserName)
+
+            Timber.d("User info encrypted and saved.")
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to encrypt user info.")
+        }
+
+        editor.apply()
+    }
+
 
     fun getLoginInfo(): ResponseLoginDto? {
         val alias = cryptoUtils.getAliasForRefreshToken()
@@ -68,6 +92,35 @@ class AppPreferences @Inject constructor(
     fun getExpiresAt(): Int? {
         return getLoginInfo()?.expiresIn
     }
+
+    fun getUserId(): Int? {
+        val alias = cryptoUtils.getAliasForRefreshToken()
+        val encrypted = sharedPreferences.getString(KEY_USER_ID, null)
+        val iv = sharedPreferences.getString("${KEY_USER_ID}_iv", null)
+
+        return try {
+            val decrypted = cryptoUtils.decryptData(alias, encrypted, iv)
+            decrypted?.toIntOrNull() // 안전하게 Int로 변환
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to decrypt userId.")
+            null
+        }
+    }
+
+
+    fun getUserName(): String? {
+        val alias = cryptoUtils.getAliasForRefreshToken()
+        val encrypted = sharedPreferences.getString(KEY_USER_NAME, null)
+        val iv = sharedPreferences.getString("${KEY_USER_NAME}_iv", null)
+
+        return try {
+            cryptoUtils.decryptData(alias, encrypted, iv)
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to decrypt userName.")
+            null
+        }
+    }
+
 
     /*fun getAccessToken(): String? {
         val alias = cryptoUtils.getAliasForRefreshToken()
@@ -96,5 +149,16 @@ class AppPreferences @Inject constructor(
         }
 
         Timber.d("Access token cleared from preferences and keystore.")
+    }
+
+    fun clearInfo(){
+        sharedPreferences.edit()
+            .remove(KEY_USER_ID)
+            .remove("${KEY_USER_ID}_iv")
+            .remove(KEY_USER_NAME)
+            .remove("${KEY_USER_NAME}_iv")
+            .apply()
+
+        Timber.d("User info cleared from preferences.")
     }
 }

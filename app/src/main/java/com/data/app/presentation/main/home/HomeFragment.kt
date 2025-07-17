@@ -42,13 +42,16 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import androidx.core.net.toUri
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.repeatOnLifecycle
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.filter
 
 @AndroidEntryPoint
 class HomeFragment : Fragment(), OnTabReselectedListener {
     private var _binding: FragmentHomeBinding? = null
     private val binding: FragmentHomeBinding
         get() = requireNotNull(_binding) { "home fragment is null" }
-
 
     private val mainViewModel: MainViewModel by activityViewModels()
     private val homeViewModel: HomeViewModel by viewModels()
@@ -73,10 +76,8 @@ class HomeFragment : Fragment(), OnTabReselectedListener {
     }
 
     private fun setting() {
-        mainViewModel.accessToken.observe(viewLifecycleOwner) { token ->
-            getInfo(token)
-            refresh(token)
-        }
+        getInfo()
+        refresh(appPreferences.getAccessToken()!!)
         showImage()
         //clickPractice(token)
         inputData()
@@ -85,7 +86,7 @@ class HomeFragment : Fragment(), OnTabReselectedListener {
     private fun refresh(token: String) {
         binding.btnRefresh.setOnClickListener{
             homeViewModel.getUserGameInfo(token)
-            homeViewModel.getProfile(appPreferences.getAccessToken()!!)
+            //homeViewModel.getProfile(appPreferences.getAccessToken()!!)
         }
     }
 
@@ -141,8 +142,8 @@ class HomeFragment : Fragment(), OnTabReselectedListener {
         }
     }
 
-    private fun getInfo(token: String) {
-        getUserName()
+    private fun getInfo() {
+        //getUserName()
 
         lifecycleScope.launchWhenResumed {
             homeViewModel.userGameInfoState.collect { state ->
@@ -169,9 +170,10 @@ class HomeFragment : Fragment(), OnTabReselectedListener {
                             tvConversationCount.text = (totalchat).toString()
                             tvContinueStudy.text = getString(R.string.home_continue_study, totalquiz + totalchat)
                         }
+                        getUserName()
                         clickOnline()
-                        clickPractice(token)
-                        clickGame(token)
+                        clickPractice(appPreferences.getAccessToken()!!)
+                        clickGame(appPreferences.getAccessToken()!!)
                     }
 
                     is UserGameInfoState.Loading -> {}
@@ -179,6 +181,11 @@ class HomeFragment : Fragment(), OnTabReselectedListener {
                         Timber.d(state.message)
                         if(state.message.contains("No address")) {
                             with(binding) {
+                                with(binding) {
+                                    tvTitleKor.text = getString(R.string.home_title, "??")
+                                    tvSubtitleEng.text = getString(R.string.home_subtitle_eng, "??")
+                                    tvNotGiveUp.text = getString(R.string.home_not_give_up, "??")
+                                }
                                 tvQuizCount1.visibility = View.GONE
                                 tvQuizCount2.visibility = View.GONE
                                 tvConversationCount.visibility = View.GONE
@@ -194,49 +201,25 @@ class HomeFragment : Fragment(), OnTabReselectedListener {
                             }
                         }
                         clickOnline()
-                        clickPractice(token)
-                        clickGame(token)
+                        clickPractice(appPreferences.getAccessToken()!!)
+                        clickGame(appPreferences.getAccessToken()!!)
                     }
                 }
             }
         }
 
-        Timber.d("get info token: $token")
+        Timber.d("get info token: $appPreferences.getAccessToken()!!")
 
-        homeViewModel.getUserGameInfo(token)
+        homeViewModel.getUserGameInfo(appPreferences.getAccessToken()!!)
     }
 
     private fun getUserName() {
-        lifecycleScope.launch {
-            homeViewModel.myProfileState.collect { state ->
-                when (state) {
-                    is MyProfileState.Success -> {
-                        val name = state.response.name
-                        with(binding) {
-                            tvTitleKor.text = getString(R.string.home_title, name)
-                            tvSubtitleEng.text = getString(R.string.home_subtitle_eng, name)
-                            tvNotGiveUp.text = getString(R.string.home_not_give_up, name)
-                        }
-                        mainViewModel.saveUserId(state.response.userId)
-                    }
-
-                    is MyProfileState.Loading -> {}
-                    is MyProfileState.Error -> {
-                        Timber.d(state.message)
-                        if(state.message.contains("No address")) {
-                            val name = "??"
-                            with(binding) {
-                                tvTitleKor.text = getString(R.string.home_title, name)
-                                tvSubtitleEng.text = getString(R.string.home_subtitle_eng, name)
-                                tvNotGiveUp.text = getString(R.string.home_not_give_up, name)
-                            }
-                        }
-                    }
-                }
-            }
+        val name = appPreferences.getUserName()
+        with(binding) {
+            tvTitleKor.text = getString(R.string.home_title, name)
+            tvSubtitleEng.text = getString(R.string.home_subtitle_eng, name)
+            tvNotGiveUp.text = getString(R.string.home_not_give_up, name)
         }
-
-        homeViewModel.getProfile(appPreferences.getAccessToken()!!)
     }
 
     private fun showLanguage() {

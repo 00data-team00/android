@@ -75,15 +75,7 @@ class GameTabViewModel @Inject constructor(
             levels[i].isOpen=true
         }
     }
-    val weeks = mutableListOf(
-        Week("월", false),
-        Week("화", false),
-        Week("수", false),
-        Week("목", true),
-        Week("금", true),
-        Week("토", false),
-        Week("일", false),
-    )
+    val dayNames = listOf("월", "화", "수", "목", "금", "토", "일")
 
     val levels= mutableListOf(
         GameLevel("LV.1", true),
