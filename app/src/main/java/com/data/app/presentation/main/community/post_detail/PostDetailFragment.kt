@@ -53,7 +53,9 @@ class PostDetailFragment : Fragment() {
     private val postDetailViewModel: PostDetailViewModel by viewModels()
     private val mainViewModel: MainViewModel by activityViewModels()
     private lateinit var postDetailAdapter: PostDetailAdapter
-    private var isFirstLoading=false
+    private var isFirstLoading = false
+    private var isFromCommentWrite = false
+
 
     @Inject
     lateinit var appPreferences: AppPreferences
@@ -111,12 +113,12 @@ class PostDetailFragment : Fragment() {
                         val post = postState.response
 
                         //binding.btnFollow.isSelected = post.isFollowing
-                        if(isFirstLoading){
+                        if(isFromCommentWrite){
                             binding.tvCommentCount.text = post.commentCount.toString()
+                            isFromCommentWrite = false
                         } else{
                             showPost(post)
                             showImages(post)
-                            isFirstLoading=true
                         }
 
                         getUserProfile(postState.response.comments)
@@ -365,6 +367,7 @@ class PostDetailFragment : Fragment() {
     }
 
     private fun writeComment(postId: Int, content: String) {
+        isFromCommentWrite = true
         postDetailViewModel.writeComment(appPreferences.getAccessToken()!!, postId, content)
     }
 
