@@ -50,11 +50,11 @@ class MainActivity : BaseActivity() {
     }
 
     private fun showFirstFragment(){
-        val profileToken = intent.getStringExtra("profile_token")
-        Timber.d("profiletoken: ${profileToken}")
-        if (!profileToken.isNullOrBlank()) {
+        val token = intent.getStringExtra("token")
+        Timber.d("profiletoken: ${token}")
+        if (!token.isNullOrBlank()) {
             goCommunity()
-            mainViewModel.getIdFromToken(profileToken)
+            mainViewModel.getIdFromToken(token)
         }else{
             binding.bnvMain.selectedItemId = R.id.menu_home
             switchTab(R.id.menu_home, false)
