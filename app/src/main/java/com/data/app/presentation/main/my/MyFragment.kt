@@ -529,13 +529,13 @@ class MyFragment : Fragment(), OnTabReselectedListener {
 
     fun dataUpdate() {
         Timber.d("🌀 MyFragment refresh() 호출")
-        myViewModel.getMyPosts(appPreferences.getAccessToken()!!)
         myViewModel.getProfile(appPreferences.getAccessToken()!!)
+       // myViewModel.getMyPosts(appPreferences.getAccessToken()!!)
     }
 
     override fun onTabReselected() {
-        myViewModel.getMyPosts(appPreferences.getAccessToken()!!)
         myViewModel.getProfile(appPreferences.getAccessToken()!!)
+       // myViewModel.getMyPosts(appPreferences.getAccessToken()!!)
     }
 
     override fun onDestroyView() {
